@@ -92,7 +92,7 @@ text-align: left;
 * { box-sizing: border-box }
 
 /* Поля ввода на всю ширину */
-  input[type=text], input[type=password] {
+  nput[type=text], nput[type=password] {
   width: 100%;
   padding: 15px;
   margin: 5px 0 22px 0;
@@ -108,6 +108,7 @@ input[type=text]:focus, input[type=password]:focus {
 }
 
 /* Задаем стили для всех кнопок */
+/*
 button {
   background-color: #04AA6D;
   color: white;
@@ -118,6 +119,7 @@ button {
   width: 100%;
   opacity: 0.9;
 }
+*/
 
 button:hover {
   opacity:1;
@@ -196,4 +198,11 @@ hr {
   .cancelbtn, .signupbtn {
     width: 100%;
   }
+}
+
+/* Поля textarea на форме editors */
+textarea.ta_editor{
+  width: 100%; /* На всю ширину */
+  height: 100%; /* На всю высоту */
+  
 }
