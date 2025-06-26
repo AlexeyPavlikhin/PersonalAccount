@@ -1,12 +1,10 @@
-{
-    padding: 0;
-    margin: 0;
-    box-sizing: border-box;
-}
 body {
     margin: 50px auto;
     text-align: center;
     width: 800px;
+    background-image: url('fon-1-1_1.jpg');
+    background-repeat: no-repeat;
+    background-size: cover;
 }
 h1 {
     font-family: 'Passion One';
@@ -205,4 +203,192 @@ textarea.ta_editor{
   width: 100%; /* На всю ширину */
   height: 100%; /* На всю высоту */
   
+}
+
+
+bod {
+  height: 100vh;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+}
+
+.menu-bar {
+  border-radius: 25px;
+  height: -webkit-fit-content;
+  height: -moz-fit-content;
+  height: fit-content;
+  display: inline-flex;
+  background-color: rgba(0, 0, 0, 0.4);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  align-items: center;
+  padding: 0 10px;
+  margin: 50px 0 0 0;
+}
+.menu-bar li {
+  list-style: none;
+  color: white;
+  font-family: sans-serif;
+  font-weight: bold;
+  padding: 12px 16px;
+  margin: 0 8px;
+  position: relative;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.menu-bar li::before {
+  content: " ";
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  z-index: -1;
+  transition: 0.2s;
+  border-radius: 25px;
+}
+.menu-bar li:hover {
+  color: black;
+}
+.menu-bar li:hover::before {
+  background: linear-gradient(to bottom, #e8edec, #d2d1d3);
+  box-shadow: 0px 3px 20px 0px black;
+  transform: scale(1.2);
+}
+
+.t450__menu_show.t450 {
+    -moz-transform: translate(0, 0);
+    -ms-transform: translate(0, 0);
+    -webkit-transform: translate(0, 0);
+    -o-transform: translate(0, 0);
+    transform: translate(0, 0);
+    z-index: 999999
+}
+.t450__menu_show.t450__overlay {
+    display: block;
+    z-index: 99999;
+    opacity: 1
+}
+.t450__menu__content {
+    position: fixed;
+    right: 15px;
+    z-index: 99998;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-align-items: center;
+    -ms-flex-align: center;
+    align-items: center;
+    -webkit-justify-content: end;
+    -ms-flex-pack: end;
+    justify-content: end;
+    width: auto;
+    -webkit-transition: opacity ease-in-out 0.2s;
+    -moz-transition: opacity ease-in-out 0.2s;
+    -o-transition: opacity ease-in-out 0.2s;
+    transition: opacity ease-in-out 0.2s
+}
+.t450__menu__content.t450__beforeready {
+    opacity: 0;
+    z-index: -1
+}
+.t450__menu__content.t450__static {
+    position: relative !important;
+    top: auto !important;
+    right: auto !important;
+    left: auto !important;
+    margin-left: auto !important;
+    z-index: 1
+}
+.t450__list {
+    list-style-type: none;
+    margin: 0;
+    padding: 0 !important
+}
+
+.t450__list_item {
+    clear: both;
+    font-family: 'Inter', Arial, sans-serif;
+    font-size: 16px;
+    display: block;
+    margin: 0;
+    color: #0b1b35
+}
+
+.t450__list_item a {
+    margin-bottom: 15px;
+    display: inline-block
+}
+
+.t450__list_item a.t-menusub__link-item {
+    margin-bottom: 0
+}
+
+.t450__list_item:last-child a:not(.t978__menu-link) {
+    margin-bottom: 0 !important;
+    display: inline-block
+}
+
+.t450__list_item .t-active {
+    opacity: .7
+}
+
+.menu {
+	width: 100%;
+	display: table;
+}
+.menu ul {
+	display: table-row;
+}
+.menu li {
+	display: table-cell;
+	position: relative;
+	background: #bcbdbe;
+}
+.menu li a {
+	display: block;
+	padding: 15px 15px;
+	color: #fff;
+	text-align: center;
+}
+.menu-caret:after {
+	display: inline-block;
+	width: 0;
+	height: 0;
+	margin-left: .255em;
+	vertical-align: .255em;
+	content: "";
+	border-top: 3px solid;
+	border-right: 3px solid transparent;
+	border-bottom: 0;
+	border-left: 3px solid transparent;
+}
+.menu ul li:hover, .menu a:hover {
+	background: #666;
+}
+.menu li:hover ul  {
+	display: block;
+	position: absolute;
+	top: 100%;
+	left: 0px;
+	background: #666;
+	margin: 0;
+	padding: 10px 20px;
+	width: 150px;
+	z-index: 9999;
+}
+.menu ul ul  {
+	display: none;
+}
+.menu ul ul li  {
+	display: block;
+	background: #666;
+	padding: 5px 0;
+}
+.menu ul ul li a  {
+	display: block;
+	padding: 0;
+	background: #666;
+	text-align: left;
 }
