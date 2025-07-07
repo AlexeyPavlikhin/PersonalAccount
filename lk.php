@@ -1,3 +1,27 @@
+<link rel="stylesheet" href="styles.css">
+<div class="menu">
+    <ul>
+        <li><a href="#">Главная</a></li>
+        <li><a href="#">О компании</a></li>
+        <li><a href="#">Покупателям</a></li>
+        <li>
+            <a class="menu-caret" href="#">Акции</a>
+            <ul>
+                <li><a href="#">Акция 1</a></li>
+                <li><a href="#">Акция 2</a></li>
+                <li><a href="#">Акция 3</a></li>
+                <li><a href="#">Акция 4</a></li>
+                <li><a href="#">Акция 5</a></li>
+            </ul>
+        </li>
+        <li><a href="#">Новости</a></li>
+        <li><a href="#">Контакты</a></li>
+    </ul>
+</div>
+<!--<div style="float: left; width: 50%; position: absolute ;">-->
+<table class='aaa'>
+    <tr class='aaa'>
+        <td class='aaa'>
 <?php
     session_start();
     include('config.php');
@@ -20,7 +44,9 @@
             echo "<td>" . $row["formated_row_creation_time"] . "</td>";
             echo "<td>" . $row["order_status"] . "</td>";
             echo "<td>" . $row["order_description"] . "</td>";
-            echo "<td> <button type='submit' name='detail' value='".$row["order_id"]."'>Подробно</button> </td>";
+        //echo "<td> <button type='submit' name='detail' value='".$row["order_id"]."'>Подробно</button> </td>";
+            echo "<td> <a href='lk.php?action=detail&id=".$row["order_id"]."'>Подробно</a> </td>";
+                        
             echo "</tr>";
         }
         echo "  </table>";
@@ -31,10 +57,11 @@
         if (isset($_GET['detail'])) {
             $_SESSION['detail_order_id'] = $_GET['detail'];
             header('Location: order_details.php');
-            
-            
+        }
 
-
+        if (isset($_GET['action']) && $_GET['action'] == 'detail') {
+            $_SESSION['detail_order_id'] = $_GET['id'];
+            header('Location: order_details.php');
         }
 
 
@@ -58,58 +85,15 @@
     }
 ?>
 
-<link rel="stylesheet" href="styles.css">
+<!--</div>-->
 
-<nav class="t450__menu">
-    <ul role="list" class="t450__list t-menu__list">
-        <li class="t450__list_item"> <a class="t-menu__link-item " href="/" data-menu-submenu-hook=""
-                data-menu-item-number="1">
-                Главная
-            </a> </li>
-        <li class="t450__list_item"> <a class="t-menu__link-item " href="/uslugi" data-menu-submenu-hook=""
-                data-menu-item-number="2">
-                Услуги
-            </a> </li>
-        <li class="t450__list_item"> <a class="t-menu__link-item " href="/kursy-i-vebinary" data-menu-submenu-hook=""
-                data-menu-item-number="3">
-                Курсы и&nbsp;вебинары
-            </a> </li>
-        <li class="t450__list_item"> <a class="t-menu__link-item " href="/articles" data-menu-submenu-hook=""
-                data-menu-item-number="4">
-                Статьи
-            </a> </li>
-        <li class="t450__list_item"> <a class="t-menu__link-item " href="/events" data-menu-submenu-hook=""
-                data-menu-item-number="5">
-                Мероприятия
-            </a> </li>
-        <li class="t450__list_item"> <a class="t-menu__link-item " href="/kontaktyi" data-menu-submenu-hook=""
-                data-menu-item-number="6">
-                Контакты и вакансии
-            </a> </li>
-    </ul>
-</nav>
-
-<div class="menu">
-    <ul>
-        <li><a href="#">Главная</a></li>
-        <li><a href="#">О компании</a></li>
-        <li><a href="#">Покупателям</a></li>
-        <li>
-            <a class="menu-caret" href="#">Акции</a>
-            <ul>
-                <li><a href="#">Акция 1</a></li>
-                <li><a href="#">Акция 2</a></li>
-                <li><a href="#">Акция 3</a></li>
-                <li><a href="#">Акция 4</a></li>
-                <li><a href="#">Акция 5</a></li>
-            </ul>
-        </li>
-        <li><a href="#">Новости</a></li>
-        <li><a href="#">Контакты</a></li>
-    </ul>
-</div>
-<div > 
-    <img class="tn-atom__img"
-            src="https://static.tildacdn.com/tild3830-3137-4438-b536-396362626530/Mayya_1.png" alt=""
-            imgfield="tn_img_1694086384364"> </div>
-</div>
+</td>
+<td class='aaa'>
+    <!--<div style="width: 100%; position: relative; padding-left: 50%">-->
+    <!--<div style="width: 100%;>-->
+        <img src="Mayya_1.png" alt="" width="500">
+    <!--</div>-->
+    aaa
+</td>
+</tr>
+</table>

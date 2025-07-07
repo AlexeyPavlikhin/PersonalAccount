@@ -1,10 +1,12 @@
 body {
     margin: 50px auto;
     text-align: center;
-    width: 800px;
+    width: 100%;
     background-image: url('fon-1-1_1.jpg');
     background-repeat: no-repeat;
     background-size: cover;
+    padding-left: 5%;
+    padding-right: 10%;
 }
 h1 {
     font-family: 'Passion One';
@@ -34,9 +36,9 @@ form {
 }
 form.table {
     margin: 25px auto;
-    padding: 20px;
+    padding: 10px;
     border: 5px solid #ccc;
-    width: 800px;
+    width: 100%;
     background: #eee;
 }
 div.form-element {
@@ -73,7 +75,7 @@ width: 100%;
 th, td:first-child {
 background: #AFCDE7;
 color: white;
-padding: 10px 20px;
+padding: 10px 10px;
 }
 th, td {
 border-style: solid;
@@ -255,83 +257,6 @@ bod {
   background: linear-gradient(to bottom, #e8edec, #d2d1d3);
   box-shadow: 0px 3px 20px 0px black;
   transform: scale(1.2);
-}
-
-.t450__menu_show.t450 {
-    -moz-transform: translate(0, 0);
-    -ms-transform: translate(0, 0);
-    -webkit-transform: translate(0, 0);
-    -o-transform: translate(0, 0);
-    transform: translate(0, 0);
-    z-index: 999999
-}
-.t450__menu_show.t450__overlay {
-    display: block;
-    z-index: 99999;
-    opacity: 1
-}
-.t450__menu__content {
-    position: fixed;
-    right: 15px;
-    z-index: 99998;
-    display: -webkit-flex;
-    display: -ms-flexbox;
-    display: flex;
-    -webkit-align-items: center;
-    -ms-flex-align: center;
-    align-items: center;
-    -webkit-justify-content: end;
-    -ms-flex-pack: end;
-    justify-content: end;
-    width: auto;
-    -webkit-transition: opacity ease-in-out 0.2s;
-    -moz-transition: opacity ease-in-out 0.2s;
-    -o-transition: opacity ease-in-out 0.2s;
-    transition: opacity ease-in-out 0.2s
-}
-.t450__menu__content.t450__beforeready {
-    opacity: 0;
-    z-index: -1
-}
-.t450__menu__content.t450__static {
-    position: relative !important;
-    top: auto !important;
-    right: auto !important;
-    left: auto !important;
-    margin-left: auto !important;
-    z-index: 1
-}
-.t450__list {
-    list-style-type: none;
-    margin: 0;
-    padding: 0 !important
-}
-
-.t450__list_item {
-    clear: both;
-    font-family: 'Inter', Arial, sans-serif;
-    font-size: 16px;
-    display: block;
-    margin: 0;
-    color: #0b1b35
-}
-
-.t450__list_item a {
-    margin-bottom: 15px;
-    display: inline-block
-}
-
-.t450__list_item a.t-menusub__link-item {
-    margin-bottom: 0
-}
-
-.t450__list_item:last-child a:not(.t978__menu-link) {
-    margin-bottom: 0 !important;
-    display: inline-block
-}
-
-.t450__list_item .t-active {
-    opacity: .7
 }
 
 .menu {
