@@ -11,35 +11,35 @@
 
         echo "<p class='success'>Детальная информация о заказе номер ".$order_id."</p>";
         echo "<form class='table' method='POST' action=''>";
-        echo "  <table><tr><th>Номер заказа</th><th>Дата изменения</th><th>Статус (для клиента)</th><th>Комментарий (для сотрудников)</th></tr>";
+        echo "  <table class='db_data'><tr class='db_data'><th class='db_data'>Номер заказа</th><th class='db_data'>Дата изменения</th><th class='db_data'>Статус (для клиента)</th><th class='db_data'>Комментарий (для сотрудников)</th></tr>";
         while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
-            echo "<tr>";
-            echo "<td>" . $row["formated_row_creation_time"] . "</td>";
-            echo "<td>" . $row["username"] . "</td>";
-            echo "<td>" . $row["order_status"] . "</td>";            
-            echo "<td>" . $row["order_description"] . "</td>";
+            echo "<tr class='db_data'>";
+            echo "<td class='db_data'>" . $row["formated_row_creation_time"] . "</td>";
+            echo "<td class='db_data'>" . $row["username"] . "</td>";
+            echo "<td class='db_data'>" . $row["order_status"] . "</td>";            
+            echo "<td class='db_data'>" . $row["order_description"] . "</td>";
             echo "</tr>";
             $client_id = $row["client_id"];
 
         }
         echo "</table>";
         echo "<br>";
-        echo "<table>";
-        echo "<tr>";
-        echo "<td> Статус (для клиента) </td>";
-        echo "<td> <textarea class='ta_editor' name='ta_status' rows='5' cols='33'></textarea>  </td>";
+        echo "<table class='db_data'>";
+        echo "<tr class='db_data'>";
+        echo "<td class='db_data'> Статус (для клиента) </td>";
+        echo "<td class='db_data'> <textarea class='ta_editor' name='ta_status' rows='5' cols='33'></textarea>  </td>";
         echo "</tr>";
-        echo "<tr>";
-        echo "<td> Комментарий (для сотрудников) </td>";
-        echo "<td> <textarea class='ta_editor' name='ta_comment' rows='5' cols='33'></textarea>  </td>";
+        echo "<tr class='db_data'>";
+        echo "<td class='db_data'> Комментарий (для сотрудников) </td>";
+        echo "<td class='db_data'> <textarea class='ta_editor' name='ta_comment' rows='5' cols='33'></textarea>  </td>";
         echo "</tr>";
         echo "</table>";
 
         echo "<br>";
-        echo "<tr>";
-        echo "<td> <button type='submit' name='close_form' value='close_form'>Закрыть без сохранения</button> </td>";
-        echo "<td> <button type='submit' name='change' value='change'>Сохранить изменения</button> </td>";
-        echo "</tr>";
+        echo "<tr class='db_data'>";
+        echo "<td class='db_data'> <button type='submit' name='close_form' value='close_form'>Закрыть без сохранения</button> </td>";
+        echo "<td class='db_data'> <button type='submit' name='change' value='change'>Сохранить изменения</button> </td>";
+        echo "</tr >";
         echo "</form>";
         
 

@@ -20,7 +20,7 @@ label {
     font-size: 1.5rem;
     font-family: 'Lato';
 }
-input {
+input, select {
     border: 2px solid #ccc;
     font-size: 1.5rem;
     font-weight: 100;
@@ -31,7 +31,7 @@ form {
     margin: 25px auto;
     padding: 20px;
     border: 5px solid #ccc;
-    width: 500px;
+    width: 600px;
     background: #eee;
 }
 form.table {
@@ -53,6 +53,7 @@ button {
     color: white;
     border: none;
 }
+
 p.success,
 p.error {
     color: white;
@@ -65,27 +66,32 @@ p.error {
     background: orangered;
 }
 
-table {
+td {
+vertical-align: top;
+}
+
+
+table.db_data  {
 font-family: "Lucida Sans Unicode", "Lucida Grande", Sans-Serif;
 font-size: 14px;
 border-collapse: collapse;
 text-align: center;
 width: 100%;
 }
-th, td:first-child {
+th.db_data, td.db_data:first-child {
 background: #AFCDE7;
 color: white;
 padding: 10px 10px;
 }
-th, td {
+th.db_data, td.db_data {
 border-style: solid;
 border-width: 0 1px 1px 0;
 border-color: white;
 }
-td {
+td.db_data {
 background: #D8E6F3;
 }
-th:first-child, td:first-child {
+th.db_data:first-child, td.db_data:first-child {
 text-align: left;
 }
 
@@ -316,4 +322,24 @@ bod {
 	padding: 0;
 	background: #666;
 	text-align: left;
+}
+.gTFIBn {
+    display: flex
+;
+    -webkit-box-align: center;
+    align-items: center;
+    -webkit-box-pack: justify;
+    justify-content: space-between;
+    background-color: rgb(255, 255, 255);
+    position: sticky;
+    top: 0px;
+    z-index: 1;
+    box-shadow: rgba(0, 0, 0, 0.08) 0px 1.2px 18px, rgba(0, 0, 0, 0.12) 0px 6.4px 28px;
+    height: 48px;
+    min-height: 48px;
+    padding: 0px 16px;
+}
+.right {
+  text-align: right;
+  float: right;
 }

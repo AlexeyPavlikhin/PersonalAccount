@@ -11,13 +11,13 @@
 
         echo "<p class='success'>Детальная информация о заказе номер ".$order_id."</p>";
         echo "<form class='table' method='GET' action=''>";
-        echo "  <table><tr><th>Номер заказа</th><th>Дата изменения</th><th>Статус (для клиента)</th><th>Комментарий (для сотрудников)</th></tr>";
+        echo "  <table class='db_data'><tr class='db_data'><th class='db_data'>Номер заказа</th><th class='db_data'>Дата изменения</th><th class='db_data'>Статус (для клиента)</th><th class='db_data'>Комментарий (для сотрудников)</th></tr>";
         while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
             echo "<tr>";
-            echo "<td>" . $row["formated_row_creation_time"] . "</td>";
-            echo "<td>" . $row["username"] . "</td>";
-            echo "<td>" . $row["order_status"] . "</td>";            
-            echo "<td>" . $row["order_description"] . "</td>";
+            echo "<td class='db_data'>" . $row["formated_row_creation_time"] . "</td>";
+            echo "<td class='db_data'>" . $row["username"] . "</td>";
+            echo "<td class='db_data'>" . $row["order_status"] . "</td>";            
+            echo "<td class='db_data'>" . $row["order_description"] . "</td>";
             echo "</tr>";
         }
         echo "  </table>";

@@ -1,32 +1,16 @@
 <link rel="stylesheet" href="styles.css">
-<div class="menu">
-    <ul>
-        <li><a href="#">Главная</a></li>
-        <li><a href="#">О компании</a></li>
-        <li><a href="#">Покупателям</a></li>
-        <li>
-            <a class="menu-caret" href="#">Акции</a>
-            <ul>
-                <li><a href="#">Акция 1</a></li>
-                <li><a href="#">Акция 2</a></li>
-                <li><a href="#">Акция 3</a></li>
-                <li><a href="#">Акция 4</a></li>
-                <li><a href="#">Акция 5</a></li>
-            </ul>
-        </li>
-        <li><a href="#">Новости</a></li>
-        <li><a href="#">Контакты</a></li>
-    </ul>
-</div>
+
+
 <!--<div style="float: left; width: 50%; position: absolute ;">-->
-<table class='aaa'>
-    <tr class='aaa'>
-        <td class='aaa'>
+
 <?php
     session_start();
     include('config.php');
     //echo $_SESSION['user_id'];
+    //echo "<header class='gTFIBn'> aaa </header>";
+    echo "<a href='login.php' class='right'>Выход</a><br/>";
     echo  'Уважаемый ',  $_SESSION['user_name'], ', добро пожаловать в личный кабинет!';
+    
     if ($_SESSION['user_group']!="client") {
         $user_id = $_SESSION['user_id'];
         $query = $connection->prepare("SELECT t2.*, DATE_FORMAT(t2.row_creation_time, '%d.%m.%Y %H:%i:%s') as 'formated_row_creation_time' FROM orders t2 WHERE t2.id in (SELECT MAX(t.id) FROM orders t GROUP by t.order_id) ORDER BY t2.order_id");
@@ -34,18 +18,28 @@
         $query->execute();
         $current_record="";
         //$result = $query->fetch(PDO::FETCH_ASSOC);
-
         
+        echo "<div class='menu'>";
+        echo "    <ul>";
+        echo "        <li><a href='lk.php'>Управление заказами</a></li>";
+        echo "        <li><a href='uc.php'>Управление пользователями</a></li>";
+        echo "        <li><a href='sales.php'>Управление продажами</a></li>";
+        echo "    </ul>";
+        echo "</div>";
+        
+        echo "<table>";
+        echo "    <tr>";
+        echo "        <td>";
         echo "<form class='table' method='GET' action=''>";
-        echo "  <table><tr><th>Номер заказа</th><th>Дата изменения</th><th>Статус (для клиента)</th><th>Комментарий (для сотрудников)</th><th>Подробно</th></tr>";
+        echo "  <table class='db_data'><tr class='db_data'><th class='db_data'>Номер заказа</th><th class='db_data'>Дата изменения</th><th class='db_data'>Статус (для клиента)</th><th class='db_data'>Комментарий (для сотрудников)</th><th class='db_data'>Подробно</th></tr>";
         while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
             echo "<tr>";
-            echo "<td>" . $row["order_id"] . "</td>";
-            echo "<td>" . $row["formated_row_creation_time"] . "</td>";
-            echo "<td>" . $row["order_status"] . "</td>";
-            echo "<td>" . $row["order_description"] . "</td>";
+            echo "<td class='db_data'>" . $row["order_id"] . "</td>";
+            echo "<td class='db_data'>" . $row["formated_row_creation_time"] . "</td>";
+            echo "<td class='db_data'>" . $row["order_status"] . "</td>";
+            echo "<td class='db_data'>" . $row["order_description"] . "</td>";
         //echo "<td> <button type='submit' name='detail' value='".$row["order_id"]."'>Подробно</button> </td>";
-            echo "<td> <a href='lk.php?action=detail&id=".$row["order_id"]."'>Подробно</a> </td>";
+            echo "<td class='db_data'> <a href='lk.php?action=detail&id=".$row["order_id"]."'>Подробно</a> </td>";
                         
             echo "</tr>";
         }
@@ -71,14 +65,18 @@
         $query->bindParam("user_id", $user_id, PDO::PARAM_STR);
         $query->execute();
 
+        echo "</div>";
+        echo "<table>";
+        echo "    <tr>";
+        echo "        <td>";
         echo "<form class='table'>";
-        echo "  <table><tr><th>Номер заказа</th><th>дата изменения</th><th>статус</th></tr>";
+        echo "  <table class='db_data'><tr class='db_data'><th class='db_data'>Номер заказа</th><th class='db_data'>дата изменения</th><th class='db_data'>статус</th></tr>";
         while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
-            echo "<tr>";
-            echo "<td>" . $row["order_id"] . "</td>";
-            echo "<td>" . $row["formated_row_creation_time"] . "</td>";
-            echo "<td>" . $row["order_status"] . "</td>";
-            echo "</tr>";
+            echo "<tr class='db_data'>";
+            echo "<td class='db_data'>" . $row["order_id"] . "</td>";
+            echo "<td class='db_data'>" . $row["formated_row_creation_time"] . "</td>";
+            echo "<td class='db_data'>" . $row["order_status"] . "</td>";
+            echo "</tr class='db_data'>";
         }
         echo "  </table>";
         echo "</form>";
@@ -88,12 +86,16 @@
 <!--</div>-->
 
 </td>
-<td class='aaa'>
+<td width=300>
     <!--<div style="width: 100%; position: relative; padding-left: 50%">-->
     <!--<div style="width: 100%;>-->
-        <img src="Mayya_1.png" alt="" width="500">
+
+
+        <div >
+            <img src="Mayya_1.png" alt="" width=100% min-width=100%>
+        </div>
     <!--</div>-->
-    aaa
+ 
 </td>
 </tr>
 </table>
