@@ -6,6 +6,7 @@
     session_start();
     include('config.php');
     //echo "<a href='login.php' class='right'>Выход</a><br/>";
+    //echo $_SESSION['edit_user_id'];
     echo "<div class='menu-bar'>";
     echo "  <ul>";
     echo "      <li class='right'>";
@@ -28,13 +29,55 @@
         echo "</div>";
 
         
-/*
+
         $user_id = $_SESSION['user_id'];
-        $query = $connection->prepare("SELECT * FROM users u order by u.login");
+        $query = $connection->prepare("SELECT * FROM users u where u.id='".$_SESSION['edit_user_id']."'");
         $query->execute();
         $current_record="";
-*/        
-        
+
+        $in_Login = "";
+        $in_username = "";
+        $in_email = "";
+        $in_user_group = "";
+
+        while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
+            $in_Login = $row["login"];
+            $in_username = $row["username"];
+            $in_email = $row["email"];
+            $in_user_group = $row["user_group"];
+        }
+         echo $in_user_group;
+
+
+        echo "<form method='post' action='' name='signup-form'>";
+        echo "    <div class='form-element'>";
+        echo "        <label>Login</label>";
+        echo "        <input type='text' name='login' pattern='[a-zA-Z0-9]+' required value='".$in_Login."' />";
+        echo "    </div>";
+        echo "    <div class='form-element'>";
+        echo "        <label>Имя пользователя</label>";
+        echo "        <input type='text' name='username' required value='".$in_username."' />";
+            
+        echo "    </div>";
+        echo "    <div class='form-element'>";
+        echo "        <label>E-mail</label>";
+        echo "        <input type='email' name='email' required value='".$in_email."' />";
+        echo "    </div>";
+
+        echo "    <div class='form-element'>";
+        echo "        <label>Группа</label>";
+        echo "        <select name='user_group' required   >";
+        echo "            <option value='".$in_user_group."'>".$in_user_group."</option>";
+        echo "            <option value='client'>client</option>";
+        echo "            <option value='operator'>operator</option>";
+        echo "        </select>";
+        echo "    </div>";
+
+        echo "<button type='submit' name='btn_register' value='btn_register'>Создать</button>";
+        echo "<button type='submit' name='btn_cancel' value='btn_cancel' formnovalidate>Отменить</button>";
+        echo "</form>";
+
+
         //echo "<form class='table' method='GET' action=''>";
         
         
@@ -83,11 +126,13 @@
                 $result = $query->execute();
                 if ($result) {
                     echo '<p class="success">Регистрация прошла успешно!</p>';
-                    header('Location: uc.php');
                 } else {
                     echo '<p class="error">Неверные данные!</p>';
                 }
             }
+
+
+            header('Location: uc.php');
         }
 
 
@@ -96,32 +141,3 @@
     }
 
 ?>
-
-
-<form method="post" action="" name="signup-form">
-    <div class="form-element">
-        <label>Login</label>
-        <input type="text" name="login" pattern="[a-zA-Z0-9]+" required />
-    </div>
-    <div class="form-element">
-        <label>Имя пользователя</label>
-        <input type="text" name="username" required />
-    
-    </div>
-    <div class="form-element">
-        <label>E-mail</label>
-        <input type="email" name="email" required />
-    </div>
-
-    <div class="form-element">
-        <label>Группа</label>
-        <select name="user_group" required>
-            <option value="">------ Выберите группу -----</option>
-            <option value="client">client</option>
-            <option value="operator">operator</option>
-        </select>
-    </div>
-
-<button type="submit" name="btn_register" value="btn_register">Создать</button>
-<button type="submit" name="btn_cancel" value="btn_cancel" formnovalidate>Отменить</button>
-</form>

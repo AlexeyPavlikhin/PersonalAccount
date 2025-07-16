@@ -4,12 +4,26 @@
 <!--<div style="float: left; width: 50%; position: absolute ;">-->
 
 <?php
+    //error_reporting(0);
     session_start();
     include('config.php');
     //echo $_SESSION['user_id'];
     //echo "<header class='gTFIBn'> aaa </header>";
-    echo "<a href='login.php' class='right'>Выход</a><br/>";
-    echo  'Уважаемый ',  $_SESSION['user_name'], ', добро пожаловать в личный кабинет!';
+    //echo "<a href='login.php' class='right'>Выход</a><br/>";
+    echo "<div class='menu-bar'>";
+    echo "  <ul>";
+    echo "      <li class='right'>";
+    echo "          ".$_SESSION['user_name'];
+    echo "          <ul>";
+    echo "              <li><a href='#'>Профиль</a></li>";
+    echo "              <li><a href='login.php'>Выход</a></li>";
+    echo "          </ul>";
+    echo "        </li>";
+    echo "    </ul>";
+    echo "</div>";
+
+
+    //echo  'Уважаемый ',  $_SESSION['user_name'], ', добро пожаловать в личный кабинет!';
     
     if ($_SESSION['user_group']!="client") {
         $user_id = $_SESSION['user_id'];
@@ -47,11 +61,12 @@
         
         echo "</form>";
         
-        
+        /*
         if (isset($_GET['detail'])) {
             $_SESSION['detail_order_id'] = $_GET['detail'];
             header('Location: order_details.php');
         }
+        */
 
         if (isset($_GET['action']) && $_GET['action'] == 'detail') {
             $_SESSION['detail_order_id'] = $_GET['id'];
@@ -86,7 +101,7 @@
 <!--</div>-->
 
 </td>
-<td width=300>
+<td width=400>
     <!--<div style="width: 100%; position: relative; padding-left: 50%">-->
     <!--<div style="width: 100%;>-->
 

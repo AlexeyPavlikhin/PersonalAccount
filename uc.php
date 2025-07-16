@@ -5,9 +5,20 @@
     //error_reporting(0);
     session_start();
     include('config.php');
-    echo "<a href='login.php' class='right'>Выход</a><br/>";
+    //echo "<a href='login.php' class='right'>Выход</a><br/>";
+    echo "<div class='menu-bar'>";
+    echo "  <ul>";
+    echo "      <li class='right'>";
+    echo "          ".$_SESSION['user_name'];
+    echo "          <ul>";
+    echo "              <li><a href='#'>Профиль</a></li>";
+    echo "              <li><a href='login.php'>Выход</a></li>";
+    echo "          </ul>";
+    echo "        </li>";
+    echo "    </ul>";
+    echo "</div>";
     if ($_SESSION['user_group']!= null and $_SESSION['user_group']!= 'client' ) {
-        echo  'Уважаемый ',  $_SESSION['user_name'], ', добро пожаловать в личный кабинет!';
+        //echo  'Уважаемый ',  $_SESSION['user_name'], ', добро пожаловать в личный кабинет!';
         echo "<div class='menu'>";
         echo "    <ul>";
         echo "        <li><a href='lk.php'>Управление заказами</a></li>";
@@ -39,12 +50,17 @@
             echo "<td class='db_data'>" . $row["username"] . "</td>";
             echo "<td class='db_data'>" . $row["email"] . "</td>";
             echo "<td class='db_data'>" . $row["user_group"] . "</td>";
-            echo "<td class='db_data'> <a href='lk.php?action=create_new_user&id=".$row["id"]."'>Изменить</a> </td>";
+            echo "<td class='db_data'> <a href='uc.php?action=edit_user&id=".$row["id"]."'>Изменить</a> </td>";
             echo "</tr>";
         }
         echo "  </table>";
-        
+                
         echo "</form>";
+
+        if (isset($_GET['action'])) {
+            $_SESSION['edit_user_id'] = $_GET['id'];
+            header('Location: edit_user.php');
+        }
 
     } else {
         echo "<p class='error'> Доступ закрыт!</p>";

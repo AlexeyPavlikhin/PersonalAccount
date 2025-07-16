@@ -1,0 +1,51 @@
+
+.my {
+    border-radius: 24px;
+    padding: 24px;
+    width: 576px;
+    height: 120px;
+    min-width: 272px;
+    background: #be162b;
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
+    flex-direction: column;
+    gap: 8px;
+}
+
+button, a {
+  display: inline-block;
+  padding: 15px;
+  background: #bd162b;
+  transform: skew(-30deg);
+  border-radius: 5px;
+  border-color: #8594ae;
+  border-width: 5px;
+  border-style: outset;
+}
+
+button:hover, a:hover{
+    background:#8594ae;
+}
+
+.my2 {
+  display: inline-block;
+  transform: skew(30deg);
+  color: #fff;
+}
+
+menu, ul {
+  display: flex;
+  list-style: none;
+  padding: 0;
+  width: 250px;
+}
+
+li {
+  flex-grow: 1;
+  background: #fff;
+}
+
+li:hover {
+    background:#8594ae;
+}
