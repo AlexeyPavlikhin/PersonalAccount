@@ -24,7 +24,7 @@
     }
 ?>
 
-<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="styles2.css">
 <form method="get" action="" name="signin-form">
   <div class="form-element">
     <label>Login</label>

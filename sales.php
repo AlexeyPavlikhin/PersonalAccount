@@ -22,9 +22,9 @@
 //        echo  'Уважаемый ',  $_SESSION['user_name'], ', добро пожаловать в личный кабинет!';
         echo "<div class='menu'>";
         echo "    <ul>";
-        echo "        <li><a href='lk.php'>Управление заказами</a></li>";
-        echo "        <li><a href='uc.php'>Управление пользователями</a></li>";
-        echo "        <li><a href='sales.php'>Управление продажами</a></li>";
+        echo "        <li><a class='menu_button' href='lk.php'><div class='menu_button_text'>Управление заказами</div></a></li>";
+        echo "        <li><a class='menu_button' href='uc.php'><div class='menu_button_text'>Управление пользователями</div></a></li>";
+        echo "        <li><a class='menu_button' href='sales.php'><div class='menu_button_text'>Управление продажами</div></a></li>";
         echo "    </ul>";
         echo "</div>";
 

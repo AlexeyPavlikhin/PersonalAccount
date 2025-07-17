@@ -1,416 +1,76 @@
 body {
-    /*margin: 50px auto;*/
     text-align: center;
-    width: 100%;
+    width: 90%;
     background-image: url('fon-1-1_1.jpg');
     background-repeat: no-repeat;
     background-size: cover;
     padding-left: 5%;
-    padding-right: 10%;
-}
-h1 {
-    font-family: 'Passion One';
-    font-size: 2rem;
-    text-transform: uppercase;
-}
-label {
-    width: 150px;
-    display: inline-block;
-    text-align: left;
-    font-size: 1.5rem;
-    font-family: 'Lato';
-}
-input, select {
-    border: 2px solid #ccc;
-    font-size: 1.5rem;
-    font-weight: 100;
-    font-family: 'Lato';
-    padding: 10px;
-}
-form {
-    margin: 25px auto;
-    padding: 20px;
-    border: 5px solid #ccc;
-    width: 600px;
-    background: #eee;
-}
-form.table {
-    margin: 25px auto;
-    padding: 10px;
-    border: 5px solid #ccc;
-    width: 100%;
-    background: #eee;
-}
-div.form-element {
-    margin: 20px 0;
-}
-button {
-    padding: 10px;
-    font-size: 1.5rem;
-    font-family: 'Lato';
-    font-weight: 100;
-    background: yellowgreen;
-    color: white;
-    border: none;
-}
-
-p.success,
-p.error {
-    color: white;
-    font-family: lato;
-    background: yellowgreen;
-    display: inline-block;
-    padding: 2px 10px;
-}
-p.error {
-    background: orangered;
-}
-
-td {
-vertical-align: top;
-}
-
-
-table.db_data  {
-font-family: "Lucida Sans Unicode", "Lucida Grande", Sans-Serif;
-font-size: 14px;
-border-collapse: collapse;
-text-align: center;
-width: 100%;
-}
-th.db_data, td.db_data:first-child {
-background: #AFCDE7;
-color: white;
-padding: 10px 10px;
-}
-th.db_data, td.db_data {
-border-style: solid;
-border-width: 0 1px 1px 0;
-border-color: white;
-}
-td.db_data {
-background: #D8E6F3;
-}
-th.db_data:first-child, td.db_data:first-child {
-text-align: left;
-}
-
-* { box-sizing: border-box }
-
-/* Поля ввода на всю ширину */
-  nput[type=text], nput[type=password] {
-  width: 100%;
-  padding: 15px;
-  margin: 5px 0 22px 0;
-  display: inline-block;
-  border: none;
-  background: #f1f1f1;
-}
-
-/* Добавляем фоновый цвет, когда поля ввода в фокусе */
-input[type=text]:focus, input[type=password]:focus {
-  background-color: #ddd;
-  outline: none;
-}
-
-/* Задаем стили для всех кнопок */
-/*
-button {
-  background-color: #04AA6D;
-  color: white;
-  padding: 14px 20px;
-  margin: 8px 0;
-  border: none;
-  cursor: pointer;
-  width: 100%;
-  opacity: 0.9;
-}
-*/
-
-button:hover {
-  opacity:1;
-}
-
-/* Дополнительные стили для кнопки отмены */
-.cancelbtn {
-  padding: 14px 20px;
-  background-color: #f44336;
-}
-
-/* Добавляем обтекание и одинаковую ширину для кнопок отмены и регистрации */
-.cancelbtn, .signupbtn {
-  float: left;
-  width: 50%;
-}
-
-/* Добавляем отступы для контейнерных элементов */
-.container {
-  padding: 16px;
-}
-
-/* Модальное окно (фон) */
-.modal {
-  display: none; /* По умолчанию скрыто */
-  position: fixed; /* Оставаться на месте */
-  z-index: 1; /* Поверх всего */
-  left: 0;
-  top: 0;
-  width: 100%; /* На всю ширину */
-  height: 100%; /* На всю высоту */
-  overflow: auto; /* Разрешить прокрутку при необходимости */
-  background-color: #474e5d;
-  padding-top: 50px;
-}
-
-/* Модальное окно (содержимое) */
-.modal-content {
-  background-color: #fefefe;
-  margin: 5% auto 15% auto; /* 5% от верха, 15% от низа и по центру */
-  border: 1px solid #888;
-  width: 80%; /* Может быть меньше или больше в зависимости от размера экрана */
-}
-
-/* Стили горизонтального разделителя */
-hr {
-  border: 1px solid #f1f1f1;
-  margin-bottom: 25px;
-}
-
-/* Кнопка закрытия (x) */
-.close {
-  position: absolute;
-  right: 35px;
-  top: 15px;
-  font-size: 40px;
-  font-weight: bold;
-  color: #f1f1f1;
-}
-
-.close:hover,
-.close:focus {
-  color: #f44336;
-  cursor: pointer;
-}
-
-/* Очистка обтекания */
-.clearfix::after {
-  content: "";
-  clear: both;
-  display: table;
-}
-
-/* Изменяем стили кнопок отмены и регистрации на маленьких экранах */
-@media screen and (max-width: 300px) {
-  .cancelbtn, .signupbtn {
-    width: 100%;
-  }
-}
-
-/* Поля textarea на форме editors */
-textarea.ta_editor{
-  width: 100%; /* На всю ширину */
-  height: 100%; /* На всю высоту */
-  
-}
-
-
-bod {
-  height: 100vh;
-  margin: 0;
-  display: flex;
-  justify-content: center;
-}
-
-.menu-bar {
-  border-radius: 25px;
-  height: -webkit-fit-content;
-  height: -moz-fit-content;
-  height: fit-content;
-  display: inline-flex;
-  /*background-color: rgba(0, 0, 0, 0.4);*/
-  -webkit-backdrop-filter: blur(10px);
-  backdrop-filter: blur(10px);
-  align-items: center;
-  padding: 0 10px;
-  /*margin: 50px 0 0 0;*/
-  
-  
-}
-
-/*начало*/
-.menu-bar {
-	width: 100%;
-	display: table;
-}
-.menu-bar ul {
-	display: table-row;
-}
-.menu-bar li {
-	display: table-cell;
-	position: relative;
-	/*background: #bcbdbe;*/
-  z-index: 10;
-}
-.menu-bar li a {
-	display: block;
-	padding: 15px 15px;
-	/*color: #fff;*/
-	text-align: center;
-  z-index: 1;
-  
-}
-.menu-bar-caret:after {
-	display: inline-block;
-	width: 0;
-	height: 0;
-	margin-left: .255em;
-	vertical-align: .255em;
-	content: "";
-	border-top: 3px solid;
-	border-right: 3px solid transparent;
-	border-bottom: 0;
-	border-left: 3px solid transparent;
-}
-.menu-bar ul li:hover, .menu a:hover {
-	/*background: #666;*/
-}
-.menu-bar li:hover ul  {
-	display: block;
-	position: absolute;
-	top: 100%;
-	left: 0px;
-	/*background: #666;*/
-	margin: 0;
-	padding: 10px 20px;
-	width: 150px;
-	/*z-index: 9999;*/
-}
-.menu-bar ul ul  {
-	display: none;
-}
-.menu-bar ul ul li  {
-	display: block;
-	/*background: #666;*/
-	padding: 5px 0;
-}
-.menu-bar ul ul li a  {
-	display: block;
-	padding: 0;
-	/*background: #666;*/
-	text-align: left;
-}
-/*конец*/
-
-
-.menu-bar li {
-  list-style: none;
-  color: rgb(255, 255, 255);
-  font-family: sans-serif;
-  font-weight: bold;
-  padding: 12px 16px;
-  margin: 0 8px;
-  position: relative;
-  cursor: pointer;
-  white-space: nowrap;
-}
-.menu-bar li::before {
-  content: " ";
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 100%;
-  width: 100%;
-  z-index: -1;
-  transition: 0.2s;
-  border-radius: 25px;
-}
-.menu-bar li:hover {
-  color: black;
-}
-.menu-bar li:hover::before {
-  background: linear-gradient(to bottom, #e8edec, #d2d1d3);
-  box-shadow: 0px 3px 20px 0px black;
-  transform: scale(1.2);
+    padding-right: 5%;
 }
 
 .menu {
-	width: 70%;
 	display: table;
   margin-left: auto;
   margin-right: auto;
 }
-.menu ul {
-	display: table-row;
+
+.menu_button {
+  display: inline-block;
+  padding: 15px;
+  background: #bd162b;
+  transform: skew(-30deg);
+  border-radius: 5px;
+  border-color: #8594ae;
+  border-width: 5px;
+  border-style: outset;
+  width: 300px;
+  margin: 5px;
 }
-.menu li {
+.menu_button:hover{
+    background:#8594ae;
+    border-style: groove;
+}
+
+.menu_button_text {
+  display: inline-block;
+  transform: skew(30deg);
+  color: #fff;
+}
+
+li {
 	display: table-cell;
-	position: relative;
-	background: #bcbdbe;
-  z-index: 1;
+	/*position: relative;*/
+	/*background: #bcbdbe;*/
+  /*z-index: 1;*/
 }
-.menu li a {
-	display: block;
-	padding: 15px 15px;
-	color: #fff;
-	text-align: center;
+
+table.db_data  {
+  font-family: "Lucida Sans Unicode", "Lucida Grande", Sans-Serif;
+  font-size: 14px;
+  border-collapse: collapse;
+  border-style: hidden;
+  text-align: center;
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  /*transform: skew(-30deg);*/
 }
-.menu-caret:after {
-	display: inline-block;
-	width: 0;
-	height: 0;
-	margin-left: .255em;
-	vertical-align: .255em;
-	content: "";
-	border-top: 3px solid;
-	border-right: 3px solid transparent;
-	border-bottom: 0;
-	border-left: 3px solid transparent;
+
+th.db_data, td.db_data:first-child {
+  background: #8594ae; /*#dddae0; /*#8594ae*/
+  color: black;
+  padding: 10px;
 }
-.menu ul li:hover, .menu a:hover {
-	background: #666;
+th.db_data, td.db_data {
+  border-style: solid;
+  border-width: 0 5px 5px 0;
+  border-color: white;
+  
+  
 }
-.menu li:hover ul  {
-	display: block;
-	position: absolute;
-	top: 100%;
-	left: 0px;
-	background: #666;
-	margin: 0;
-	padding: 10px 20px;
-	width: 150px;
-	/*z-index: 9999;*/
+td.db_data {
+  background: #e0e4e9;
 }
-.menu ul ul  {
-	display: none;
-}
-.menu ul ul li  {
-	display: block;
-	background: #666;
-	padding: 5px 0;
-}
-.menu ul ul li a  {
-	display: block;
-	padding: 0;
-	background: #666;
-	text-align: left;
-}
-.gTFIBn {
-    display: flex
-;
-    -webkit-box-align: center;
-    align-items: center;
-    -webkit-box-pack: justify;
-    justify-content: space-between;
-    background-color: rgb(255, 255, 255);
-    position: sticky;
-    top: 0px;
-    /*z-index: 1;*/
-    box-shadow: rgba(0, 0, 0, 0.08) 0px 1.2px 18px, rgba(0, 0, 0, 0.12) 0px 6.4px 28px;
-    height: 48px;
-    min-height: 48px;
-    padding: 0px 16px;
-}
-.right {
-  text-align: right;
-  float: right;
+th.db_data:first-child, td.db_data:first-child {
+  text-align: center;
 }

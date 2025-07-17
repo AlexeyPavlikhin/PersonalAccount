@@ -1,6 +1,5 @@
 <link rel="stylesheet" href="styles.css">
 
-
 <!--<div style="float: left; width: 50%; position: absolute ;">-->
 
 <?php
@@ -35,17 +34,21 @@
         
         echo "<div class='menu'>";
         echo "    <ul>";
-        echo "        <li><a href='lk.php'>Управление заказами</a></li>";
-        echo "        <li><a href='uc.php'>Управление пользователями</a></li>";
-        echo "        <li><a href='sales.php'>Управление продажами</a></li>";
+        echo "        <li><a class='menu_button' href='lk.php'><div class='menu_button_text'>Управление заказами</div></a></li>";
+        echo "        <li><a class='menu_button' href='uc.php'><div class='menu_button_text'>Управление пользователями</div></a></li>";
+        echo "        <li><a class='menu_button' href='sales.php'><div class='menu_button_text'>Управление продажами</div></a></li>";
         echo "    </ul>";
         echo "</div>";
         
-        echo "<table>";
-        echo "    <tr>";
-        echo "        <td>";
-        echo "<form class='table' method='GET' action=''>";
-        echo "  <table class='db_data'><tr class='db_data'><th class='db_data'>Номер заказа</th><th class='db_data'>Дата изменения</th><th class='db_data'>Статус (для клиента)</th><th class='db_data'>Комментарий (для сотрудников)</th><th class='db_data'>Подробно</th></tr>";
+        echo "<form method='GET' action=''>";
+        echo "  <table class='db_data'>";
+        echo "      <tr>";
+        echo "          <th class='db_data' width='5%'>№ заказа</th>";
+        echo "          <th class='db_data' width='10%'>Дата изменения</th>";
+        echo "          <th class='db_data' width='25%'>Статус (для клиента)</th>";
+        echo "          <th class='db_data' width='50%'>Комментарий (для сотрудников)</th>";
+        echo "          <th class='db_data' width='10%'>Подробно</th>";
+        echo "      </tr>";
         while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
             echo "<tr>";
             echo "<td class='db_data'>" . $row["order_id"] . "</td>";
@@ -100,17 +103,3 @@
 
 <!--</div>-->
 
-</td>
-<td width=400>
-    <!--<div style="width: 100%; position: relative; padding-left: 50%">-->
-    <!--<div style="width: 100%;>-->
-
-
-        <div >
-            <img src="Mayya_1.png" alt="" width=100% min-width=100%>
-        </div>
-    <!--</div>-->
- 
-</td>
-</tr>
-</table>
