@@ -1,4 +1,7 @@
 
+body{
+  margin: 0;
+}
 .my {
     border-radius: 24px;
     padding: 24px;
@@ -13,7 +16,7 @@
     gap: 8px;
 }
 
-button, a {
+button, a1 {
   display: inline-block;
   padding: 15px;
   background: #bd162b;
@@ -48,4 +51,104 @@ li {
 
 li:hover {
     background:#8594ae;
+}
+.my_header{
+    display: flex;
+    -webkit-box-align: center;
+    align-items: center;
+    -webkit-box-pack: justify;
+    justify-content: space-between;
+    background-color: #dddae0;
+    position: sticky;
+    
+    top: 0px;
+    z-index: 1;
+    box-shadow: rgba(0, 0, 0, 0.08) 0px 1.2px 18px, rgba(0, 0, 0, 0.12) 0px 6.4px 28px;
+    height: 48px;
+    min-height: 48px;
+    padding: 0px 0px;
+    text-align: right;
+}
+.my_header_polygon{
+    display: flex;
+    align-items: center;
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 60px 100%);
+    border: 0px none;
+    width: 50%;
+    height: 100%;
+    background: #bd162b;
+    position: absolute;
+    right: 0;
+    text-align: right;
+    color: #fff;
+}
+
+/*
+div {
+  border: #8594ae;
+  border-style: groove;
+  border-width: 10px;
+}
+div.div_main {
+  border: #bd162b;
+  border-style: groove;
+}
+div.div1 p, div.div2 p {
+  border: #76cd0b;
+  border-style: groove;
+}
+*/
+
+.msll_footer {
+    display: flex;
+    -webkit-box-align: center;
+    align-items: center;
+    -webkit-box-pack: justify;
+    justify-content: space-between;
+    /*background-color: #dddae0;*/
+    position: sticky;
+    
+    bottom: 0px;
+    z-index: 1;
+    box-shadow: rgba(0, 0, 0, 0.08) 0px 1.2px 18px, rgba(0, 0, 0, 0.12) 0px 6.4px 28px;
+    height: 48px;
+    min-height: 48px;
+    padding: 0px 0px;
+    text-align: right;
+}
+
+.msll_footer_polygon_red {
+    display: flex;
+    clip-path: polygon(0 0, 96% 0, 100% 100%, 0px 100%);
+    position: absolute;
+    border: 0px none;
+    width: 15%;
+    height: 33%;
+    background: #bd162b;
+    left: 0;
+    bottom: 0;
+}
+
+.msll_footer_polygon_light_gray {
+    display: flex;
+    clip-path: polygon(0 0, 96% 0, 100% 100%, 4% 100%);
+    position: absolute;
+    border: 0px none;
+    width: 60%;
+    height: 66%;
+    background: #dddae0;
+    left: 10%;
+    bottom: 0;
+}
+
+.msll_footer_polygon_dark_gray {
+    display: flex;
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 4% 100%);
+    position: absolute;
+    border: 0px none;
+    width: 50%;
+    height: 100%;
+    background: #8594ae;
+    right: 0;
+    top: 0;
 }
