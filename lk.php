@@ -1,10 +1,12 @@
 <link rel="stylesheet" href="styles.css">
+<link href="https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
 
 <?php
     //error_reporting(0);
     session_start();
     include('config.php');
 
+    echo "<html>";
     echo "<header class='my_header'>";
     echo "  <div class='logo'> </div>";
     echo "  <div class='my_header_polygon'></div>";
@@ -24,6 +26,7 @@
     echo "</div>";
     echo "</header>";
     echo "<br/><br/>";
+    echo "<main>";
 
 
     if ($_SESSION['user_group']!="client") {
@@ -65,14 +68,17 @@
         echo "  </table>";
         
         echo "</form>";
-/*echo "<br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>";*/
-        echo "<footer class='msll_footer'>";
-        echo "  <div class='msll_footer_polygon_dark_gray'></div>";
-        echo "  <div class='msll_footer_polygon_light_gray'></div>";
-        echo "  <div class='msll_footer_polygon_red'></div>";
-        echo "</footer>";
+echo "<br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>";
 
-        
+
+
+        /*echo "</html>";*/
+/*        
+        echo "<div class='wrapper'>";
+        echo "    <div class='content'></div>";
+        echo "    <div class='footer'>aaaaaaaaaaa</div>";
+        echo "</div>";
+*/        
         /*
         if (isset($_GET['detail'])) {
             $_SESSION['detail_order_id'] = $_GET['detail'];
@@ -95,21 +101,31 @@
         echo "<form class='table'>";
         echo "  <table class='msll_table'>";
         echo "  <tr>";
-        echo "      <th>Номер заказа</th>";
-        echo "      <th>дата изменения</th>";
-        echo "      <th>статус</th>";
+        echo "      <th width='5%'>Номер заказа</th>";
+        echo "      <th width='10%'>дата изменения</th>";
+        echo "      <th width='85%'>статус</th>";
         echo "  </tr>";
         while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
             echo "<tr>";
-            echo "<td width='5%'>" . $row["order_id"] . "</td>";
-            echo "<td width='10%'>" . $row["formated_row_creation_time"] . "</td>";
-            echo "<td width='85%'>" . $row["order_status"] . "</td>";
+            echo "<td>" . $row["order_id"] . "</td>";
+            echo "<td>" . $row["formated_row_creation_time"] . "</td>";
+            echo "<td>" . $row["order_status"] . "</td>";
             echo "</tr>";
         }
         echo "  </table>";
         echo "</form>";
     }
+    echo "<br/><br/>";
+    echo "</main>";
+    echo "<footer class='msll_footer'>";
+    echo "  <div class='msll_footer_polygon_dark_gray'></div>";
+    echo "  <div class='msll_footer_polygon_light_gray'></div>";
+    echo "  <div class='msll_footer_polygon_red'></div>";
+    echo "</footer>";
+    echo "</html>";
+
+
 ?>
-<br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
+
 <!--</div>-->
 

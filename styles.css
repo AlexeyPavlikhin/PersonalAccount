@@ -1,3 +1,8 @@
+html{
+  width: 100%;
+
+}
+
 body {
     text-align: center;
     width: 100%;
@@ -5,6 +10,8 @@ body {
     background-repeat: no-repeat;
     background-size: cover;
     margin: 0;
+    font-family: 'Jost', sans-serif;
+    
 }
 
 .menu {
@@ -39,11 +46,9 @@ body {
 }
 .menu_button:hover{
     background:#8594ae;
-    -border-style: groove;
 }
 
 .menu_button:active{
-    -background:#8594ae;
     border-style: groove;
 }
 
@@ -66,8 +71,30 @@ li {
   /*z-index: 1;*/
 }
 
+.msll_button{
+  display: inline-block;
+  padding: 15px;
+  background: #bd162b;
+  border-radius: 5px;
+  border-color: #8594ae;
+  border-width: 5px;
+  border-style: outset;
+  width: 300px;
+  margin: 5px; 
+  color: #fff;
+  font-weight: bold;
+}
+
+.msll_button:hover{
+    background:#8594ae;
+}
+
+.msll_button:active{
+    border-style: groove;
+}
+
+
 table.msll_table  {
-  font-family: "Lucida Sans Unicode", "Lucida Grande", Sans-Serif;
   font-size: 14px;
   border-collapse: collapse;
   border-style: hidden;
@@ -87,6 +114,8 @@ table.msll_table th, table.msll_table td {
 table.msll_table th, table.msll_table th a{
   background: #8594ae; /*#dddae0; /*#8594ae*/  
   color: #fff;
+  font-weight: bold;
+  
 }
 
 table.msll_table td {
@@ -231,7 +260,7 @@ table.msll_table th:first-child, table.msll_table td:first-child {
 .menu-bar li {
   list-style: none;
   color: rgb(255, 255, 255);
-  font-family: sans-serif;
+  font-family: 'Jost', sans-serif;
   font-weight: bold;
   padding: 12px 16px;
   margin: 0 8px;
@@ -268,13 +297,14 @@ div.logo{
 
 
 .msll_footer {
-    display: flex;
-    position: sticky;
+    position: fixed;
     z-index: 1;
     height: 48px;
     min-height: 48px;
     padding: 0px 0px;
-    margin-top: 500px;
+    width: 100%;
+    bottom: 0;
+    
 }
 
 .msll_footer_polygon_red {
@@ -312,3 +342,53 @@ div.logo{
     right: 0;
     top: 0;
 }
+
+/* Поля textarea на форме editors */
+textarea.ta_editor{
+  min-height: max-content;
+  min-width: 100%;
+  max-width: max-content;
+  width: 100%; /* На всю ширину */
+  height: 100%; /* На всю высоту */
+}
+
+label {
+    width: 150px;
+    display: inline-block;
+    text-align: left;
+    font-size: 1.5rem;
+    font-family: 'Lato';
+}
+input, select {
+    width: 500px;
+    border: 2px solid #ccc;
+    font-size: 1.5rem;
+    font-weight: 100;
+    padding: 10px;
+}
+form.change_users {
+    margin: 25px auto;
+    padding: 20px;
+    border: 5px solid #8594ae;
+    width: 800px;
+    background: #dddae0;
+    border-style: outsetf;
+    border-width:20px;
+    display: block;
+}
+
+div.no_display {
+    display: none;
+}
+
+div.display {
+    display: block;
+}
+
+form.change_users div.form-element {
+    margin: 20px 0;
+}
+
+p.error {
+    background: orangered;
+} 

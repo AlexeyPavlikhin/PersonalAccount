@@ -1,12 +1,18 @@
 <link rel="stylesheet" href="styles.css">
-
+<link href="https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
 
 <?php
     //error_reporting(0);
     session_start();
     include('config.php');
-    //echo "<a href='login.php' class='right'>Выход</a><br/>";
-    //echo $_SESSION['edit_user_id'];
+    
+    echo "<html>";
+    echo "<header class='my_header'>";
+    echo "  <div class='logo'> </div>";
+    echo "  <div class='my_header_polygon'></div>";
+    echo "</header>";
+
+    echo "<header class='my_header2'>";
     echo "<div class='menu-bar'>";
     echo "  <ul>";
     echo "      <li class='right'>";
@@ -17,17 +23,12 @@
     echo "          </ul>";
     echo "        </li>";
     echo "    </ul>";
-    echo "</div>";    
-    if ($_SESSION['user_group']!= null and $_SESSION['user_group']!= 'client' ) {
-        //echo  'Уважаемый ',  $_SESSION['user_name'], ', добро пожаловать в личный кабинет!';
-        echo "<div class='menu'>";
-        echo "    <ul>";
-        echo "        <li><a href='lk.php'>Управление заказами</a></li>";
-        echo "        <li><a href='uc.php'>Управление пользователями</a></li>";
-        echo "        <li><a href='sales.php'>Управление продажами</a></li>";
-        echo "    </ul>";
-        echo "</div>";
+    echo "</div>";
+    echo "</header>";
+    echo "<br/><br/>";
+    echo "<main>";
 
+    if ($_SESSION['user_group']!= null and $_SESSION['user_group']!= 'client' ) {
         
 
         $user_id = $_SESSION['user_id'];
@@ -49,7 +50,7 @@
          echo $in_user_group;
 
 
-        echo "<form method='post' action='' name='signup-form'>";
+        echo "<form class='change_users' method='post' action='' name='signup-form'>";
         echo "    <div class='form-element'>";
         echo "        <label>Login</label>";
         echo "        <input type='text' name='login' pattern='[a-zA-Z0-9]+' required value='".$in_Login."' />";
@@ -73,8 +74,8 @@
         echo "        </select>";
         echo "    </div>";
 
-        echo "<button type='submit' name='btn_register' value='btn_register'>Создать</button>";
-        echo "<button type='submit' name='btn_cancel' value='btn_cancel' formnovalidate>Отменить</button>";
+        echo "<button class='msll_button' type='submit' name='btn_update' value='btn_update'>Обновить</button>";
+        echo "<button class='msll_button' type='submit' name='btn_cancel' value='btn_cancel' formnovalidate>Отменить</button>";
         echo "</form>";
 
 
@@ -86,7 +87,7 @@
             header('Location: uc.php');
         }
 
-        if (isset($_POST['btn_register'])) {
+        if (isset($_POST['btn_update'])) {
             $login = $_POST['login'];
             $username = $_POST['username'];
             $email = $_POST['email'];
