@@ -53,7 +53,7 @@
         echo "<form class='change_users' method='post' action='' name='signup-form'>";
         echo "    <div class='form-element'>";
         echo "        <label>Login</label>";
-        echo "        <input type='text' name='login' pattern='[a-zA-Z0-9]+' required value='".$in_Login."' />";
+        echo "        <input type='text' name='login' pattern='[a-zA-Z0-9]+' required value='".$in_Login."' disabled />";
         echo "    </div>";
         echo "    <div class='form-element'>";
         echo "        <label>Имя пользователя</label>";
@@ -72,6 +72,15 @@
         echo "            <option value='client'>client</option>";
         echo "            <option value='operator'>operator</option>";
         echo "        </select>";
+        echo "    </div>";
+        
+        echo "    <div class='form-element'>";
+        echo "    <input type='checkbox' name='scales' checked />";
+        echo "    <label>Изменить пароль</label><br/>";
+        echo "    <label>Пароль</label>";
+        echo "    <input type='password' name='password' required />";
+        echo "    <input type='checkbox' name='scales'/>";
+        echo "    <label>Показать пароль</label><br/>";
         echo "    </div>";
 
         echo "<button class='msll_button' type='submit' name='btn_update' value='btn_update'>Обновить</button>";
@@ -140,5 +149,13 @@
     } else {
         echo "<p class='error'> Доступ закрыт!</p>";
     }
+    echo "<br/><br/>";
+    echo "</main>";
+    echo "<footer class='msll_footer'>";
+    echo "  <div class='msll_footer_polygon_dark_gray'></div>";
+    echo "  <div class='msll_footer_polygon_light_gray'></div>";
+    echo "  <div class='msll_footer_polygon_red'></div>";
+    echo "</footer>";
+    echo "</html>";
 
 ?>

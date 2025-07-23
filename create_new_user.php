@@ -136,6 +136,14 @@
     } else {
         echo "<p class='error'> Доступ закрыт!</p>";
     }
+    echo "<br/><br/>";
+    echo "</main>";
+    echo "<footer class='msll_footer'>";
+    echo "  <div class='msll_footer_polygon_dark_gray'></div>";
+    echo "  <div class='msll_footer_polygon_light_gray'></div>";
+    echo "  <div class='msll_footer_polygon_red'></div>";
+    echo "</footer>";
+    echo "</html>";
 
 ?>
 
