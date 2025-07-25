@@ -32,13 +32,12 @@
         echo "<form class='change_users' method='post' action='' name='signup-form'>";
         echo "  <div class='form-element'>";
         echo "      <h1>Создание нового пользователя</h1>";
-        echo "      <div class='".$_SESSION['is_login_dublicat']."'><p class='error'>Пользователь с таким login уже зарегистрирован!</p></div>";
-        echo "      <div class='".$_SESSION['is_email_dublicat']."'><p class='error'>Пользователь с таким email уже зарегистрирован!</p></div>";
         echo "  </div>";
     
         echo "  <div class='form-element'>";
         echo "      <label>Login</label>";
         echo "      <input type='text' name='login' pattern='[a-zA-Z0-9]+' required value='".$_SESSION['save_login']."' />";
+        echo "      <div class='".$_SESSION['is_login_dublicat']."'><p class='error'>Пользователь с таким login уже зарегистрирован!</p></div>";
         echo "  </div>";
         echo "  <div class='form-element'>";
         echo "      <label>Имя пользователя</label>";
@@ -47,6 +46,7 @@
         echo "  <div class='form-element'>";
         echo "      <label>E-mail</label>";
         echo "      <input type='email' name='email' required value='".$_SESSION['save_email']."' />";
+        echo "      <div class='".$_SESSION['is_email_dublicat']."'><p class='error'>Пользователь с таким email уже зарегистрирован!</p></div>";
         echo "  </div>";
         echo "  <div class='form-element'>";
         echo "      <label>Группа</label>";
@@ -95,7 +95,7 @@
             $query->execute();
             
             if ($query->rowCount() > 0) {
-                echo '<p class="error">Пользователь с таким login уже зарегистрирован!</p>';
+                //echo '<p class="error">Пользователь с таким login уже зарегистрирован!</p>';
                 $ready_for_creation=false;
                 $_SESSION['is_login_dublicat']="display";
             }
@@ -106,7 +106,7 @@
             $query->execute();
             
             if ($query->rowCount() > 0) {
-                echo '<p class="error">Пользователь с таким email уже зарегистрирован!</p>';
+                //echo '<p class="error">Пользователь с таким email уже зарегистрирован!</p>';
                 $ready_for_creation=false;
                 $_SESSION['is_email_dublicat']="display";
                 
@@ -146,6 +146,3 @@
     echo "</html>";
 
 ?>
-
-
-

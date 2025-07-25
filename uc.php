@@ -74,10 +74,19 @@
 
         if (isset($_GET['action'])) {
             $_SESSION['edit_user_id'] = $_GET['id'];
+
+            $_SESSION['save_username']="";
+            $_SESSION['save_email']="";
+            $_SESSION['save_user_group_value']="";
+            $_SESSION['save_user_group_display']="";
+
+            $_SESSION['is_email_dublicat']="no_display";
+
             header('Location: edit_user.php');
         }
 
         if (isset($_GET['create_user'])) {
+            
             $_SESSION['save_login']="";
             $_SESSION['save_username']="";
             $_SESSION['save_email']="";
@@ -86,13 +95,14 @@
 
             $_SESSION['is_login_dublicat']="no_display";
             $_SESSION['is_email_dublicat']="no_display";
+
             header('Location: create_new_user.php');
         }
 
     } else {
         echo "<p class='error'> Доступ закрыт!</p>";
     }
-    echo "</main>";
+    echo "<br/><br/></main>";
     echo "<footer class='msll_footer'>";
     echo "  <div class='msll_footer_polygon_dark_gray'></div>";
     echo "  <div class='msll_footer_polygon_light_gray'></div>";
