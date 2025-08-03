@@ -12,10 +12,10 @@
             echo '<p class="error"> Неверные имя пользователя!</p>';
         } else {
             if (password_verify($usr_password, $result['password'])) {
-                $_SESSION['user_id'] = $result['id'];
-                $_SESSION['user_group'] = $result['user_group'];
-                $_SESSION['user_name'] = $result['username'];
-                echo '<p class="success">Поздравляем, вы прошли авторизацию!</p>';
+                $_SESSION['current_user_id'] = $result['id'];
+                $_SESSION['current_user_login'] = $result['login'];
+                $_SESSION['current_user_group'] = $result['user_group'];
+                $_SESSION['current_user_name'] = $result['username'];
                 header('Location: lk.php');
             } else {
                 echo '<p class="error"> Неверные пароль или имя пользователя!</p>';

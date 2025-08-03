@@ -3,6 +3,7 @@
 
 <?php
     //error_reporting(0);
+    ob_start();
     session_start();
     include('config.php');
     
@@ -16,7 +17,7 @@
     echo "<div class='menu-bar'>";
     echo "  <ul>";
     echo "      <li class='right'>";
-    echo "          ".$_SESSION['user_name'];
+    echo "          ".$_SESSION['current_user_name'];
     echo "          <ul>";
     echo "              <li><a href='#'>Профиль</a></li>";
     echo "              <li><a href='login.php'>Выход</a></li>";
@@ -28,10 +29,10 @@
     echo "<br/><br/>";
     echo "<main>";
 
-    if ($_SESSION['user_group']!= null and $_SESSION['user_group']!= 'client' ) {
+    if ($_SESSION['current_user_group']!= null and $_SESSION['current_user_group']!= 'client' ) {
         
 
-        $user_id = $_SESSION['user_id'];
+        $user_id = $_SESSION['current_user_id'];
         $query = $connection->prepare("SELECT * FROM users u where u.id='".$_SESSION['edit_user_id']."'");
         $query->execute();
         $current_record="";
@@ -55,7 +56,6 @@
                  $_SESSION['save_user_group_display'] = $row["user_group"];
             };
         }
-         $_SESSION['log']= $_SESSION['log']." отрисовка";
 
         echo "<form class='change_users' method='post' action='' name='signup-form'>";
         echo "  <div class='form-element'>";
@@ -98,6 +98,7 @@
 
         if (isset($_POST['btn_cancel'])) {
             header('Location: uc.php');
+            ob_get_flush();
         }
 
         if (isset($_POST['btn_update'])) {
@@ -138,6 +139,7 @@
                 if ($result) {
                     echo '<p class="success">Регистрация прошла успешно!</p>';
                     header('Location: uc.php');
+                    ob_get_flush();
                 } else {
                     echo '<p class="error">Неверные данные!</p>';
                 }
@@ -145,6 +147,7 @@
                 
             } else {
                 header('Location: edit_user.php');
+                ob_get_flush();
             }
         }
 

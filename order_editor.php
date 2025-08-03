@@ -3,6 +3,7 @@
 
 <?php
     //error_reporting(0);
+    ob_start();
     session_start();
     include('config.php');
     
@@ -16,7 +17,7 @@
     echo "<div class='menu-bar'>";
     echo "  <ul>";
     echo "      <li class='right'>";
-    echo "          ".$_SESSION['user_name'];
+    echo "          ".$_SESSION['current_user_name'];
     echo "          <ul>";
     echo "              <li><a href='#'>Профиль</a></li>";
     echo "              <li><a href='login.php'>Выход</a></li>";
@@ -77,6 +78,7 @@
 
     if (isset($_POST['close_form'])) {
         header('Location: order_details.php');
+        ob_get_flush();
     }
 
     if (isset($_POST['change'])) {
@@ -85,10 +87,11 @@
         $query->bindParam("client_id", $client_id, PDO::PARAM_INT);
         $query->bindParam("order_status", $_POST['ta_status'], PDO::PARAM_STR);
         $query->bindParam("order_description", $_POST['ta_comment'], PDO::PARAM_STR);
-        $query->bindParam("operator_id", $_SESSION['user_id'], PDO::PARAM_INT);
+        $query->bindParam("operator_id", $_SESSION['current_user_id'], PDO::PARAM_INT);
         $result = $query->execute();
         if ($result) {
             header('Location: order_details.php');
+            ob_get_flush();
         } else {
             echo '<p class="error">Неверные данные!</p>';
         }

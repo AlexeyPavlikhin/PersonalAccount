@@ -3,6 +3,7 @@
 
 <?php
     //error_reporting(0);
+    ob_start();
     session_start();
     include('config.php');
     
@@ -16,7 +17,7 @@
     echo "<div class='menu-bar'>";
     echo "  <ul>";
     echo "      <li class='right'>";
-    echo "          ".$_SESSION['user_name'];
+    echo "          ".$_SESSION['current_user_name'];
     echo "          <ul>";
     echo "              <li><a href='#'>Профиль</a></li>";
     echo "              <li><a href='login.php'>Выход</a></li>";
@@ -65,10 +66,12 @@
     
     if (isset($_GET['close_form'])) {
         header('Location: lk.php');
+        ob_get_flush();
     }
 
     if (isset($_GET['change'])) {
         header('Location: order_editor.php');
+        ob_get_flush();
     }
     echo "<br/><br/>";
     echo "</main>";

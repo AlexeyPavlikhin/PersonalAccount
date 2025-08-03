@@ -315,8 +315,9 @@ div.logo{
     width: 15%;
     height: 33%;
     background: #bd162b;
-    left: 0;
+    left: 0;  
     bottom: 0;
+    box-shadow: rgba(0, 0, 0, 0.08) 0px 1.2px 18px, rgba(0, 0, 0, 0.12) 0px 6.4px 28px;
 }
 
 .msll_footer_polygon_light_gray {
@@ -395,3 +396,25 @@ form.change_users div.form-element {
 p.error {
     background: orangered;
 } 
+
+/* Меню боковой панели */
+.sidenav {
+  height: 100%; /* Полная высота: удалите это, если вы хотите "авто" высота */
+  width: 400px; /* Установите ширину боковой панели */
+  position: fixed; /* Фиксированная боковая панель (оставайтесь на месте при прокрутке) */
+  z-index: 0; /* Оставайтесь с верху */
+  top: 0; /* Оставайтесь на вершине */
+  left: 0;
+  /*background-color: #dddae0; /*#dddae0* #8594ae*/
+  background-image: url("1975.png");
+  background-repeat: no-repeat;
+  background-size: cover;
+  overflow-x: hidden; /* Отключить горизонтальную прокрутку */
+  padding-top: 20px;
+  box-shadow: rgba(0, 0, 0, 0.08) 0px 1.2px 18px, rgba(0, 0, 0, 0.12) 0px 6.4px 28px;
+  margin-top: 48px;
+}
+/* Тело сайта, при наличии бокового меню */
+.msll_body{
+  margin-left: 400px;
+}

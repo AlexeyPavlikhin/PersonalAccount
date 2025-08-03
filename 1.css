@@ -2,6 +2,10 @@
 body{
   margin: 0;
 }
+
+.msll_body{
+  margin-left: 160px;
+}
 .my {
     border-radius: 24px;
     padding: 24px;
@@ -151,4 +155,44 @@ div.div1 p, div.div2 p {
     background: #8594ae;
     right: 0;
     top: 0;
+}
+
+
+/* Меню боковой панели */
+.sidenav {
+  height: 100%; /* Полная высота: удалите это, если вы хотите "авто" высота */
+  width: 160px; /* Установите ширину боковой панели */
+  position: fixed; /* Фиксированная боковая панель (оставайтесь на месте при прокрутке) */
+  z-index: 0; /* Оставайтесь с верху */
+  top: 0; /* Оставайтесь на вершине */
+  left: 0;
+  background-color: #111; /* Черный */
+  overflow-x: hidden; /* Отключить горизонтальную прокрутку */
+  padding-top: 20px;
+}
+
+/* Ссылки в меню навигации */
+.sidenav a {
+  padding: 6px 8px 6px 16px;
+  text-decoration: none;
+  font-size: 25px;
+  color: #818181;
+  display: block;
+}
+
+/* При наведении курсора мыши на навигационные ссылки измените их цвет */
+.sidenav a:hover {
+  color: #f1f1f1;
+}
+
+/* Стиль содержимого страницы */
+.main {
+  margin-left: 160px; /* То же, что и ширина боковой панели */
+  padding: 0px 10px;
+}
+
+/* На небольших экранах, где высота меньше 450px, измените стиль боковой панели (меньше отступов и меньший размер шрифта) */
+@media screen and (max-height: 450px) {
+  .sidenav {padding-top: 15px;}
+  .sidenav a {font-size: 18px;}
 }

@@ -2,13 +2,12 @@
 <?php
     session_start();
     include('config.php');
-    //echo $_SESSION['user_id'];
-    echo '<p> это страница личного кабинета ', $_SESSION['user_id'], '</p>';
-    echo  'Уважаемый ',  $_SESSION['user_id'], ', добро пожаловать!';
-    if ($_SESSION['user_group']=="staff") {
+    echo '<p> это страница личного кабинета ', $_SESSION['current_user_id'], '</p>';
+    echo  'Уважаемый ',  $_SESSION['current_user_id'], ', добро пожаловать!';
+    if ($_SESSION['current_user_group']=="staff") {
         echo 'Вы идентифицированы как оператор';
 
-        $user_id = $_SESSION['user_id'];
+        $user_id = $_SESSION['current_user_id'];
         $query = $connection->prepare("SELECT t2.* FROM orders t2 WHERE t2.id in (SELECT MAX(t.id) FROM orders t GROUP by t.order_id) ORDER BY t2.order_id");
         //$query->bindParam("user_id", $user_id, PDO::PARAM_STR);
         $query->execute();
@@ -45,7 +44,7 @@
 
     } else {
         echo 'Вы идентифицированы как клиент <BR>';
-        $user_id = $_SESSION['user_id'];
+        $user_id = $_SESSION['current_user_id'];
         $query = $connection->prepare("SELECT t2.* FROM orders t2 WHERE t2.id in (SELECT MAX(t.id) FROM orders t WHERE t.client_id =:user_id GROUP by t.order_id) ORDER BY t2.order_id");
         $query->bindParam("user_id", $user_id, PDO::PARAM_STR);
         $query->execute();
