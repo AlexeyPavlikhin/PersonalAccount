@@ -37,21 +37,21 @@
     
         echo "  <div class='form-element'>";
         echo "      <label>Login</label>";
-        echo "      <input type='text' name='login' pattern='[a-zA-Z0-9]+' required value='".$_SESSION['save_login']."' />";
+        echo "      <input class='login_form' type='text' name='login' pattern='[a-zA-Z0-9]+' required value='".$_SESSION['save_login']."' />";
         echo "      <div class='".$_SESSION['is_login_dublicat']."'><p class='error'>Пользователь с таким login уже зарегистрирован!</p></div>";
         echo "  </div>";
         echo "  <div class='form-element'>";
         echo "      <label>Имя пользователя</label>";
-        echo "      <input type='text' name='username' required value='".$_SESSION['save_username']."' />";
+        echo "      <input class='login_form' type='text' name='username' required value='".$_SESSION['save_username']."' />";
         echo "  </div>";
         echo "  <div class='form-element'>";
         echo "      <label>E-mail</label>";
-        echo "      <input type='email' name='email' required value='".$_SESSION['save_email']."' />";
+        echo "      <input class='login_form' type='email' name='email' required value='".$_SESSION['save_email']."' />";
         echo "      <div class='".$_SESSION['is_email_dublicat']."'><p class='error'>Пользователь с таким email уже зарегистрирован!</p></div>";
         echo "  </div>";
         echo "  <div class='form-element'>";
         echo "      <label>Группа</label>";
-        echo "      <select name='user_group' required>";
+        echo "      <select class='login_form' name='user_group' required>";
         echo "          <option value='".$_SESSION['save_user_group_value']."'>".$_SESSION['save_user_group_display']."</option>";
         //echo "          <option value=''>------ Выберите группу -----</option>";
         echo "          <option value='client'>client</option>";

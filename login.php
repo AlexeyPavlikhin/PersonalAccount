@@ -28,11 +28,11 @@
 <form method="get" action="" name="signin-form">
   <div class="form-element">
     <label>Login</label>
-    <input type="text" name="usr_login" pattern="[a-zA-Z0-9]+" required />
+    <input class="login_form" type="text" name="usr_login" pattern="[a-zA-Z0-9]+" required />
   </div>
   <div class="form-element">
     <label>Password</label>
-    <input type="password" name="usr_password" required />
+    <input class="login_form" type="password" name="usr_password" required />
   </div>
   <button type="submit" name="btn_login" value="login">Log In</button>
 </form>

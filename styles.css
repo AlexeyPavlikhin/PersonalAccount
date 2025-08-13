@@ -362,7 +362,7 @@ label {
 }
 
 
-input[type='text'], input[type='email'], select {
+input[type='text'].login_form, input[type='email'].login_form, select.login_form {
     width: 500px;
     border: 2px solid #ccc;
     font-size: 1.5rem;
@@ -418,3 +418,11 @@ p.error {
 .msll_body{
   margin-left: 400px;
 }
+
+.msll_filter{
+width: 95%;
+padding: 10px;
+
+}
+
+
