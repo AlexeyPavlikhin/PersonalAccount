@@ -82,8 +82,8 @@
                             <td>{{condition.object}}</td>
                             <td>{{condition.operation}}</td>
                             <td>{{condition.value}}</td>
-                            <td><a href='#'  v-on:click='onClikDeleteItemOfConditions(condition.item_id)'>{{condition.item_id}}</a></td>
-
+                            <!--<td><a href='#'  v-on:click='onClikDeleteItemOfConditions(condition.item_id)'>{{condition.item_id}}</a></td>-->
+                            <td><input type="button" value = "Х" @click='onClikDeleteItemOfConditions(condition.item_id)'></td>
                         <tr>
 
                     </table>
@@ -100,22 +100,109 @@
                         <th width='29%'>Фаимлия</th>
                         <th width='29%'>Имя</th>
                         <th width='29%'>Отчество</th>
-                        <th width='10%'>Подробно</th>
+                        <!--<th width='10%'>Подробно</th>-->
                     </tr>
 
                     <tr v-for="client_item in list_of_clients">
-                        <td>{{client_item.num}}</td>
-                        <td>{{client_item.client_second_name}}</td>
-                        <td>{{client_item.client_first_name}}</td>
-                        <td>{{client_item.client_patronymic}}</td>
-                        <td>{{client_item.client_id}}</td>
+                        <td><a href='#'  @click='onClikClientDetail(client_item.client_id)'>{{client_item.num}}</a></td>
+                        <td><a href='#'  @click='onClikClientDetail(client_item.client_id)'>{{client_item.client_second_name}}</a></td>
+                        <td><a href='#'  @click='onClikClientDetail(client_item.client_id)'>{{client_item.client_first_name}}</a></td>
+                        <td><a href='#'  @click='onClikClientDetail(client_item.client_id)'>{{client_item.client_patronymic}}</a></td>
+                        <!--<td>{{client_item.client_id}}</td>-->
                     <tr>
 
                 </table>
                 
             </form>
-        </div>  
+            <div id="myModal" class="modal">
+                <!-- Modal content -->
+                <div class="modal-content">
+                    <div class="modal-header">
+                    <span class="close" @click="onClickCloseClientDetail()">&times;</span>
+                    <h2>Детальная информация о клиенте</h2>
+                    </div>
+                    <div class="modal-body">
+                    <br>
+                    <table class='msll_table'>
+                    <tr>
+                        <td width='20%'>Фаимлия</td>
+                        <td width='70%'>{{detail_client_last_name}}</td>
+                        <td width='10%'><input type="button" value = "Изменить" @click='onClikDeleteItemOfConditions(condition.item_id)'></td>
+                    </tr>
+                    <tr>
+                        <td>Имя</td>
+                        <td>{{detail_client_first_name}}</td>
+                        <td><input type="button" value = "Изменить" @click='onClikDeleteItemOfConditions(condition.item_id)'></td>
+                    </tr>
+                    <tr>
+                        <td>Отчество</td>
+                        <td>{{detail_client_patronymic}}</td>
+                        <td><input type="button" value = "Изменить" @click='onClikDeleteItemOfConditions(condition.item_id)'></td>
+                    </tr>
+                    <tr>
+                        <td>Преобретённые продукты</td>
+                        <td>
+                            <table class='msll_table2'>
+                                 <tr>
+                                    <th width='30%'>Дата покупки</th>
+                                    <th width='70%'>Название продукта</th>
+                                    <th width='70%'>Название подпродукта</th>
+                                </tr>
+                                <tr v-for="item in detail_client_sold_produtcs">
+                                    <td>{{item.date}}</td>
+                                    <td>{{item.product_name}}</td>
+                                    <td>{{item.subproduct_name}}</td>
+                                </tr>
+                            </table>
+                        </td>
+                        <td><input type="button" value = "Изменить" @click='onClikDeleteItemOfConditions(condition.item_id)'></td>
+                    </tr>
+                    <tr>
+                        <td>E-mail адреса</td>
+                        <td>
+                            <div v-for="detail_client_email in detail_client_emails">
+                                <p>{{detail_client_email}}</p>
+                            <div>
+                        </td>
+                        <td><input type="button" value = "Изменить" @click='onClikDeleteItemOfConditions(condition.item_id)'></td>
+                    </tr>
+                    <tr>
+                        <td>Номера телефонов</td>
+                        <td>
+                            <div v-for="detail_client_phone in detail_client_phones">
+                                <p>{{detail_client_phone}}</p>
+                            <div>
+                        </td>
+                        <td><input type="button" value = "Изменить" @click='onClikDeleteItemOfConditions(condition.item_id)'></td>
+                    </tr>
+                    <tr>
+                        <td>Имя в Telegramm</td>
+                        <td>
+                            <div v-for="detail_client_telegram in detail_client_telegrams">
+                                <a href="https://t.me/ detail_client_telegram">@{{detail_client_telegram}}</a>
+                            <div>
+                        </td>
+                        <td><input type="button" value = "Изменить" @click='onClikDeleteItemOfConditions(condition.item_id)'></td>
+                    </tr>
+                    <tr>
+                        <td>Место работы </td>
+                        <td>{{detail_client_job}}</td>
+                        <td><input type="button" value = "Изменить" @click='onClikDeleteItemOfConditions(condition.item_id)'></td>
+                    </tr>
+                    <tr>
+                        <td>Комментарий</td>
+                        <td>{{detail_client_comment}}</td>
+                        <td><input type="button" value = "Изменить" @click='onClikDeleteItemOfConditions(condition.item_id)'></td>
+                    </tr>
 
+                </table>
+                    </div>
+                    <div class="modal-footer">
+                    </div>
+                </div>
+            </div>              
+        </div>  
+      
     
     </main>
     <footer class='msll_footer'>
@@ -157,12 +244,21 @@
                 ],
                 
                 items_for_search: [],
-
                 conditions: [],
+                list_of_clients: [],
 
-                list_of_clients: [
-                    { num: '1', client_second_name: 'Фамилия1', client_first_name: 'Имя1', client_patronymic: 'Отчество1', client_id: '1' },
-                    { num: '2', client_second_name: 'Фамилия2', client_first_name: 'Имя2', client_patronymic: 'Отчество2', client_id: '2' }
+                detail_client_last_name: "Иванов",
+                detail_client_first_name: "Иван",
+                detail_client_patronymic: "Иванович",
+                detail_client_emails: ["sale@mycompany.com","pupsil@yandeх.ru"],
+                detail_client_phones: ["+79031111111","+79031111112","+79031111113"],
+                detail_client_telegrams: ["ivanovII","SladkiyPupsik","LaskoviyMerzavets", "AlexeyPavlikhin"],
+                detail_client_job: 'Кондитерская "Рога и копыта "',
+                detail_client_comment: "Песня В лесу родилась елочка – шедевр новогоднего настроения, индикатор радости детворы.",
+                detail_client_sold_produtcs: [
+                    {date: "01.01.2025", product_name: "ПАЗИС 1", subproduct_name: "Только лекции"},
+                    {date: "01.02.2025", product_name: "ПАЗИС 2", subproduct_name: "Полный доступ"},
+                    {date: "01.03.2025", product_name: "ПАЗИС 3", subproduct_name: "Нет"}
                 ]
 
             }
@@ -242,6 +338,7 @@
                     }
                 }
 
+
                 try {
                     const response = await axios.get('./queries/get_list_of_cliets_by_conditions2.php?conditions='+JSON.stringify(this.conditions));
                     if (response.data) {
@@ -257,8 +354,7 @@
                         console.error('Данные ошибки:', error.response.data);
                     }
                 }
-
-
+                
                 try {
                     const response = await axios.get('./queries/get_list_of_cliets_by_conditions.php?conditions='+JSON.stringify(this.conditions));
                     //const response = await axios.get('./queries/get_list_of_cliets_by_conditions.php', conditions, {headers: { 'Content-Type': 'application/x-www-form-urlencoded' } });
@@ -278,6 +374,7 @@
                         console.error('Данные ошибки:', error.response.data);
                     }
                 }
+                
                 document.getElementById('item_for_search').value="";
 
             },
@@ -287,8 +384,185 @@
                 this.conditions.splice(this.conditions.findIndex((item) => item.item_id === id), 1); 
                 this.onClikBtnApply(false);
 
-            }
+            },
+            async onClikClientDetail(clientID){
+                //Получаем Фамилия
+                try {
+                    const response = await axios.get('./queries/get_second_name_by_id.php?clientID='+clientID);
+                    if (response.data) {
+                        //console.log(response.data);
+                        this.detail_client_last_name=response.data;
 
+                    } else {
+                        console.log('Ответ от сервера пустой (data undefined/null)');
+                    }
+                } catch (error) {
+                    // Обработка ошибки
+                    console.error('Ошибка при запросе:', error);
+                    if (error.response) {
+                        console.error('Статус ошибки:', error.response.status);
+                        console.error('Данные ошибки:', error.response.data);
+                    }
+                }
+
+                //Получаем Имя
+                try {
+                    const response = await axios.get('./queries/get_first_name_by_id.php?clientID='+clientID);
+                    if (response.data) {
+                        //console.log(response.data);
+                        this.detail_client_first_name=response.data;
+
+                    } else {
+                        console.log('Ответ от сервера пустой (data undefined/null)');
+                    }
+                } catch (error) {
+                    // Обработка ошибки
+                    console.error('Ошибка при запросе:', error);
+                    if (error.response) {
+                        console.error('Статус ошибки:', error.response.status);
+                        console.error('Данные ошибки:', error.response.data);
+                    }
+                }
+                
+                //Получаем Отчество
+                try {
+                    const response = await axios.get('./queries/get_patronymic_by_id.php?clientID='+clientID);
+                    if (response.data) {
+                        //console.log(response.data);
+                        this.detail_client_patronymic=response.data;
+
+                    } else {
+                        console.log('Ответ от сервера пустой (data undefined/null)');
+                    }
+                } catch (error) {
+                    // Обработка ошибки
+                    console.error('Ошибка при запросе:', error);
+                    if (error.response) {
+                        console.error('Статус ошибки:', error.response.status);
+                        console.error('Данные ошибки:', error.response.data);
+                    }
+                }                
+                 
+                //Получаем проданные клиенту продукты
+                 try {
+                    const response = await axios.get('./queries/get_sold_prodicts_by_id.php?clientID='+clientID);
+                    if (response.data) {
+                        //console.log(this.detail_client_sold_produtcs);
+                        this.detail_client_sold_produtcs=response.data;
+                        //this.detail_client_sold_produtcs= JSON.parse("[{\"date\": \"1977-02-04\", \"product_name\": \"ПАЗИС 1\", \"subproduct_name\": \"Полный доступ\"}]");
+                    } else {
+                        console.log('Ответ от сервера пустой (data undefined/null)');
+                    }
+                } catch (error) {
+                    // Обработка ошибки
+                    console.error('Ошибка при запросе:', error);
+                    if (error.response) {
+                        console.error('Статус ошибки:', error.response.status);
+                        console.error('Данные ошибки:', error.response.data);
+                    }
+                }                
+
+                //Получаем Email
+                try {
+                    const response = await axios.get('./queries/get_email_by_id.php?clientID='+clientID);
+                    if (response.data) {
+                        //console.log(response.data);
+                        this.detail_client_emails=response.data;
+
+                    } else {
+                        console.log('Ответ от сервера пустой (data undefined/null)');
+                    }
+                } catch (error) {
+                    // Обработка ошибки
+                    console.error('Ошибка при запросе:', error);
+                    if (error.response) {
+                        console.error('Статус ошибки:', error.response.status);
+                        console.error('Данные ошибки:', error.response.data);
+                    }
+                }
+
+                //Получаем номера телефонов
+                try {
+                    const response = await axios.get('./queries/get_phone_by_id.php?clientID='+clientID);
+                    if (response.data) {
+                        //console.log(response.data);
+                        this.detail_client_phones=response.data;
+
+                    } else {
+                        console.log('Ответ от сервера пустой (data undefined/null)');
+                    }
+                } catch (error) {
+                    // Обработка ошибки
+                    console.error('Ошибка при запросе:', error);
+                    if (error.response) {
+                        console.error('Статус ошибки:', error.response.status);
+                        console.error('Данные ошибки:', error.response.data);
+                    }
+                }
+                //Получаем номера телеграм
+                try {
+                    const response = await axios.get('./queries/get_telegram_by_id.php?clientID='+clientID);
+                    if (response.data) {
+                        //console.log(response.data);
+                        this.detail_client_telegrams=response.data;
+
+                    } else {
+                        console.log('Ответ от сервера пустой (data undefined/null)');
+                    }
+                } catch (error) {
+                    // Обработка ошибки
+                    console.error('Ошибка при запросе:', error);
+                    if (error.response) {
+                        console.error('Статус ошибки:', error.response.status);
+                        console.error('Данные ошибки:', error.response.data);
+                    }
+                }
+                //Получаем Мето работы
+                try {
+                    const response = await axios.get('./queries/get_job_by_id.php?clientID='+clientID);
+                    if (response.data) {
+                        //console.log(response.data);
+                        this.detail_client_job=response.data;
+
+                    } else {
+                        console.log('Ответ от сервера пустой (data undefined/null)');
+                    }
+                } catch (error) {
+                    // Обработка ошибки
+                    console.error('Ошибка при запросе:', error);
+                    if (error.response) {
+                        console.error('Статус ошибки:', error.response.status);
+                        console.error('Данные ошибки:', error.response.data);
+                    }
+                }                  
+
+                //Получаем комментарий по клиенту
+                try {
+                    const response = await axios.get('./queries/get_comment_by_id.php?clientID='+clientID);
+                    if (response.data) {
+                        //console.log(response.data);
+                        this.detail_client_comment=response.data;
+
+                    } else {
+                        console.log('Ответ от сервера пустой (data undefined/null)');
+                    }
+                } catch (error) {
+                    // Обработка ошибки
+                    console.error('Ошибка при запросе:', error);
+                    if (error.response) {
+                        console.error('Статус ошибки:', error.response.status);
+                        console.error('Данные ошибки:', error.response.data);
+                    }
+                }  
+
+                document.getElementById("myModal").style.display = "block";
+            },
+
+
+            // When the user clicks on <span> (x), close the modal
+            onClickCloseClientDetail(){
+                document.getElementById("myModal").style.display = "none";
+            }
             
         }
            
