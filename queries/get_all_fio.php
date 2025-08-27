@@ -9,7 +9,7 @@ if(isset($_SESSION['current_user_id'])){
         if(strlen($response)>1){
             $response=$response.",";
         }
-        $response=$response."\"".$row["client_second_name"]." ".$row["client_first_name"]." ".$row["client_patronymic"]."\"";
+        $response=$response."\"".trim($row["client_second_name"]." ".$row["client_first_name"]." ".$row["client_patronymic"])."\"";
     }
     $response=$response."]";
     echo    $response;

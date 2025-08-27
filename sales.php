@@ -96,18 +96,34 @@
             <form method='GET' action=''>
                 <table class='msll_table'>
                     <tr>
-                        <th width='4%'>№</th>
-                        <th width='29%'>Фаимлия</th>
-                        <th width='29%'>Имя</th>
-                        <th width='29%'>Отчество</th>
-                        <!--<th width='10%'>Подробно</th>-->
+                        <th width='3%'>№</th>
+                        <th width='37%'>ФИО</th>
+                        <th width='15%'>Почта</th>
+                        <th width='15%'>Телефон</th>
+                        <th width='15%'>Telegram</th>
+                        <th width='15%'>Комментарий</th>
+                        
                     </tr>
 
                     <tr v-for="client_item in list_of_clients">
-                        <td><a href='#'  @click='onClikClientDetail(client_item.client_id)'>{{client_item.num}}</a></td>
-                        <td><a href='#'  @click='onClikClientDetail(client_item.client_id)'>{{client_item.client_second_name}}</a></td>
-                        <td><a href='#'  @click='onClikClientDetail(client_item.client_id)'>{{client_item.client_first_name}}</a></td>
-                        <td><a href='#'  @click='onClikClientDetail(client_item.client_id)'>{{client_item.client_patronymic}}</a></td>
+                        <td>{{client_item.num}}</td>
+                        <td><a href='#'  @click='onClikClientDetail(client_item.client_id)'>{{client_item.client_second_name}} {{client_item.client_first_name}} {{client_item.client_patronymic}}</a></td>
+                        <td>
+                            <div v-for="item in client_item.client_emails">
+                                {{item}}
+                            </div>
+                        </td>
+                        <td>
+                            <div v-for="item in client_item.client_phones">
+                                {{item}}
+                            </div>
+                        </td>
+                        <td>
+                            <div v-for="item in client_item.client_telegrams">
+                                {{item}}
+                            </div>
+                        </td>
+                        <td>{{client_item.client_comment}}</td>
                         <!--<td>{{client_item.client_id}}</td>-->
                     <tr>
 
@@ -146,12 +162,12 @@
                                  <tr>
                                     <th width='30%'>Дата покупки</th>
                                     <th width='70%'>Название продукта</th>
-                                    <th width='70%'>Название подпродукта</th>
+                                    <!--<th width='70%'>Название подпродукта</th>-->
                                 </tr>
                                 <tr v-for="item in detail_client_sold_produtcs">
                                     <td>{{item.date}}</td>
                                     <td>{{item.product_name}}</td>
-                                    <td>{{item.subproduct_name}}</td>
+                                    <!--<td>{{item.subproduct_name}}</td>-->
                                 </tr>
                             </table>
                         </td>
@@ -232,8 +248,8 @@
 
                 options1: [
                     { text: 'ФИО', value: 'ФИО' },
-                    { text: 'Продукт', value: 'Продукт' },
-                    { text: 'Подпродукт', value: 'Подпродукт' }
+                    { text: 'Продукт', value: 'Продукт' }/*,
+                    { text: 'Подпродукт', value: 'Подпродукт' }*/
                 ],
 
                 options2: [
@@ -256,9 +272,9 @@
                 detail_client_job: 'Кондитерская "Рога и копыта "',
                 detail_client_comment: "Песня В лесу родилась елочка – шедевр новогоднего настроения, индикатор радости детворы.",
                 detail_client_sold_produtcs: [
-                    {date: "01.01.2025", product_name: "ПАЗИС 1", subproduct_name: "Только лекции"},
-                    {date: "01.02.2025", product_name: "ПАЗИС 2", subproduct_name: "Полный доступ"},
-                    {date: "01.03.2025", product_name: "ПАЗИС 3", subproduct_name: "Нет"}
+                    {date: "01.01.2025", product_name: "ПАЗИС 1"},
+                    {date: "01.02.2025", product_name: "ПАЗИС 2"},
+                    {date: "01.03.2025", product_name: "ПАЗИС 3"}
                 ]
 
             }
@@ -266,10 +282,11 @@
         async mounted() {
             this.onSelectFirstFilter();
             try {
-                    const response = await axios.get('./queries/get_default_list_of_cliets.php');
+                    const response = await axios.get('./queries/get_default_list_of_clients.php');
                     if (response.data) {
                         //обрабатываем ответ
                         this.list_of_clients=response.data;
+                        console.log(response.data);
                     } else {
                         // пустой ответ
                         console.log('Ответ от сервера пустой (data undefined/null)');
@@ -297,8 +314,8 @@
                 } else if (selectElement.value=="Продукт"){
                     url="./queries/get_all_products.php";
 
-                } else if (selectElement.value=="Подпродукт"){
-                    url="./queries/get_all_subproducts.php";
+                /*} else if (selectElement.value=="Подпродукт"){
+                    url="./queries/get_all_subproducts.php";*/
 
                 }
 
@@ -338,7 +355,7 @@
                     }
                 }
 
-
+/*
                 try {
                     const response = await axios.get('./queries/get_list_of_cliets_by_conditions2.php?conditions='+JSON.stringify(this.conditions));
                     if (response.data) {
@@ -354,6 +371,7 @@
                         console.error('Данные ошибки:', error.response.data);
                     }
                 }
+*/
                 
                 try {
                     const response = await axios.get('./queries/get_list_of_cliets_by_conditions.php?conditions='+JSON.stringify(this.conditions));
