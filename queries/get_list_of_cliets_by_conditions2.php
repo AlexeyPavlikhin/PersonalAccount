@@ -4,7 +4,7 @@ include('../config.php');
 if(isset($_SESSION['current_user_id'])){
 
     $resp ="";
-    $sql = "SELECT ROW_NUMBER() OVER (order by tbl.client_second_name, tbl.client_first_name, tbl.client_patronymic) num, tbl.client_id, tbl.client_second_name, tbl.client_first_name, tbl.client_patronymic, trim(CONCAT(ifnull(tbl.client_second_name,''), ' ', ifnull(tbl.client_first_name,''), ' ', ifnull(tbl.client_patronymic,''))) from (select DISTINCT cl.client_id, cl.client_second_name, cl.client_first_name, cl.client_patronymic, cl.client_comment FROM sales sl, clients cl, products pr, subproducts spr WHERE sl.client_id=cl.client_id and sl.product_id=pr.product_id and sl.subproduct_id=spr.subproduct_id ^@@^) tbl;";
+    $sql = "SELECT ROW_NUMBER() OVER (order by tbl.client_last_name, tbl.client_first_name, tbl.client_patronymic) num, tbl.client_id, tbl.client_last_name, tbl.client_first_name, tbl.client_patronymic, trim(CONCAT(ifnull(tbl.client_last_name,''), ' ', ifnull(tbl.client_first_name,''), ' ', ifnull(tbl.client_patronymic,''))) from (select DISTINCT cl.client_id, cl.client_last_name, cl.client_first_name, cl.client_patronymic, cl.client_comment FROM sales sl, clients cl, products pr, subproducts spr WHERE sl.client_id=cl.client_id and sl.product_id=pr.product_id and sl.subproduct_id=spr.subproduct_id ^@@^) tbl;";
     $replace_value = "";
     $replace_value_final="";
 
@@ -14,14 +14,14 @@ if(isset($_SESSION['current_user_id'])){
 
         switch ($item->object) {
         case "ФИО":
-            //and trim(CONCAT(ifnull(cl.client_second_name,''), ' ', ifnull(cl.client_first_name,''), ' ', ifnull(cl.client_patronymic,'')))='Енокаева София'
-            $replace_value="trim(CONCAT(ifnull(cl.client_second_name,''), ' ', ifnull(cl.client_first_name,''), ' ', ifnull(cl.client_patronymic,'')))";
+            //and trim(CONCAT(ifnull(cl.client_last_name,''), ' ', ifnull(cl.client_first_name,''), ' ', ifnull(cl.client_patronymic,'')))='Енокаева София'
+            $replace_value="trim(CONCAT(ifnull(cl.client_last_name,''), ' ', ifnull(cl.client_first_name,''), ' ', ifnull(cl.client_patronymic,'')))";
             break;
         case "Продукт":
-            $replace_value="trim(CONCAT(ifnull(cl.client_second_name,''), ' ', ifnull(cl.client_first_name,''), ' ', ifnull(cl.client_patronymic,'')))";
+            $replace_value="trim(CONCAT(ifnull(cl.client_last_name,''), ' ', ifnull(cl.client_first_name,''), ' ', ifnull(cl.client_patronymic,'')))";
             break;
         case "Подпродукт":
-            $replace_value="trim(CONCAT(ifnull(cl.client_second_name,''), ' ', ifnull(cl.client_first_name,''), ' ', ifnull(cl.client_patronymic,'')))";
+            $replace_value="trim(CONCAT(ifnull(cl.client_last_name,''), ' ', ifnull(cl.client_first_name,''), ' ', ifnull(cl.client_patronymic,'')))";
             break;
         }
 

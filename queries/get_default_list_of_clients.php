@@ -4,9 +4,9 @@ include('../config.php');
 if(isset($_SESSION['current_user_id'])){
 
     $sql = "SELECT 
-                ROW_NUMBER() OVER (order by tbl.client_second_name, tbl.client_first_name, tbl.client_patronymic) num, 
+                ROW_NUMBER() OVER (order by tbl.client_last_name, tbl.client_first_name, tbl.client_patronymic) num, 
                 tbl.client_id, 
-                tbl.client_second_name, 
+                tbl.client_last_name, 
                 tbl.client_first_name, 
                 tbl.client_patronymic, 
                 (select cl1.client_job from clients cl1 where cl1.client_id = tbl.client_id) as client_job, 
@@ -17,7 +17,7 @@ if(isset($_SESSION['current_user_id'])){
             FROM (select 
                     DISTINCT 
                         cl.client_id, 
-                        cl.client_second_name, 
+                        cl.client_last_name, 
                         cl.client_first_name, 
                         cl.client_patronymic 
                     FROM 

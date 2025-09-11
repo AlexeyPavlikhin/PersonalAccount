@@ -6,7 +6,7 @@ html{
 body{
     text-align: center;
     width: 100%;
-    background-image: url('fon-1-1_1.jpg');
+    background-image: url('../pictures/fon-1-1_1.jpg');
     background-repeat: no-repeat;
     background-size: cover;
     margin: 0;
@@ -101,6 +101,30 @@ li {
     border-style: groove;
 }
 
+.msll_button_in_table{
+  height: 100%;
+  width: 100%;
+  background: #e0e4e9; /*-------------------------------------*/
+  border-color: #e0e4e9;
+  border-width: 5px;
+  border-style: solid;
+  
+  display: block;
+  box-sizing: border-box;
+  
+  margin: 0;
+  padding: 0;
+}
+
+.msll_button_in_table:hover{
+  background: #d2d6db;
+}
+
+.msll_button_in_table:active{
+  border-style: groove;
+  border-width: 5px;
+
+}
 
 table.msll_table  {
   font-size: 14px;
@@ -116,13 +140,19 @@ table.msll_table th, table.msll_table td {
   border-style: solid;
   border-width: 0 5px 5px 0;
   border-color: white;
-  padding: 10px;
+  padding: 5px;
 }
 
 table.msll_table2 th, table.msll_table2 td {
   border-width: 0 0 0 0;
   padding: 0;
 }
+
+.msll_td_nopadding {
+  padding: 0;
+  background: #bd162b;
+}
+
 
 table.msll_table th, table.msll_table th a{
   background: #8594ae; /*#dddae0; /*#8594ae*/  
@@ -305,7 +335,7 @@ table.msll_table th:first-child, table.msll_table td:first-child {
 div.logo{
   height: 100%;
   width: 190px;
-  background-image: url('logo.png');
+  background-image: url('../pictures/logo.png');
   background-size: cover;
 }
 
@@ -420,7 +450,7 @@ p.error {
   top: 0; /* Оставайтесь на вершине */
   left: 0;
   /*background-color: #dddae0; /*#dddae0* #8594ae*/
-  background-image: url("1975.png");
+  background-image: url("../pictures/1975.png");
   background-repeat: no-repeat;
   background-size: cover;
   overflow-x: hidden; /* Отключить горизонтальную прокрутку */
@@ -470,6 +500,22 @@ padding: 10px;
   animation-duration: 0.4s
 }
 
+/* Modal Content */
+.modal-content-editor {
+  position: relative;
+  background-color: #fefefe;
+  margin: auto;
+  padding: 0;
+  border: 1px solid #888;
+  width: 40%;
+  height: 40%;
+  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+  -webkit-animation-name: animatetop;
+  -webkit-animation-duration: 0.4s;
+  animation-name: animatetop;
+  animation-duration: 0.4s;
+  margin-top: 5%;
+}
 /* Add Animation */
 @-webkit-keyframes animatetop {
   from {top:-300px; opacity:0} 
@@ -505,7 +551,7 @@ padding: 10px;
 
 .modal-body {
   padding: 2px 16px;
-  background-image: url("1975.png");
+  background-image: url("../pictures/1975.png");
   background-repeat: no-repeat;
   background-size: cover;
   height: 100%;

@@ -7,6 +7,7 @@ BEGIN
 DECLARE terminate INT DEFAULT FALSE;
 Declare v_wrong_client_id int;
 Declare v_comment_wrong_client TEXT;
+Declare v_save_comment_client TEXT;
 Declare v_tmp_email_id int;
 Declare v_tmp_email varchar(100);
 Declare v_tmp_phone_id int;
@@ -15,6 +16,13 @@ Declare v_tmp_telegram_id int;
 Declare v_tmp_telegram varchar(100);
 Declare v_tmp_sales_id int;
 Declare v_tmp_sales_product_id int;
+
+Declare v_client_last_name varchar(250);
+Declare v_client_first_name varchar(250);
+Declare v_client_patronymic varchar(250);
+Declare v_client_job varchar(250);
+Declare v_client_comment TEXT;
+
 
 Declare v_tmp_val varchar(25);
 Declare CLIDCursor Cursor for SELECT tbl.client_id FROM (	
@@ -38,7 +46,7 @@ Declare SalesCursor Cursor for SELECT s.id, s.product_id FROM sales s where s.cl
 DECLARE CONTINUE HANDLER FOR NOT FOUND SET terminate = true;
 
 
-    /*Получаем минмальную ID. Именно она и останется за клиентом*/
+    /*Получаем минимальный ID. Именно он и останется за клиентом*/
 	SELECT MIN(tbl.client_id) INTO out_client_id FROM (	
 														SELECT e.client_id as client_id
 														FROM clients_email e 
@@ -53,7 +61,7 @@ DECLARE CONTINUE HANDLER FOR NOT FOUND SET terminate = true;
 														WHERE t.telegram = in_telegram
 													  ) tbl;    
     
-    /*Обрабатываем все остльные ID (звдублированных клинетов) */
+    /*Обрабатываем все остльные ID (задублированных записей о клинете) */
 	OPEN CLIDCursor;
 	getIDs: LOOP
 		FETCH CLIDCursor INTO v_wrong_client_id;
@@ -122,18 +130,37 @@ DECLARE CONTINUE HANDLER FOR NOT FOUND SET terminate = true;
                                 
 		END LOOP getSLs;
 		CLOSE SalesCursor;        
-        SET terminate = false;         
+        SET terminate = false;       
+        
+		/*Добавлем к основной записи информацию из дублирующей записи*/
+		SELECT 
+			   c.client_first_name,
+			   c.client_last_name,
+			   c.client_patronymic,
+			   c.client_job,
+			   c.client_comment
+		INTO
+ 			   v_client_first_name,
+               v_client_last_name,
+			   v_client_patronymic,
+			   v_client_job,
+			   v_client_comment        
+		FROM clients c
+        WHERE c.client_id = v_wrong_client_id;
+        
+		CALL concat_clients_property (out_client_id, 
+									  v_client_last_name,
+									  v_client_first_name,
+									  v_client_patronymic,
+									  v_client_job,
+									  v_client_comment);        
         
         
-        
-        update clients SET client_comment = v_comment_wrong_client where client_id = v_wrong_client_id;
-        
-		/*INSERT INTO loadlog(loadlog_text) VALUES(CONCAT('ID <', v_tmp_client_id, '> ', v_tmp_val));
-		select v_tmp_client_id;*/
-        
+        /*Добовляем к ошибочной записи информацию о том, с какой записью объединили (типа протокол)*/
+        SELECT IFNULL(c.client_comment, "") INTO v_save_comment_client FROM clients c WHERE c.client_id = v_wrong_client_id;
+        update clients SET client_comment = concat(v_save_comment_client , "; ", v_comment_wrong_client) where client_id = v_wrong_client_id;
         
 	END LOOP getIDs;
 	CLOSE CLIDCursor;
     
-    /*SET out_client_id = 333;*/
 END

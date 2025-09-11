@@ -1,10 +1,3 @@
-<link rel="stylesheet" href="styles.css">
-<link href="https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
-<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
-<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-<!--<script src="https://code.jquery.com/jquery-3.3.1.js" integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60=" crossorigin="anonymous"></script>-->
-<!--<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>-->
-
 <?php
     //error_reporting(0);
     ob_start();
@@ -20,216 +13,156 @@
         }
     }
 ?>
- 
 <html>
-    <header class='my_header'>
-    <div class='logo'> </div>
-    <div class='my_header_polygon'></div>
-    </header>
-        
-    <header class='my_header2' id='header_menu'>
-    <div class='menu-bar'>
-        <ul>
-            <li class='right' >
-                {{ user_name }}
-                <ul>
-                    <li><a href='#'>Профиль</a></li>
-                    <li><a href='login.php'>Выход</a></li>
-                </ul>
-            </li>
-        </ul>
-    </div>
-    </header>
-    <main id='main'>
-        <br/><br/>
-        <div class='menu'>
+    <head> 
+
+        <!--<link href="https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">-->
+        <!--<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>-->
+        <!--<script src="https://unpkg.com/axios/dist/axios.min.js"></script>-->
+        <!--<script src="https://code.jquery.com/jquery-3.3.1.js" integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60=" crossorigin="anonymous"></script>-->
+        <!--<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>-->
+
+        <link href="./css/styles.css" rel="stylesheet">
+        <!--<link href="./css/jost.css" rel="stylesheet">-->
+        <script src="./js/vue.global.js"></script>
+        <script src="./js/axios.min.js"></script>
+
+        <title>Личный кабинет: Управление пользователями</title>
+
+        <link rel="icon" type="image/png" sizes="32x32" href="./pictures/Iogo-1.png" media="(prefers-color-scheme: light)">
+        <link rel="icon" type="image/png" sizes="32x32" href="-./pictures/Iogo-2.png" media="(prefers-color-scheme: dark)">
+        <link rel="icon" type="image/svg+xml" sizes="any" href="./pictures/Iogo-4.svg">
+        <link rel="apple-touch-icon" type="image/png" href="./pictures/Iogo-3.png">
+        <link rel="icon" type="image/png" sizes="192x192" href="./pictures/Iogo-3.png">
+
+    </head> 
+    <body>
+
+        <header class='my_header'>
+        <div class='logo'> </div>
+        <div class='my_header_polygon'></div>
+        </header>
+            
+        <header class='my_header2' id='header_menu'>
+        <div class='menu-bar'>
             <ul>
-                <li><a class='menu_button' href='lk.php'><div class='menu_button_text'>Управление заказами</div></a></li>
-                <li><a class='menu_button' href='uc.php'><div class='menu_button_text'>Управление пользователями</div></a></li>
-                <li><a class='menu_button_atcive' href='sales.php'><div class='menu_button_text_active'>Управление продажами</div></a></li>
+                <li class='right' >
+                    {{ user_name }}
+                    <ul>
+                        <li><a href='#'>Профиль</a></li>
+                        <li><a href='login.php'>Выход</a></li>
+                    </ul>
+                </li>
             </ul>
         </div>
-        <div class='sidenav'>
-            <form method='GET' action='' id='filter'>
-  
-                <label>Фильтр</label>
+        </header>
+        <main id='main'>
+            <br/><br/>
+            <div class='menu'>
+                <ul>
+                    <li><a class='menu_button' href='lk.php'><div class='menu_button_text'>Управление заказами</div></a></li>
+                    <li><a class='menu_button' href='uc.php'><div class='menu_button_text'>Управление пользователями</div></a></li>
+                    <li><a class='menu_button_atcive' href='sales.php'><div class='menu_button_text_active'>Управление продажами</div></a></li>
+                </ul>
+            </div>
+            <div class='sidenav'>
+                <form method='GET' action='' id='filter'>
+    
+                    <label>Фильтр</label>
 
-                <select class='msll_filter' name='fieldFirstFilter' id='fieldFirstFilter' required @change='onSelectFirstFilter();'>
-                    <option disabled value=''>Выберите поле</option>
-                    <option v-for="option in options1" :value="option.value">{{ option.text }}</option>
-                </select>
+                    <select class='msll_filter' name='fieldFirstFilter' id='fieldFirstFilter' required @change='onSelectFirstFilter();'>
+                        <option disabled value=''>Выберите поле</option>
+                        <option v-for="option in options1" :value="option.value">{{ option.text }}</option>
+                    </select>
 
-                <select class='msll_filter' name='search_operation' id='search_operation' required>
-                    <option v-for="option in options2" :value="option.value">{{ option.text }}</option>
-                </select>
+                    <select class='msll_filter' name='search_operation' id='search_operation' required>
+                        <option v-for="option in options2" :value="option.value">{{ option.text }}</option>
+                    </select>
+                    
+                    <input class='msll_filter' type="search" list="options" id=item_for_search>
+                    <datalist class='msll_filter' id="options">
+                        <option v-for="item in items_for_search" :value="item">
+                    </datalist>
 
+                    <a class='msll_button' href='#'  id='BtnApply' @click='onClikBtnApply(true);'>Применить</a>
+
+                    <label>Применённые фильтры</label>
+                    <div>
+                        <table class='msll_table'>
+                            <tr v-for="condition in conditions">
+                                <td>{{condition.object}}</td>
+                                <td>{{condition.operation}}</td>
+                                <td>{{condition.value}}</td>
+                                <!--<td><a href='#'  v-on:click='onClikDeleteItemOfConditions(condition.item_id)'>{{condition.item_id}}</a></td>-->
+                                <td><input type="button" value = "Х" @click='onClikDeleteItemOfConditions(condition.item_id)'></td>
+                            <tr>
+
+                        </table>
+                    </div>
+
+                </form>
                 
-                <input class='msll_filter' type="search" list="options" id=item_for_search>
-                <datalist class='msll_filter' id="options">
-                    <option v-for="item in items_for_search" :value="item">
-                </datalist>
+            </div>
+            <div class='msll_body'>
 
-                <!--<button class='msll_button' type='submit' name='close_form' value='close_form'>Закрыть без сохранения</button>-->
-
-                <a class='msll_button' href='#'  id='BtnApply' @click='onClikBtnApply(true);'>Применить</a>
-
-                <!--<textarea class='ta_searched_value' name='ta_search_parametr' rows='2' cols='130'></textarea>-->
-
-                <label>Применённые фильтры</label>
-                <div>
+                <form method='GET' action=''>
                     <table class='msll_table'>
-                        <tr v-for="condition in conditions">
-                            <td>{{condition.object}}</td>
-                            <td>{{condition.operation}}</td>
-                            <td>{{condition.value}}</td>
-                            <!--<td><a href='#'  v-on:click='onClikDeleteItemOfConditions(condition.item_id)'>{{condition.item_id}}</a></td>-->
-                            <td><input type="button" value = "Х" @click='onClikDeleteItemOfConditions(condition.item_id)'></td>
+                        <tr>
+                            <th width='3%'>№</th>
+                            <th width='37%'>ФИО</th>
+                            <th width='15%'>Почта</th>
+                            <th width='15%'>Телефон</th>
+                            <th width='15%'>Telegram</th>
+                            <th width='15%'>Комментарий</th>
+                            
+                        </tr>
+
+                        <tr v-for="client_item in list_of_clients">
+                            <td>{{client_item.num}}</td>
+                            <!--<td><a href='#'  @click='onClikClientDetail(client_item.client_id)'>{{client_item.client_last_name}} {{client_item.client_first_name}} {{client_item.client_patronymic}}</a></td>-->
+                            <td class='msll_td_nopadding'><button class="msll_button_in_table" type="button" @click='onClikClientDetail(client_item.client_id)'> {{client_item.client_last_name}} {{client_item.client_first_name}} {{client_item.client_patronymic}}</button></td>
+                            
+                            <td>
+                                <div v-for="item in client_item.client_emails">
+                                    {{item}}
+                                </div>
+                            </td>
+                            <td>
+                                <div v-for="item in client_item.client_phones">
+                                    {{formate_phone(item)}}
+                                </div>
+                            </td>
+                            <td>
+                                <div v-for="item in client_item.client_telegrams">
+                                    {{item}}
+                                </div>
+                            </td>
+                            <td>{{client_item.client_comment}}</td>
+                            <!--<td>{{client_item.client_id}}</td>-->
                         <tr>
 
                     </table>
-                </div>
-
-            </form>
-            
-        </div>
-        <div class='msll_body'>
-            <form method='GET' action=''>
-                <table class='msll_table'>
-                    <tr>
-                        <th width='3%'>№</th>
-                        <th width='37%'>ФИО</th>
-                        <th width='15%'>Почта</th>
-                        <th width='15%'>Телефон</th>
-                        <th width='15%'>Telegram</th>
-                        <th width='15%'>Комментарий</th>
-                        
-                    </tr>
-
-                    <tr v-for="client_item in list_of_clients">
-                        <td>{{client_item.num}}</td>
-                        <td><a href='#'  @click='onClikClientDetail(client_item.client_id)'>{{client_item.client_second_name}} {{client_item.client_first_name}} {{client_item.client_patronymic}}</a></td>
-                        <td>
-                            <div v-for="item in client_item.client_emails">
-                                {{item}}
-                            </div>
-                        </td>
-                        <td>
-                            <div v-for="item in client_item.client_phones">
-                                {{item}}
-                            </div>
-                        </td>
-                        <td>
-                            <div v-for="item in client_item.client_telegrams">
-                                {{item}}
-                            </div>
-                        </td>
-                        <td>{{client_item.client_comment}}</td>
-                        <!--<td>{{client_item.client_id}}</td>-->
-                    <tr>
-
-                </table>
-                
-            </form>
-            <div id="myModal" class="modal">
-                <!-- Modal content -->
-                <div class="modal-content">
-                    <div class="modal-header">
-                    <span class="close" @click="onClickCloseClientDetail()">&times;</span>
-                    <h2>Детальная информация о клиенте</h2>
-                    </div>
-                    <div class="modal-body">
-                    <br>
-                    <table class='msll_table'>
-                    <tr>
-                        <td width='20%'>Фаимлия</td>
-                        <td width='70%'>{{detail_client_last_name}}</td>
-                        <td width='10%'><input type="button" value = "Изменить" @click='onClikDeleteItemOfConditions(condition.item_id)'></td>
-                    </tr>
-                    <tr>
-                        <td>Имя</td>
-                        <td>{{detail_client_first_name}}</td>
-                        <td><input type="button" value = "Изменить" @click='onClikDeleteItemOfConditions(condition.item_id)'></td>
-                    </tr>
-                    <tr>
-                        <td>Отчество</td>
-                        <td>{{detail_client_patronymic}}</td>
-                        <td><input type="button" value = "Изменить" @click='onClikDeleteItemOfConditions(condition.item_id)'></td>
-                    </tr>
-                    <tr>
-                        <td>Преобретённые продукты</td>
-                        <td>
-                            <table class='msll_table2'>
-                                 <tr>
-                                    <th width='30%'>Дата покупки</th>
-                                    <th width='70%'>Название продукта</th>
-                                    <!--<th width='70%'>Название подпродукта</th>-->
-                                </tr>
-                                <tr v-for="item in detail_client_sold_produtcs">
-                                    <td>{{item.date}}</td>
-                                    <td>{{item.product_name}}</td>
-                                    <!--<td>{{item.subproduct_name}}</td>-->
-                                </tr>
-                            </table>
-                        </td>
-                        <td><input type="button" value = "Изменить" @click='onClikDeleteItemOfConditions(condition.item_id)'></td>
-                    </tr>
-                    <tr>
-                        <td>E-mail адреса</td>
-                        <td>
-                            <div v-for="detail_client_email in detail_client_emails">
-                                <p>{{detail_client_email}}</p>
-                            <div>
-                        </td>
-                        <td><input type="button" value = "Изменить" @click='onClikDeleteItemOfConditions(condition.item_id)'></td>
-                    </tr>
-                    <tr>
-                        <td>Номера телефонов</td>
-                        <td>
-                            <div v-for="detail_client_phone in detail_client_phones">
-                                <p>{{detail_client_phone}}</p>
-                            <div>
-                        </td>
-                        <td><input type="button" value = "Изменить" @click='onClikDeleteItemOfConditions(condition.item_id)'></td>
-                    </tr>
-                    <tr>
-                        <td>Имя в Telegramm</td>
-                        <td>
-                            <div v-for="detail_client_telegram in detail_client_telegrams">
-                                <a href="https://t.me/ detail_client_telegram">@{{detail_client_telegram}}</a>
-                            <div>
-                        </td>
-                        <td><input type="button" value = "Изменить" @click='onClikDeleteItemOfConditions(condition.item_id)'></td>
-                    </tr>
-                    <tr>
-                        <td>Место работы </td>
-                        <td>{{detail_client_job}}</td>
-                        <td><input type="button" value = "Изменить" @click='onClikDeleteItemOfConditions(condition.item_id)'></td>
-                    </tr>
-                    <tr>
-                        <td>Комментарий</td>
-                        <td>{{detail_client_comment}}</td>
-                        <td><input type="button" value = "Изменить" @click='onClikDeleteItemOfConditions(condition.item_id)'></td>
-                    </tr>
-
-                </table>
-                    </div>
-                    <div class="modal-footer">
-                    </div>
-                </div>
-            </div>              
-        </div>  
-      
-    
-    </main>
-    <footer class='msll_footer'>
-        <div class='msll_footer_polygon_dark_gray'></div>
-        <div class='msll_footer_polygon_light_gray'></div>
-        <div class='msll_footer_polygon_red'></div>
-    </footer>
+                    
+                </form>
+                <div id="form_Detail_Info_Of_Client" class="modal">
+                    <Detail-Info-Of-Client ref="childRef" @update_client_data="onChangeLastName"/>
+                </div>              
+            </div>  
+        
+        
+        </main>
+        <footer class='msll_footer'>
+            <div class='msll_footer_polygon_dark_gray'></div>
+            <div class='msll_footer_polygon_light_gray'></div>
+            <div class='msll_footer_polygon_red'></div>
+        </footer>
+    </body>
 </html>
 
 
-<script>
+<script type="module">
+    import DetailInfoOfClient from './components/detail_info_of_client.js'
+
     const { createApp } = Vue
 
     createApp({
@@ -242,6 +175,9 @@
     }).mount('#header_menu')
 
     createApp({
+        components: {
+            DetailInfoOfClient
+        },
         data() {
             return {
                 opt: 0,
@@ -261,21 +197,7 @@
                 
                 items_for_search: [],
                 conditions: [],
-                list_of_clients: [],
-
-                detail_client_last_name: "Иванов",
-                detail_client_first_name: "Иван",
-                detail_client_patronymic: "Иванович",
-                detail_client_emails: ["sale@mycompany.com","pupsil@yandeх.ru"],
-                detail_client_phones: ["+79031111111","+79031111112","+79031111113"],
-                detail_client_telegrams: ["ivanovII","SladkiyPupsik","LaskoviyMerzavets", "AlexeyPavlikhin"],
-                detail_client_job: 'Кондитерская "Рога и копыта "',
-                detail_client_comment: "Песня В лесу родилась елочка – шедевр новогоднего настроения, индикатор радости детворы.",
-                detail_client_sold_produtcs: [
-                    {date: "01.01.2025", product_name: "ПАЗИС 1"},
-                    {date: "01.02.2025", product_name: "ПАЗИС 2"},
-                    {date: "01.03.2025", product_name: "ПАЗИС 3"}
-                ]
+                list_of_clients: []
 
             }
         },
@@ -286,7 +208,7 @@
                     if (response.data) {
                         //обрабатываем ответ
                         this.list_of_clients=response.data;
-                        console.log(response.data);
+                        //console.log(response.data);
                     } else {
                         // пустой ответ
                         console.log('Ответ от сервера пустой (data undefined/null)');
@@ -397,192 +319,50 @@
 
             },
             onClikDeleteItemOfConditions(id){
-                //delete this.conditions[id];
-                //console.log(id);
                 this.conditions.splice(this.conditions.findIndex((item) => item.item_id === id), 1); 
                 this.onClikBtnApply(false);
 
             },
             async onClikClientDetail(clientID){
-                //Получаем Фамилия
-                try {
-                    const response = await axios.get('./queries/get_second_name_by_id.php?clientID='+clientID);
-                    if (response.data) {
-                        //console.log(response.data);
-                        this.detail_client_last_name=response.data;
+                this.$refs.childRef.onClikClientDetail(clientID);
 
-                    } else {
-                        console.log('Ответ от сервера пустой (data undefined/null)');
-                    }
-                } catch (error) {
-                    // Обработка ошибки
-                    console.error('Ошибка при запросе:', error);
-                    if (error.response) {
-                        console.error('Статус ошибки:', error.response.status);
-                        console.error('Данные ошибки:', error.response.data);
-                    }
-                }
+                //отключить прокрутку страницы
+                document.body.style.overflow = 'hidden';
 
-                //Получаем Имя
-                try {
-                    const response = await axios.get('./queries/get_first_name_by_id.php?clientID='+clientID);
-                    if (response.data) {
-                        //console.log(response.data);
-                        this.detail_client_first_name=response.data;
-
-                    } else {
-                        console.log('Ответ от сервера пустой (data undefined/null)');
-                    }
-                } catch (error) {
-                    // Обработка ошибки
-                    console.error('Ошибка при запросе:', error);
-                    if (error.response) {
-                        console.error('Статус ошибки:', error.response.status);
-                        console.error('Данные ошибки:', error.response.data);
-                    }
-                }
-                
-                //Получаем Отчество
-                try {
-                    const response = await axios.get('./queries/get_patronymic_by_id.php?clientID='+clientID);
-                    if (response.data) {
-                        //console.log(response.data);
-                        this.detail_client_patronymic=response.data;
-
-                    } else {
-                        console.log('Ответ от сервера пустой (data undefined/null)');
-                    }
-                } catch (error) {
-                    // Обработка ошибки
-                    console.error('Ошибка при запросе:', error);
-                    if (error.response) {
-                        console.error('Статус ошибки:', error.response.status);
-                        console.error('Данные ошибки:', error.response.data);
-                    }
-                }                
-                 
-                //Получаем проданные клиенту продукты
-                 try {
-                    const response = await axios.get('./queries/get_sold_prodicts_by_id.php?clientID='+clientID);
-                    if (response.data) {
-                        //console.log(this.detail_client_sold_produtcs);
-                        this.detail_client_sold_produtcs=response.data;
-                        //this.detail_client_sold_produtcs= JSON.parse("[{\"date\": \"1977-02-04\", \"product_name\": \"ПАЗИС 1\", \"subproduct_name\": \"Полный доступ\"}]");
-                    } else {
-                        console.log('Ответ от сервера пустой (data undefined/null)');
-                    }
-                } catch (error) {
-                    // Обработка ошибки
-                    console.error('Ошибка при запросе:', error);
-                    if (error.response) {
-                        console.error('Статус ошибки:', error.response.status);
-                        console.error('Данные ошибки:', error.response.data);
-                    }
-                }                
-
-                //Получаем Email
-                try {
-                    const response = await axios.get('./queries/get_email_by_id.php?clientID='+clientID);
-                    if (response.data) {
-                        //console.log(response.data);
-                        this.detail_client_emails=response.data;
-
-                    } else {
-                        console.log('Ответ от сервера пустой (data undefined/null)');
-                    }
-                } catch (error) {
-                    // Обработка ошибки
-                    console.error('Ошибка при запросе:', error);
-                    if (error.response) {
-                        console.error('Статус ошибки:', error.response.status);
-                        console.error('Данные ошибки:', error.response.data);
-                    }
-                }
-
-                //Получаем номера телефонов
-                try {
-                    const response = await axios.get('./queries/get_phone_by_id.php?clientID='+clientID);
-                    if (response.data) {
-                        //console.log(response.data);
-                        this.detail_client_phones=response.data;
-
-                    } else {
-                        console.log('Ответ от сервера пустой (data undefined/null)');
-                    }
-                } catch (error) {
-                    // Обработка ошибки
-                    console.error('Ошибка при запросе:', error);
-                    if (error.response) {
-                        console.error('Статус ошибки:', error.response.status);
-                        console.error('Данные ошибки:', error.response.data);
-                    }
-                }
-                //Получаем номера телеграм
-                try {
-                    const response = await axios.get('./queries/get_telegram_by_id.php?clientID='+clientID);
-                    if (response.data) {
-                        //console.log(response.data);
-                        this.detail_client_telegrams=response.data;
-
-                    } else {
-                        console.log('Ответ от сервера пустой (data undefined/null)');
-                    }
-                } catch (error) {
-                    // Обработка ошибки
-                    console.error('Ошибка при запросе:', error);
-                    if (error.response) {
-                        console.error('Статус ошибки:', error.response.status);
-                        console.error('Данные ошибки:', error.response.data);
-                    }
-                }
-                //Получаем Мето работы
-                try {
-                    const response = await axios.get('./queries/get_job_by_id.php?clientID='+clientID);
-                    if (response.data) {
-                        //console.log(response.data);
-                        this.detail_client_job=response.data;
-
-                    } else {
-                        console.log('Ответ от сервера пустой (data undefined/null)');
-                    }
-                } catch (error) {
-                    // Обработка ошибки
-                    console.error('Ошибка при запросе:', error);
-                    if (error.response) {
-                        console.error('Статус ошибки:', error.response.status);
-                        console.error('Данные ошибки:', error.response.data);
-                    }
-                }                  
-
-                //Получаем комментарий по клиенту
-                try {
-                    const response = await axios.get('./queries/get_comment_by_id.php?clientID='+clientID);
-                    if (response.data) {
-                        //console.log(response.data);
-                        this.detail_client_comment=response.data;
-
-                    } else {
-                        console.log('Ответ от сервера пустой (data undefined/null)');
-                    }
-                } catch (error) {
-                    // Обработка ошибки
-                    console.error('Ошибка при запросе:', error);
-                    if (error.response) {
-                        console.error('Статус ошибки:', error.response.status);
-                        console.error('Данные ошибки:', error.response.data);
-                    }
-                }  
-
-                document.getElementById("myModal").style.display = "block";
+                //сделать элемент модальным     
+                document.getElementById("form_Detail_Info_Of_Client").style.display = "block";
             },
+            formate_phone(in_phone){
+                let ret;
+                let in_phone2;
+                in_phone2 = in_phone;
 
+                ret="-"+in_phone.slice(-2);
+                in_phone=in_phone.slice(0,-2);
 
-            // When the user clicks on <span> (x), close the modal
-            onClickCloseClientDetail(){
-                document.getElementById("myModal").style.display = "none";
+                ret="-"+in_phone.slice(-2)+ret;
+                in_phone=in_phone.slice(0,-2);
+
+                ret=") "+in_phone.slice(-3)+ret;
+                in_phone=in_phone.slice(0,-3);
+
+                ret=" ("+in_phone.slice(-3)+ret;
+                in_phone=in_phone.slice(0,-3);                
+
+                ret="+"+in_phone+ret;
+                
+                return ret;
+            },
+            onChangeLastName(in_clientID, in_clientLastName){
+                //alert('И тут тоже Event in Parent'+" "+in_clientID+" "+in_clientLastName);
+                //this.detail_client_last_name = in_clientLastName;
+                this.onSelectFirstFilter();
+                this.onClikBtnApply(true);
+                
             }
-            
         }
            
     }).mount('#main')
 </script>
+
+ 

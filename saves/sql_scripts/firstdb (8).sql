@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Хост: 127.0.0.1:3306
--- Время создания: Авг 27 2025 г., 08:46
+-- Время создания: Авг 27 2025 г., 22:05
 -- Версия сервера: 8.0.32
 -- Версия PHP: 8.3.14
 
@@ -149,9 +149,24 @@ CREATE TABLE IF NOT EXISTS `sales` (
   `product_id` int NOT NULL,
   `sale_date` date NOT NULL DEFAULT '1977-02-04',
   `product_comment` text NOT NULL,
+  `sale_status_id` int NOT NULL,
   PRIMARY KEY (`id`),
   KEY `idx_client_id` (`client_id`),
-  KEY `idx_product_id` (`product_id`)
+  KEY `idx_product_id` (`product_id`),
+  KEY `sales_status_id` (`sale_status_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `sales_status`
+--
+
+DROP TABLE IF EXISTS `sales_status`;
+CREATE TABLE IF NOT EXISTS `sales_status` (
+  `status_id` int NOT NULL AUTO_INCREMENT,
+  `status_name` varchar(50) NOT NULL,
+  PRIMARY KEY (`status_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
@@ -205,8 +220,9 @@ ALTER TABLE `orders`
 -- Ограничения внешнего ключа таблицы `sales`
 --
 ALTER TABLE `sales`
-  ADD CONSTRAINT `sales_ibfk_1` FOREIGN KEY (`client_id`) REFERENCES `clients` (`client_id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
-  ADD CONSTRAINT `sales_ibfk_2` FOREIGN KEY (`product_id`) REFERENCES `products` (`product_id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+  ADD CONSTRAINT `sales_client_id` FOREIGN KEY (`client_id`) REFERENCES `clients` (`client_id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  ADD CONSTRAINT `sales_product_id` FOREIGN KEY (`product_id`) REFERENCES `products` (`product_id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  ADD CONSTRAINT `sales_status_id` FOREIGN KEY (`sale_status_id`) REFERENCES `sales_status` (`status_id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

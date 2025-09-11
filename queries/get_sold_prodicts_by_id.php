@@ -3,7 +3,7 @@ session_start();
 include('../config.php');
 if(isset($_SESSION['current_user_id'])){
     //$query = $connection->prepare("SELECT pr.product_name, spr.subproduct_name, s.sale_date FROM sales s, products pr, subproducts spr WHERE s.product_id=pr.product_id and s.subproduct_id=spr.subproduct_id and s.client_id=".$_GET['clientID']." ORDER by 3,1,2;");
-    $query = $connection->prepare("SELECT s.sale_date, pr.product_name FROM sales s, products pr WHERE s.product_id=pr.product_id and s.client_id=".$_GET['clientID']." ORDER by 1,2;");
+    $query = $connection->prepare("SELECT s.sale_date, pr.product_name, ss.status_name, s.product_comment  FROM sales s, products pr, sales_status ss  WHERE s.product_id=pr.product_id and s.sale_status_id=ss.status_id and s.client_id=".$_GET['clientID']." ORDER by 1,2;");
     $query->execute();
     $response="[";
     while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
@@ -11,7 +11,7 @@ if(isset($_SESSION['current_user_id'])){
             $response=$response.",";
         }
         //$response=$response."{\"date\": \"".$row["sale_date"]."\", \"product_name\": \"".$row["product_name"]."\", \"subproduct_name\": \"".$row["subproduct_name"]."\"}";
-        $response=$response."{\"date\": \"".$row["sale_date"]."\", \"product_name\": \"".$row["product_name"]."\"}";
+        $response=$response."{\"date\": \"".$row["sale_date"]."\", \"product_name\": \"".$row["product_name"]."\", \"status\": \"".$row["status_name"]."\", \"comment\": \"".$row["product_comment"]."\"}";
     }
     $response=$response."]";
     echo    $response;

@@ -1,5 +1,5 @@
-<link rel="stylesheet" href="styles.css">
-<link href="https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+<link href="./css/styles.css" rel="stylesheet">
+<link href="./css/jost.css" rel="stylesheet">
 
 <?php
     //error_reporting(0);
@@ -79,13 +79,13 @@
             echo "          <th width='10%'>Подробно</th>";
             echo "      </tr>";
                         
-            $query = $connection->prepare("SELECT ROW_NUMBER() OVER (order by tbl.client_second_name, tbl.client_first_name, tbl.client_patronymic) num, tbl.client_id, tbl.client_second_name, tbl.client_first_name, tbl.client_patronymic from (select DISTINCT cl.client_id, cl.client_second_name, cl.client_first_name,  cl.client_patronymic, cl.comment  FROM sales sl, clients cl, products pr, subproducts spr WHERE sl.client_id=cl.client_id and sl.product_id=pr.product_id and sl.subproduct_id=spr.subproduct_id) tbl;");
+            $query = $connection->prepare("SELECT ROW_NUMBER() OVER (order by tbl.client_last_name, tbl.client_first_name, tbl.client_patronymic) num, tbl.client_id, tbl.client_last_name, tbl.client_first_name, tbl.client_patronymic from (select DISTINCT cl.client_id, cl.client_last_name, cl.client_first_name,  cl.client_patronymic, cl.comment  FROM sales sl, clients cl, products pr, subproducts spr WHERE sl.client_id=cl.client_id and sl.product_id=pr.product_id and sl.subproduct_id=spr.subproduct_id) tbl;");
             $query->execute();
 
             while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
                 echo "<tr>";
                 echo "<td>" . $row["num"] . "</td>";
-                echo "<td>" . $row["client_second_name"] . "</td>";
+                echo "<td>" . $row["client_last_name"] . "</td>";
                 echo "<td>" . $row["client_first_name"] . "</td>";
                 echo "<td>" . $row["client_patronymic"] . "</td>";
                 echo "<td> <a href='lk.php?action=detail&id=".$row["client_id"]."'>Подробно</a> </td>";

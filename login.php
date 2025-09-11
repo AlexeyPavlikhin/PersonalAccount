@@ -24,7 +24,26 @@
     }
 ?>
 
-<link rel="stylesheet" href="styles2.css">
+<title>Личный кабинет: Авторизация</title>
+<link rel="icon" type="image/png" sizes="32x32" href="./pictures/Iogo-1.png" media="(prefers-color-scheme: light)">
+<link rel="icon" type="image/png" sizes="32x32" href="-./pictures/Iogo-2.png" media="(prefers-color-scheme: dark)">
+<link rel="icon" type="image/svg+xml" sizes="any" href="./pictures/Iogo-4.svg">
+<link rel="apple-touch-icon" type="image/png" href="./pictures/Iogo-3.png">
+<link rel="icon" type="image/png" sizes="192x192" href="./pictures/Iogo-3.png">
+
+<!--
+<link rel="icon" type="image/png" sizes="32x32" href="https://static.tildacdn.com/tild3162-3235-4463-a131-323537306264/Iogo-1.png" media="(prefers-color-scheme: light)">
+<link rel="icon" type="image/png" sizes="32x32" href="https://static.tildacdn.com/tild3033-6130-4161-b163-663165306565/Iogo-2.png" media="(prefers-color-scheme: dark)">
+<link rel="icon" type="image/svg+xml" sizes="any" href="https://static.tildacdn.com/tild3132-6565-4736-a237-326261313366/Iogo-4.svg">
+<link rel="apple-touch-icon" type="image/png" href="https://static.tildacdn.com/tild6530-3732-4831-b536-393362383539/Iogo-3.png">
+<link rel="icon" type="image/png" sizes="192x192" href="https://static.tildacdn.com/tild6530-3732-4831-b536-393362383539/Iogo-3.png">
+  -->
+
+
+<link href="./css/styles2.css" rel="stylesheet">
+<link href="./css/jost.css" rel="stylesheet">
+
+<!--<link rel="stylesheet" href="styles2.css">-->
 <form method="get" action="" name="signin-form">
   <div class="form-element">
     <label>Login</label>
