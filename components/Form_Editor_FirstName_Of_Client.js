@@ -1,5 +1,5 @@
 export default {
-    emits: ["update_firstname"],
+    emits: ["update_client_data"],
     data() {
         return {
                     detail_client_first_name: "",
@@ -49,7 +49,7 @@ export default {
 
                         is_resp_success= axios.post("./queries/update_client_first_name_by_id.php", {clientID: this.detail_client_id, clientFirstName: this.detail_client_first_name})
                         .then(function (response) {
-                            console.log(response.data);
+                            //console.log(response.data);
                             if (response.data=="1"){
                                 //this.is_resp_success = true;
                                 //is_resp_success1 = true;
@@ -65,7 +65,7 @@ export default {
 
                         if (is_resp_success) {
                             //alert('resp_success ' + this.detail_client_id + " " +this.detail_client_first_name);
-                            this.$emit('update_firstname', this.detail_client_id, this.detail_client_first_name);
+                            this.$emit('update_client_data', 'FirstName');
                         }
                     }
                     
@@ -80,13 +80,13 @@ export default {
     <div class="modal-content-editor">
         <div class="modal-header">
             <span class="close" @click="onClickCloseFormEditorFirstNameOfClient()">&times;</span>
-            <h2>Изменение Имени клиента</h2>
+            <h2>Изменение имени клиента</h2>
         </div>
         <div class="modal-body">
             <br>
             <input class="msll_filter" type="input" id="item_for_search" v-model="detail_client_first_name" />
-            <button class="msll_button" type="button" @click="onClickApplyFormEditorFirstNameOfClient()">Применить</button>
-            <button class="msll_button" type="button" @click="onClickCloseFormEditorFirstNameOfClient()">Отменить</button>
+            <button class="msll_middle_button" type="button" @click="onClickApplyFormEditorFirstNameOfClient()">Применить</button>
+            <button class="msll_middle_button" type="button" @click="onClickCloseFormEditorFirstNameOfClient()">Отменить</button>
 
         </div>
         <div class="modal-footer">

@@ -1,5 +1,5 @@
 export default {
-    emits: ["update_lastname"],
+    emits: ["update_client_data"],
     data() {
         return {
                     detail_client_last_name: "",
@@ -49,7 +49,7 @@ export default {
 
                         is_resp_success= axios.post("./queries/update_client_last_name_by_id.php", {clientID: this.detail_client_id, clientLastName: this.detail_client_last_name})
                         .then(function (response) {
-                            console.log(response.data);
+                            //console.log(response.data);
                             if (response.data=="1"){
                                 //this.is_resp_success = true;
                                 //is_resp_success1 = true;
@@ -64,7 +64,7 @@ export default {
                         });
 
                         if (is_resp_success) {
-                            this.$emit('update_lastname', this.detail_client_id, this.detail_client_last_name);
+                            this.$emit('update_client_data', 'LastName');
                         }
                     }
                     
@@ -84,8 +84,8 @@ export default {
         <div class="modal-body">
             <br>
             <input class="msll_filter" type="input" id="item_for_search" v-model="detail_client_last_name" />
-            <button class="msll_button" type="button" @click="onClickApplyFormEditorLastNameOfClient()">Применить</button>
-            <button class="msll_button" type="button" @click="onClickCloseFormEditorLastNameOfClient()">Отменить</button>
+            <button class="msll_middle_button" type="button" @click="onClickApplyFormEditorLastNameOfClient()">Применить</button>
+            <button class="msll_middle_button" type="button" @click="onClickCloseFormEditorLastNameOfClient()">Отменить</button>
 
         </div>
         <div class="modal-footer">

@@ -24,7 +24,7 @@ body{
   display: inline-block;
   padding: 15px;
   background: #bd162b;
-  transform: skew(-30deg);
+  transform: skew(45deg);
   border-radius: 5px;
   border-color: #8594ae;
   border-width: 5px;
@@ -36,7 +36,7 @@ body{
   display: inline-block;
   padding: 15px;
   background: #dddae0;;
-  transform: skew(-30deg);
+  transform: skew(45deg);
   border-radius: 5px;
   border-color: #8594ae;
   border-width: 5px;
@@ -56,13 +56,13 @@ body{
 
 .menu_button_text {
   display: inline-block;
-  transform: skew(30deg);
+  transform: skew(-45deg);
   color: #fff;
 }
 
 .menu_button_text_active {
   display: inline-block;
-  transform: skew(30deg);
+  transform: skew(-45deg);
   /*color: #000000;*/
   
 }
@@ -123,8 +123,56 @@ li {
 .msll_button_in_table:active{
   border-style: groove;
   border-width: 5px;
-
 }
+
+.td_no_padding{
+  padding: 0px;
+  margin: 0px; 
+}
+
+.msll_small_button{
+  display: inline-block;
+  padding: 0;
+  background: #bd162b;
+  border-radius: 5px;
+  border-color: #8594ae;
+  border-width: 5px;
+  border-style: outset;
+  width: 100px;
+  margin: 0; 
+  color: #fff;
+  font-weight: bold;
+}
+.msll_small_button:hover{
+    background:#8594ae;
+}
+
+.msll_small_button:active{
+    border-style: groove;
+}
+
+.msll_middle_button{
+  display: inline-block;
+  padding: 0;
+  background: #bd162b;
+  border-radius: 5px;
+  border-color: #8594ae;
+  border-width: 5px;
+  border-style: outset;
+  width: 200px;
+  height: 50px;
+  margin: 5px; 
+  color: #fff;
+  font-weight: bold;
+}
+.msll_middle_button:hover{
+    background:#8594ae;
+}
+
+.msll_middle_button:active{
+    border-style: groove;
+}
+
 
 table.msll_table  {
   font-size: 14px;
@@ -134,6 +182,7 @@ table.msll_table  {
   width: 96%;
   margin-left: 2%;
   margin-right: 2%;
+  
 }
 
 table.msll_table th, table.msll_table td {
@@ -144,7 +193,7 @@ table.msll_table th, table.msll_table td {
 }
 
 table.msll_table2 th, table.msll_table2 td {
-  border-width: 0 0 0 0;
+  border-width: 1 1 1 1;
   padding: 0;
 }
 
@@ -398,9 +447,9 @@ textarea.ta_editor{
 }
 
 label {
-    width: 150px;
+    width: 100%;
     display: inline-block;
-    text-align: left;
+    text-align: center;
     font-size: 1.5rem;
     font-family: 'Lato';
 }
@@ -440,6 +489,16 @@ form.change_users div.form-element {
 p.error {
     background: orangered;
 } 
+
+.error {
+    color: orangered;
+    font-weight: bold;
+    animation: pulse 1.5s infinite;
+} 
+@keyframes pulse {
+from { opacity: 1; /* Непрозрачный текст */ }
+to { opacity: 0; /* Прозрачный текст */ }
+}
 
 /* Меню боковой панели */
 .sidenav {
@@ -516,6 +575,23 @@ padding: 10px;
   animation-duration: 0.4s;
   margin-top: 5%;
 }
+
+.modal-content-editor-large {
+  position: relative;
+  background-color: #fefefe;
+  margin: auto;
+  padding: 0;
+  border: 1px solid #888;
+  width: 80%;
+  height: 40%;
+  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+  -webkit-animation-name: animatetop;
+  -webkit-animation-duration: 0.4s;
+  animation-name: animatetop;
+  animation-duration: 0.4s;
+  margin-top: 5%;
+}
+
 /* Add Animation */
 @-webkit-keyframes animatetop {
   from {top:-300px; opacity:0} 
@@ -557,3 +633,22 @@ padding: 10px;
   height: 100%;
 }
 
+.container_inline {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    border: 0;
+    padding: 0;
+}
+
+.form_login {
+    margin: 150px auto;
+    padding: 20px;
+    width: 600px;
+    border-color: #8594ae;
+    border-style: outset;
+    border-width: 10px;
+    background-image: url("../pictures/1975.png");
+    background-repeat: no-repeat;
+    background-size: cover;
+}

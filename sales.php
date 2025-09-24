@@ -67,7 +67,7 @@
             </div>
             <div class='sidenav'>
                 <form method='GET' action='' id='filter'>
-    
+                    <input class="msll_button" type="button" value = "Новый клиент" @click="onClikCreateNewClient">
                     <label>Фильтр</label>
 
                     <select class='msll_filter' name='fieldFirstFilter' id='fieldFirstFilter' required @change='onSelectFirstFilter();'>
@@ -145,12 +145,17 @@
                     
                 </form>
                 <div id="form_Detail_Info_Of_Client" class="modal">
-                    <Detail-Info-Of-Client ref="childRef" @update_client_data="onChangeLastName"/>
-                </div>              
+                    <Detail-Info-Of-Client ref="childRef" @update_client_data="onChangeClientData"/>
+                </div>            
+
+                <div id="form_Create_New_Client" class="modal">
+                    <Form-Create-New-Client ref="FormCreateNewClientRef" @client_creted="onClientCreted"/>
+                </div>     
             </div>  
-        
+            
         
         </main>
+        
         <footer class='msll_footer'>
             <div class='msll_footer_polygon_dark_gray'></div>
             <div class='msll_footer_polygon_light_gray'></div>
@@ -161,7 +166,8 @@
 
 
 <script type="module">
-    import DetailInfoOfClient from './components/detail_info_of_client.js'
+    import DetailInfoOfClient from './components/detail_info_of_client.js';
+    import FormCreateNewClient from './components/Form_Create_New_Client.js';
 
     const { createApp } = Vue
 
@@ -176,7 +182,8 @@
 
     createApp({
         components: {
-            DetailInfoOfClient
+            DetailInfoOfClient,
+            FormCreateNewClient
         },
         data() {
             return {
@@ -353,12 +360,23 @@
                 
                 return ret;
             },
-            onChangeLastName(in_clientID, in_clientLastName){
-                //alert('И тут тоже Event in Parent'+" "+in_clientID+" "+in_clientLastName);
-                //this.detail_client_last_name = in_clientLastName;
+            onChangeClientData(){
+                //alert("получен event onChangeClientData на форме sales.php")
                 this.onSelectFirstFilter();
                 this.onClikBtnApply(true);
-                
+            },
+            onClikCreateNewClient(){
+                //отключить прокрутку страницы
+                document.body.style.overflow = 'hidden';
+
+                //сделать элемент модальным     
+                document.getElementById("form_Create_New_Client").style.display = "block";
+            }, 
+            onClientCreted(in_ClientID){
+                //alert("3: "+in_ClientID);
+                this.onChangeClientData();
+                this.onClikClientDetail(in_ClientID);
+
             }
         }
            
