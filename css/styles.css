@@ -102,18 +102,32 @@ li {
 }
 
 .msll_button_in_table{
+
+  position: absolute;
+  top: 0; 
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: #e0e4e9;
+  border-color: #e0e4e9;
+  border-style: solid;
+  border-width: 0;
+
+ /* 
   height: 100%;
   width: 100%;
-  background: #e0e4e9; /*-------------------------------------*/
+  background: #e0e4e9; /*-------------------------------------* /
   border-color: #e0e4e9;
-  border-width: 5px;
+  
+  border-width: 0;
   border-style: solid;
   
   display: block;
-  box-sizing: border-box;
+  /*box-sizing: border-box;* /
   
   margin: 0;
   padding: 0;
+  */
 }
 
 .msll_button_in_table:hover{
@@ -175,7 +189,7 @@ li {
 
 
 table.msll_table  {
-  font-size: 14px;
+  font-size: 16px;
   border-collapse: collapse;
   border-style: hidden;
   text-align: center;
@@ -195,6 +209,8 @@ table.msll_table th, table.msll_table td {
 table.msll_table2 th, table.msll_table2 td {
   border-width: 1 1 1 1;
   padding: 0;
+  font-size: 16px;
+  text-align: center;
 }
 
 .msll_td_nopadding {

@@ -1,0 +1,85 @@
+<!--"https://unpkg.com/vue@3/dist/vue.esm-browser.js"-->
+<script type="importmap">{
+    "imports": {
+      "vue": "../js/vue3.esm-browser.js"
+    }
+  }
+</script>
+
+
+<script>
+  import { vMaska } from "./vue"
+
+  export default {
+    directives: { maska: vMaska },
+    data: () => ({
+      maskedValue: "",
+      unmaskedValue: ""
+    })
+  }
+</script>
+
+
+<html>
+    <head> 
+        <script src="../js/vue.global.js"></script>
+        <!--<script src="./Vue_phone_mask.js"></script>-->
+        <!--<script src="./222.js"></script>-->
+    </head> 
+    <body>
+        <main id='main'>
+            <p>QQQQQQQQQQQQ</p>
+            <p>{{opt}}</p>
+            <input 
+                v-model="opt"
+                placeholder="+7 (9xx) xxx-xx-xx"
+                autocomplete="tel"
+                maxlength="15"
+                type="tel"
+                v-phone
+                
+            >
+            <!--v-phone---->
+
+        </main>
+    </body>
+</html>  
+
+
+<!--script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.min.js"></script>  "vue": "https://unpkg.com/vue@3/dist/vue.esm-browser.js"-->
+
+<script type="module">
+    import { createApp } from 'vue';
+
+    const app = createApp({
+        data() {
+                    return {
+                        opt: ""
+                    }
+                }        
+    });
+
+    app.directive('phone', {
+            updated: function(e) {
+                
+
+               
+                if (!e.isTrusted) {
+                //return
+                }
+                 console.log (e.value);
+                const x = e.value.replace(/\D/g, '').match(/(\d{0,1})(\d{0,3})(\d{0,3})(\d{0,2})(\d{0,2})/);
+                x[1] = '+7';
+                e.value = !x[3] ? x[1] + ' (' + x[2] : x[1] + ' (' + x[2] + ') ' + x[3] + (x[4] ? '-' + x[4] : '') + (x[5] ? '-' + x[5] : '');
+                
+
+                if (!x[2] && x[1] !== '') {
+                e.value = x[1] === '8' ? x[1] : '8' + x[1]
+                } else {
+                    e.value = !x[3] ? x[1] + x[2] : x[1] + '(' + x[2] + ') ' + x[3] + (x[4] ? '-' + x[4] : '')
+                }
+            }
+    });
+
+    app.mount('#main');
+</script>

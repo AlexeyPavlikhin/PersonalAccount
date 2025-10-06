@@ -135,36 +135,7 @@ export default {
                 onClickAddPhone(){
                     this.WarningMessage = "ЕСТЬ НЕСОХРАНЁННЫЕ ИЗМЕНЕНИЯ";
                     this.detail_client_phones.push({ phone: "", phone_id: Date.now()}); 
-                },
-                format_phone(in_phone){
-                    let ret;
-                    //console.log(in_phone.length);
-
-                    in_phone=in_phone.toString().slice();
-                    
-                    while (in_phone.length<11){
-                        in_phone  = in_phone + "_"
-                    }
-                    
-                    //console.log(in_phone);
-
-                    ret="-"+in_phone.slice(-2);
-                    in_phone=in_phone.slice(0,-2);
-
-                    ret="-"+in_phone.slice(-2)+ret;
-                    in_phone=in_phone.slice(0,-2);
-
-                    ret=") "+in_phone.slice(-3)+ret;
-                    in_phone=in_phone.slice(0,-3);
-
-                    ret=" ("+in_phone.slice(-3)+ret;
-                    in_phone=in_phone.slice(0,-3);                
-
-                    ret="+"+in_phone+ret;
-                    
-                    return ret;
                 }
-
                 
     },
     template: 
@@ -178,11 +149,9 @@ export default {
         <div class="modal-body">
             <div class="ERROR">{{WarningMessage}}<br/></div>
             <button class="msll_middle_button" type="button" @click="onClickAddPhone()">Добавить телефон</button>
-            
             <div class="container_inline" v-for="detail_client_phone in detail_client_phones">
-                <p style='width:300px'>{{format_phone(detail_client_phone.phone)}}</p>
-                <input class="msll_filter" type="number" v-model="detail_client_phone.phone" placeholder="71112223344" v-phone/>
-                <input type="button" value = "&times;" @click="onClikDeleteDeletePhone(detail_client_phone.phone_id)">
+                <input class="msll_filter" type="input" v-model="detail_client_phone.phone"/>
+                <input type="button" value = "&times;" @click='onClikDeleteDeletePhone(detail_client_phone.phone_id)'>
             </div>
 
             <button class="msll_middle_button" type="button" @click="onClickApplyFormEditorPhonesOfClient()">Применить</button>

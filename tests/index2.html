@@ -1,0 +1,100 @@
+<script type="importmap">
+  {
+    "imports": {
+      "vue": "https://cdn.jsdelivr.net/npm/vue@3/dist/vue.esm-browser.prod.js",
+      "vue-router": "https://cdn.jsdelivr.net/npm/vue-router@4/dist/vue-router.esm-browser.js",
+      "@vue/devtools-api": "https://cdn.jsdelivr.net/npm/@vue/devtools-api@6/lib/esm/index.js",
+      "vuetify": "https://cdn.jsdelivr.net/npm/vuetify@3.1.14/dist/vuetify.esm.js"
+    }
+  }
+</script>
+
+
+
+<html>
+    <head> 
+        <!--<script src="../js/vue.global.js"></script>-->
+        <!--<script src="./Vue_phone_mask.js"></script>-->
+        <!--<script src="./222.js"></script>-->
+        <!--<script src="https://unpkg.com/vue-tel-input"></script>-->
+        
+        <link rel="stylesheet" href="https://unpkg.com/vue-tel-input/dist/vue-tel-input.css" />
+    </head> 
+    <body>
+        <main id='main'>
+            <p>QQQQQQQQQQQQ</p>
+            <p>{{opt}}</p>
+            <input 
+                v-model="opt"
+                placeholder="+7 (9xx) xxx-xx-xx"
+                autocomplete="tel"
+                maxlength="15"
+                type="number"
+                v-phone
+                
+            >
+            <!--v-phone- @onkeypress="validate(event)" --->
+            <!-- <input-mask v-model="value" mask="+4\9 99 999 99" maskChar=" "></input-mask> -->
+
+        </main>
+    </body>
+</html>  
+
+
+<!--script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.min.js"></script>  "vue": "https://unpkg.com/vue@3/dist/vue.esm-browser.js"-->
+
+<script type="module">
+    import vue3PhoneNumberInput from 'https://cdn.jsdelivr.net/npm/vue3-phone-number-input@1.1.2/+esm'
+    
+    
+
+    import { createApp } from 'vue';
+
+    const app = createApp({
+       
+        data() {
+            return {
+                opt: ""
+            }
+        },
+        methods: {
+            validate(evt) {
+                console.log(1111111);
+                var theEvent = evt || window.event;
+                var key = theEvent.keyCode || theEvent.which;
+                key = String.fromCharCode( key );
+                var regex = /[0-9]|\./;
+                if( !regex.test(key) ) {
+                    theEvent.returnValue = false;
+                    if(theEvent.preventDefault) theEvent.preventDefault();
+                }
+            }
+
+        }        
+    });
+
+    app.directive('phone', {
+            updated: function(e) {
+                
+
+               
+                if (!e.isTrusted) {
+                //return
+                }
+                console.log (e.value);
+
+                const x = e.value.replace(/\D/g, '').match(/(\d{0,1})(\d{0,3})(\d{0,3})(\d{0,2})(\d{0,2})/);
+                x[1] = '+7';
+                e.value = !x[3] ? x[1] + ' (' + x[2] : x[1] + ' (' + x[2] + ') ' + x[3] + (x[4] ? '-' + x[4] : '') + (x[5] ? '-' + x[5] : '');
+                
+
+                if (!x[2] && x[1] !== '') {
+                e.value = x[1] === '8' ? x[1] : '8' + x[1]
+                } else {
+                    e.value = !x[3] ? x[1] + x[2] : x[1] + '(' + x[2] + ') ' + x[3] + (x[4] ? '-' + x[4] : '')
+                }
+            }
+    });
+
+    app.mount('#main');
+</script>

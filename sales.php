@@ -23,7 +23,7 @@
         <!--<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>-->
 
         <link href="./css/styles.css" rel="stylesheet">
-        <!--<link href="./css/jost.css" rel="stylesheet">-->
+        <!--link href="./css/jost.css" rel="stylesheet"-->
         <script src="./js/vue.global.js"></script>
         <script src="./js/axios.min.js"></script>
 
@@ -96,7 +96,6 @@
                                 <!--<td><a href='#'  v-on:click='onClikDeleteItemOfConditions(condition.item_id)'>{{condition.item_id}}</a></td>-->
                                 <td><input type="button" value = "Х" @click='onClikDeleteItemOfConditions(condition.item_id)'></td>
                             <tr>
-
                         </table>
                     </div>
 
@@ -109,40 +108,39 @@
                     <table class='msll_table'>
                         <tr>
                             <th width='3%'>№</th>
-                            <th width='37%'>ФИО</th>
+                            <th width='22%'>ФИО</th>
                             <th width='15%'>Почта</th>
-                            <th width='15%'>Телефон</th>
+                            <th width='10%'>Телефон</th>
                             <th width='15%'>Telegram</th>
-                            <th width='15%'>Комментарий</th>
+                            <th width='48%'>Комментарий</th>
                             
                         </tr>
 
                         <tr v-for="client_item in list_of_clients">
                             <td>{{client_item.num}}</td>
                             <!--<td><a href='#'  @click='onClikClientDetail(client_item.client_id)'>{{client_item.client_last_name}} {{client_item.client_first_name}} {{client_item.client_patronymic}}</a></td>-->
-                            <td class='msll_td_nopadding'><button class="msll_button_in_table" type="button" @click='onClikClientDetail(client_item.client_id)'> {{client_item.client_last_name}} {{client_item.client_first_name}} {{client_item.client_patronymic}}</button></td>
+                            <td style='position: relative;'><button  class="msll_button_in_table" type="button" @click='onClikClientDetail(client_item.client_id)'> {{client_item.client_last_name}} {{client_item.client_first_name}} {{client_item.client_patronymic}}</button></td>
                             
                             <td>
                                 <div v-for="item in client_item.client_emails">
-                                    {{item}}
+                                    <a :href=createMTLink(item) target="_blank">{{item}}</a>
                                 </div>
                             </td>
                             <td>
                                 <div v-for="item in client_item.client_phones">
-                                    {{formate_phone(item)}}
+                                    <a :href=createTelLink(item) target="_blank">{{formate_phone(item)}}</a>
                                 </div>
                             </td>
                             <td>
                                 <div v-for="item in client_item.client_telegrams">
-                                    {{item}}
+                                    <a :href=createTGLink(item) target="_blank">{{item}}</a>
                                 </div>
                             </td>
                             <td>{{client_item.client_comment}}</td>
                             <!--<td>{{client_item.client_id}}</td>-->
                         <tr>
-
                     </table>
-                    
+                    <br/><br/>
                 </form>
                 <div id="form_Detail_Info_Of_Client" class="modal">
                     <Detail-Info-Of-Client ref="childRef" @update_client_data="onChangeClientData"/>
@@ -164,23 +162,56 @@
     </body>
 </html>
 
+<script type="importmap">{
+    "imports": {
+      "vue": "./js/vue3.esm-browser.js"
+    }
+  }
+</script>
 
 <script type="module">
     import DetailInfoOfClient from './components/detail_info_of_client.js';
     import FormCreateNewClient from './components/Form_Create_New_Client.js';
+   
+    import { createApp } from 'vue';
 
-    const { createApp } = Vue
+    const app = createApp({
 
-    createApp({
+
+    //const { createApp } = Vue
+    //createApp({
         data() {
             return {
                user_name: 'Имя Пользователя' 
 
             }
-        }
-    }).mount('#header_menu')
+        },
+        async mounted() {
+            try {
+                    const response = await axios.get('./queries/get_current_user_name.php');
+                    if (response.data) {
+                        //обрабатываем ответ
+                        this.user_name=response.data;
+                        //console.log(response.data);
+                    } else {
+                        // пустой ответ
+                        console.log('Ответ от сервера пустой (data undefined/null)');
+                    }
+                } catch (error) {
+                    // Обработка ошибки
+                    console.error('Ошибка при запросе:', error);
+                    if (error.response) {
+                        console.error('Статус ошибки:', error.response.status);
+                        console.error('Данные ошибки:', error.response.data);
+                    }
+                }               
+        }    
+    });     
+ //   }).mount('#header_menu')
+    app.mount('#header_menu');
 
-    createApp({
+    //createApp({
+    const app2 = createApp({
         components: {
             DetailInfoOfClient,
             FormCreateNewClient
@@ -211,10 +242,32 @@
         async mounted() {
             this.onSelectFirstFilter();
             try {
+                    //const response = await axios.get('./queries/get_default_list_of_clients_limit.php');
                     const response = await axios.get('./queries/get_default_list_of_clients.php');
                     if (response.data) {
                         //обрабатываем ответ
                         this.list_of_clients=response.data;
+/*
+                        try {
+                                const response = await axios.get('./queries/get_default_list_of_clients.php');
+                                if (response.data) {
+                                    //обрабатываем ответ
+                                    this.list_of_clients=response.data;
+                                    
+                                    //console.log(response.data);
+                                } else {
+                                    // пустой ответ
+                                    console.log('Ответ от сервера пустой (data undefined/null)');
+                                }
+                            } catch (error) {
+                                // Обработка ошибки
+                                console.error('Ошибка при запросе:', error);
+                                if (error.response) {
+                                    console.error('Статус ошибки:', error.response.status);
+                                    console.error('Данные ошибки:', error.response.data);
+                                }
+                            } 
+*/
                         //console.log(response.data);
                     } else {
                         // пустой ответ
@@ -377,10 +430,29 @@
                 this.onChangeClientData();
                 this.onClikClientDetail(in_ClientID);
 
+            },
+            createTGLink(inLink){
+                return "https://t.me/"+inLink.replaceAll("@", "");
+            },
+            createMTLink(inLink){
+                return "mailto:"+inLink;
+            },
+            createTelLink(inLink){
+                return "tel:+"+inLink;
+            }         
+        }
+        
+    });
+    app2.directive('phone', {
+        updated: function(e) {
+            //console.log(e.value.slice(0,1));
+            if (e.value.slice(0,1)=="8"){
+                e.value="7"+e.value.slice(1);
             }
         }
-           
-    }).mount('#main')
+    });
+    app2.mount('#main');
+//    }).mount('#main')
 </script>
 
  
