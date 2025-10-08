@@ -23,7 +23,7 @@
         <!--<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>-->
 
         <link href="./css/styles.css" rel="stylesheet">
-        <!--link href="./css/jost.css" rel="stylesheet"-->
+        <link href="./css/jost.css" rel="stylesheet">
         <script src="./js/vue.global.js"></script>
         <script src="./js/axios.min.js"></script>
 
@@ -138,7 +138,7 @@
                             </td>
                             <td>{{client_item.client_comment}}</td>
                             <!--<td>{{client_item.client_id}}</td>-->
-                        <tr>
+                        </tr>
                     </table>
                     <br/><br/>
                 </form>
@@ -419,6 +419,9 @@
                 this.onClikBtnApply(true);
             },
             onClikCreateNewClient(){
+
+                this.$refs.FormCreateNewClientRef.activate(this.list_of_clients);
+
                 //отключить прокрутку страницы
                 document.body.style.overflow = 'hidden';
 

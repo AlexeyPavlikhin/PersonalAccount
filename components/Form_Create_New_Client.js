@@ -5,7 +5,9 @@ export default {
                     new_client_LastName: "",
                     new_client_FirstName: "",
                     new_client_Patronymic: "",
-                    new_client_id: ""
+                    new_client_id: "",
+                    list_of_clients_all: "",
+                    list_of_selected_clients: "",
         }
     },
     methods: {
@@ -18,35 +20,11 @@ export default {
                     this.new_client_Patronymic = "";
                     this.new_client_id = "";
                 },
-/*
-                async activate(clientID){
-                    
-                    //Получаем Фамилию
-                    try {
-                        this.detail_client_id=clientID;
-                        
-                        const response = await axios.get('./queries/get_comment_by_id.php?clientID='+clientID);
-                        if (response.data) {
-                            //console.log(response.data);
-                            this.detail_client_comment = response.data; 
-                            this.detail_client_comment_saved = response.data;
-                            
-                            //сделать элемент модальным     
-                            document.getElementById("Form_Editor_Comment_Of_Client").style.display = "block";
 
-                        } else {
-                            console.log('Ответ от сервера пустой (data undefined/null)');
-                        }
-                    } catch (error) {
-                        // Обработка ошибки
-                        console.error('Ошибка при запросе:', error);
-                        if (error.response) {
-                            console.error('Статус ошибки:', error.response.status);
-                            console.error('Данные ошибки:', error.response.data);
-                        }
-                    }
+                async activate(in_list_of_clients){
+                    this.list_of_clients_all=in_list_of_clients;
                 },
-*/                
+               
                 async onClickApplyForm(){
                     if (this.new_client_LastName+this.new_client_FirstName+this.new_client_Patronymic != "") {
                         
@@ -83,15 +61,58 @@ export default {
                     } else {
                         alert("Минимум одно из полей должно быть заполнено");
 
-                    };
-
-                    //alert("2: "+this.new_client_id);
-/*
-*/                    
-
+                    }
 
                     
                 },
+
+                onClikUseThisClient(inClientID){
+                    console.log(inClientID);
+                    
+                },
+
+                formate_phone(in_phone){
+                    let ret;
+                    let in_phone2;
+                    in_phone2 = in_phone;
+
+                    ret="-"+in_phone.slice(-2);
+                    in_phone=in_phone.slice(0,-2);
+
+                    ret="-"+in_phone.slice(-2)+ret;
+                    in_phone=in_phone.slice(0,-2);
+
+                    ret=") "+in_phone.slice(-3)+ret;
+                    in_phone=in_phone.slice(0,-3);
+
+                    ret=" ("+in_phone.slice(-3)+ret;
+                    in_phone=in_phone.slice(0,-3);                
+
+                    ret="+"+in_phone+ret;
+                    
+                    return ret;
+                },
+                
+                onClickFieldLastName(){
+                    //console.log(this.list_of_clients_all)
+                    this.list_of_clients_all.forEach((item) => {
+                    if (item) {
+                        console.log(item.client_last_name)
+                        this.list_of_selected_clients.push(item)
+                    }
+                    });
+ /*
+                    let i;
+
+                    for (i=0; i<this.list_of_clients_all.lenght; i++){
+                        
+                        console.log(this.list_of_clients_all[i].client_last_name);
+                    }
+*/
+                }
+
+
+
     },
     template: 
     `
@@ -103,6 +124,7 @@ export default {
         </div>
         <div class="modal-body">
             <br>
+            <button class="msll_middle_button" type="button" @click="onClickFieldLastName">Отфильтровать</button>
             <table class='msll_table'>
                 <tbody>
 
@@ -123,6 +145,39 @@ export default {
 
             <button class="msll_middle_button" type="button" @click="onClickApplyForm()">Создать</button>
             <button class="msll_middle_button" type="button" @click="onClickCloseForm()">Отменить</button>
+
+            <table class='msll_table'>
+                <tbody>
+                    <tr>
+                        <th width='250px'>ФИО 11111111111111111111111111</th>
+                        <th width='25px'>Почта</th>
+                        <th width='25px'>Телефон</th>
+                        <th width='25px'>Telegram</th>
+                        
+                    </tr>
+
+                    <tr v-for="client_item in list_of_selected_clients">
+                        <td style='position: relative;'><button  class="msll_button_in_table" type="button" @click='onClikUseThisClient(client_item.client_id)'> {{client_item.client_last_name}} {{client_item.client_first_name}} {{client_item.client_patronymic}}</button></td>
+                        
+                        <td>
+                            <div v-for="item in client_item.client_emails">
+                                <p>{{item}}</p>
+                            </div>
+                        </td>
+                        <td>
+                            <div v-for="item in client_item.client_phones">
+                                <p>{{formate_phone(item)}}</p>
+                            </div>
+                        </td>
+                        <td>
+                            <div v-for="item in client_item.client_telegrams">
+                                <p>{{item}}</p>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
 
         </div>
         <div class="modal-footer">
