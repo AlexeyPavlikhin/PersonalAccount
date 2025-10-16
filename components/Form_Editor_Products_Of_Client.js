@@ -100,6 +100,9 @@ export default {
                             //alert("Это новый адрес id: " + item.sale_id + " product: " + item.product_name);
 
                             let is_resp_success = false;                                        
+                            if (item.product_name == ""){item.product_name = "НЕТ ПРОДУКТА"}
+                            if (item.status == ""){item.status = "НЕ ОПРЕДЕЛЁН"}
+
                             is_resp_success= axios.post("./queries/add_client_product.php", {client_id: var_client_id, product_name: item.product_name, date: item.usdate, status: item.status, comment: item.comment})
                             .then(function (response) {
                                 //console.log(response.data);
@@ -182,21 +185,23 @@ export default {
                 },
                 onClickAddProduct(){
                     this.WarningMessage = "ЕСТЬ НЕСОХРАНЁННЫЕ ИЗМЕНЕНИЯ";
-                    this.detail_client_products.push({ sale_id: Date.now(), usdate: "", product_name: "", status: "", comment: "", is_disable: false}); 
+                    let date = new Date();
+                    let v_usdate = date.toISOString().slice(0, 10);
+                    //console.log(v_usdate);
+                    this.detail_client_products.push({ sale_id: Date.now(), usdate: v_usdate, product_name: "", status: "", comment: "", is_disable: false}); 
                 }
                 
     },
     template: 
     `
     <!-- Modal content -->
-    <div class="modal-content-editor-large">
+    <div class="modal-content-80">
         <div class="modal-header">
             <span class="close" @click="onClickCloseFormEditorProductsOfClient()">&times;</span>
             <h2>Изменение списка продуктов клиента</h2>
         </div>
         <div class="modal-body">
             <div class="ERROR">{{WarningMessage}}<br/></div>
-            <button class="msll_middle_button" type="button" @click="onClickAddProduct()">Добавить продукт</button>
             <table class='msll_table'>
                 <tbody>
                     <tr>
@@ -225,7 +230,7 @@ export default {
                     </tr>
                 </tbody>
             </table>
-
+            <button class="msll_middle_button" type="button" @click="onClickAddProduct()">Добавить продукт</button>
             <button class="msll_middle_button" type="button" @click="onClickApplyFormEditorProductsOfClient()">Применить</button>
             <button class="msll_middle_button" type="button" @click="onClickCloseFormEditorProductsOfClient()">Отменить</button>
 

@@ -141,7 +141,7 @@ export default {
     template: 
     `
     <!-- Modal content -->
-    <div class="modal-content-editor">
+    <div class="modal-content-40">
         <div class="modal-header">
             <span class="close" @click="onClickCloseFormEditorPhonesOfClient()">&times;</span>
             <h2>Изменение списка телефонов клиента</h2>

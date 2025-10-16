@@ -77,7 +77,7 @@ export default {
     template: 
     `
     <!-- Modal content -->
-    <div class="modal-content-editor">
+    <div class="modal-content-40">
         <div class="modal-header">
             <span class="close" @click="onClickCloseFormEditorJobOfClient()">&times;</span>
             <h2>Изменение информации о месте работы клиента</h2>

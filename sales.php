@@ -147,7 +147,7 @@
                 </div>            
 
                 <div id="form_Create_New_Client" class="modal">
-                    <Form-Create-New-Client ref="FormCreateNewClientRef" @client_creted="onClientCreted"/>
+                    <Form-Create-New-Client ref="FormCreateNewClientRef" @client_created="onClientCreted"/>
                 </div>     
             </div>  
             
@@ -356,6 +356,7 @@
 */
                 
                 try {
+                    //console.log(JSON.stringify(this.conditions));
                     const response = await axios.get('./queries/get_list_of_cliets_by_conditions.php?conditions='+JSON.stringify(this.conditions));
                     //const response = await axios.get('./queries/get_list_of_cliets_by_conditions.php', conditions, {headers: { 'Content-Type': 'application/x-www-form-urlencoded' } });
                     // Обработка успешного ответа
@@ -391,6 +392,8 @@
 
                 //сделать элемент модальным     
                 document.getElementById("form_Detail_Info_Of_Client").style.display = "block";
+
+                //console.log("onClikClientDetail")
             },
             formate_phone(in_phone){
                 let ret;

@@ -427,7 +427,7 @@ emits: ["update_client_data"],
     template: 
     `
     <!-- Modal content -->
-    <div class="modal-content">
+    <div class="modal-content-50">
         <div class="modal-header">
             <span class="close" @click="onClickCloseClientDetail()">&times;</span>
             <h2>Детальная информация о клиенте</h2>
@@ -559,7 +559,7 @@ emits: ["update_client_data"],
 
         <div id="spinner_panel" class="modal">
             <!-- Modal content -->
-            <div class="modal-content-editor">
+            <div class="modal-content-40">
                 <div class="modal-header">
                 </div>
                 <div class="modal-body">

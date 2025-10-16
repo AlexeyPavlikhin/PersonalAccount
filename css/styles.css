@@ -186,8 +186,14 @@ li {
     border-style: groove;
 }
 
+.msll_middle_button:disabled{
+    background:#8594ae;
+    border-style: groove;
+}
+
 
 table.msll_table  {
+  position: static;
   font-size: 16px;
   border-collapse: collapse;
   border-style: hidden;
@@ -195,7 +201,6 @@ table.msll_table  {
   width: 96%;
   margin-left: 2%;
   margin-right: 2%;
-  
 }
 
 table.msll_table th, table.msll_table td {
@@ -559,53 +564,83 @@ padding: 10px;
 }
 
 /* Modal Content */
-.modal-content {
-  position: relative;
-  background-color: #fefefe;
-  margin: auto;
-  padding: 0;
-  border: 1px solid #888;
-  width: 50%;
-  height: 70%;
-  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
-  -webkit-animation-name: animatetop;
-  -webkit-animation-duration: 0.4s;
-  animation-name: animatetop;
-  animation-duration: 0.4s
-}
-
-/* Modal Content */
-.modal-content-editor {
+.modal-content-40 {
   position: relative;
   background-color: #fefefe;
   margin: auto;
   padding: 0;
   border: 1px solid #888;
   width: 40%;
-  height: 40%;
+  /*height: 40%;*/
   box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
   -webkit-animation-name: animatetop;
   -webkit-animation-duration: 0.4s;
   animation-name: animatetop;
   animation-duration: 0.4s;
   margin-top: 5%;
+  margin-bottom: 200px;
 }
 
-.modal-content-editor-large {
+/* Modal Content */
+.modal-content-50 {
+  position: relative;
+  background-color: #fefefe;
+  margin: auto;
+  padding: 0;
+  border: 1px solid #888;
+  width: 50%;
+  /*height: 70%;*/
+  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+  -webkit-animation-name: animatetop;
+  -webkit-animation-duration: 0.4s;
+  animation-name: animatetop;
+  animation-duration: 0.4s;
+  margin-bottom: 200px;
+}
+
+.modal-content-60 {
+  position: relative;
+  background-color: #fefefe;
+  margin: auto;
+  padding: 0;
+  border: 1px solid #888;
+  width: 60%;
+  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+  -webkit-animation-name: animatetop;
+  -webkit-animation-duration: 0.4s;
+  animation-name: animatetop;
+  animation-duration: 0.4s;
+  margin-top: 5%;
+  margin-bottom: 200px;
+}
+
+
+.modal-content-80 {
   position: relative;
   background-color: #fefefe;
   margin: auto;
   padding: 0;
   border: 1px solid #888;
   width: 80%;
-  height: 40%;
+  /*height: 40%;*/
   box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
   -webkit-animation-name: animatetop;
   -webkit-animation-duration: 0.4s;
   animation-name: animatetop;
   animation-duration: 0.4s;
   margin-top: 5%;
+  margin-bottom: 200px;
 }
+
+
+
+.modal-body {
+  padding: 2px 16px;
+  background-image: url("../pictures/1975.png");
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
 
 /* Add Animation */
 @-webkit-keyframes animatetop {
@@ -640,13 +675,7 @@ padding: 10px;
   height: 48px;
 }
 
-.modal-body {
-  padding: 2px 16px;
-  background-image: url("../pictures/1975.png");
-  background-repeat: no-repeat;
-  background-size: cover;
-  height: 100%;
-}
+
 
 .container_inline {
     display: flex;
@@ -654,6 +683,7 @@ padding: 10px;
     justify-content: flex-start;
     border: 0;
     padding: 0;
+    margin: 0;
 }
 
 .form_login {
@@ -666,4 +696,11 @@ padding: 10px;
     background-image: url("../pictures/1975.png");
     background-repeat: no-repeat;
     background-size: cover;
+}
+.msll_center {
+  text-align: center;
+  vertical-align: middle;
+  height: 100%;
+  padding-top: 7;
+  padding-bottom: 7;
 }

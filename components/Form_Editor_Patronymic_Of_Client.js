@@ -76,7 +76,7 @@ export default {
     template: 
     `
     <!-- Modal content -->
-    <div class="modal-content-editor">
+    <div class="modal-content-40">
         <div class="modal-header">
             <span class="close" @click="onClickCloseFormEditorPatronymicOfClient()">&times;</span>
             <h2>Изменение отчества клиента</h2>
