@@ -24,7 +24,7 @@
 
         <link href="./css/styles.css" rel="stylesheet">
         <link href="./css/jost.css" rel="stylesheet">
-        <script src="./js/vue.global.js"></script>
+        <!--script src="./js/vue.global.js"></script-->
         <script src="./js/axios.min.js"></script>
 
         <title>Личный кабинет: Управление пользователями</title>
