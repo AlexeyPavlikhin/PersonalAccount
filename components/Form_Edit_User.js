@@ -87,7 +87,7 @@ export default {
                                     //console.log(response1.data)     
                                     //console.log(response1.data.new_pass)
 
-                                    if (response1.data.status_send_status != 0){
+                                    if (response1.data.send_status == 0){
                                         this2.ref_to_parent.$refs.ref_FormModalMessage.init(this, 
                                             "Установлен новый пароль для пользователя " + "<br>" +
                                             "login: " + this2.user_login + "<br>" +

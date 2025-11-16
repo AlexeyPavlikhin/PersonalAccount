@@ -123,7 +123,7 @@
   }
 </script>
 
-<script src="./js/vue-spinner.js"></script>
+<script src="./js/vue-spinner.min.js"></script>
 <script>
   var PulseLoader = VueSpinner.PulseLoader;
 </script>

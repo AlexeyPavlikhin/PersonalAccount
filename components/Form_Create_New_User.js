@@ -60,7 +60,7 @@ export default {
                                 //console.log(response1.data)     
                                 //console.log(response1.data.new_pass)
 
-                                if (response1.data.status_send_status != 0){
+                                if (response1.data.send_status == 0){
                                     this2.ref_to_parent.$refs.ref_FormModalMessage.init(this, 
                                         "Установлен новый пароль для пользователя " + "<br>" +
                                         "login: " + this2.user_login + "<br>" +
@@ -245,7 +245,7 @@ export default {
 
                 onChangeUserLogin(in_user_login){
                                      
-                    console.log("start onChangeUserLogin")  
+                    //console.log("start onChangeUserLogin")  
                     
                     if(in_user_login.length > 0){
                         this.is_user_login_entered = true;
@@ -281,7 +281,7 @@ export default {
                 },
 
                 onChangeUserEmail(in_user_email){
-                    console.log("start onChangeUserEmail")  
+                    //console.log("start onChangeUserEmail")  
 
                     if(in_user_email.length > 0){
                         this.is_user_email_entered = true;
