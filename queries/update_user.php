@@ -16,6 +16,7 @@ if(isset($_SESSION['current_user_id'])){
 
         // echo a message to say the UPDATE succeeded
         echo $query->rowCount();
+        //echo $sql;
     } catch(PDOException $e) {
         echo $e->getMessage()." ".$sql;
     }

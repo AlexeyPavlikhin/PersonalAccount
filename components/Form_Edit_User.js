@@ -22,7 +22,9 @@ export default {
                     is_user_email_entered: false,
                     is_user_email_formate_correct: false,
                     is_user_email_ready: false,
-                    is_user_user_group_ready: false
+                    is_user_user_group_ready: false,
+
+                    is_generate_password: false
 
 
         }
@@ -49,6 +51,8 @@ export default {
                     this.is_user_email_ready = false;
                     this.is_user_user_group_ready = false;
 
+                    this.is_generate_password = false
+
                     this.onChangeUserName(this.user_username);
                     this.onChangeUserEmail(this.user_email, this.user_login);
                     this.onChangeUserGroup(this.user_user_group);
@@ -56,27 +60,99 @@ export default {
                 },                
 
                 CloseForm(){
-                    document.getElementById("id_FormEditUserID").style.display = "none";
+                    document.getElementById("id_FormUpdateUserID").style.display = "none";
                     document.body.style.overflow = '';
                 },
 
-                CreateNewUser(){
+                UpdateUser(){
                     let this2 = this;
                     
+                    //запускаем спиннер    
+                    document.getElementById("id_spinner_panel").style.display = "block"; 
+
                     axios.post("./queries/update_user.php", {user_login: this.user_login, user_username: this.user_username, user_email: this.user_email, user_user_group: this.user_user_group})
                     .then(function (response) {
                         //console.log(response.data);
-                        if (response.data == "1"){
+                        //console.log(this2.is_ValueNotEqual());
+                        if ((response.data == "1")||(response.data == "0" && this2.is_ValueNotEqual() == false)){
 
-                            // обноляем родительскую форму
-                            this2.ref_to_parent.get_users();
+                            //теперь делаем генерацию пароля
+                            if (this2.is_generate_password){
+                                
+                                axios.post("./queries/generate_password.php", {user_login: this2.user_login})
+                                .then(function (response1) {      
+                                    //останавливаем спиннер    
+                                    document.getElementById("id_spinner_panel").style.display = "none";
 
-                            //закрываем модальное окно
-                            this2.CloseForm();
+                                    //console.log(response1.data)     
+                                    //console.log(response1.data.new_pass)
+
+                                    if (response1.data.status_send_status != 0){
+                                        this2.ref_to_parent.$refs.ref_FormModalMessage.init(this, 
+                                            "Установлен новый пароль для пользователя " + "<br>" +
+                                            "login: " + this2.user_login + "<br>" +
+                                            "Пароль: " + response1.data.new_pass +"<br>"+
+                                            
+                                            "При попытке отправки письма с новым паролем на адрес "+ this2.user_email +" произошла ошибка и письмо не отправилось, поэтому нужно этот пароль как-то сообщить пользователю.<br>" + 
+                                            "<br>" +
+                                            "Информация об ошибке: <br>"+ response1.data.send_error);
+                                        //показываем сообщение    
+                                        document.getElementById("id_FormModalMessage").style.display = "block"; 
+                                    } else {
+                                        this2.ref_to_parent.$refs.ref_FormModalMessage.init(this, 
+                                            "Установлен новый пароль для пользователя " + "<br>" +
+                                            "Информация о пароле отправлна на адрес электронной почты: "+ this2.user_email + ".");
+                                        //показываем сообщение    
+                                        document.getElementById("id_FormModalMessage").style.display = "block"; 
+                                    }
+
+                                    // обноляем родительскую форму
+                                    this2.ref_to_parent.get_users();
+
+                                    //закрываем модальное окно
+                                    this2.CloseForm();
+
+                                })
+                                .catch(function (error1) {
+                                    //останавливаем спиннер    
+                                    document.getElementById("id_spinner_panel").style.display = "none";
+
+                                    this2.ref_to_parent.$refs.ref_FormModalMessage.init(this, "Что-то пошло не так при генерации пароля. Пароль не создан <br>" + error1);
+                                    //показываем сообщение    
+                                    document.getElementById("id_FormModalMessage").style.display = "block";           
+                                    
+                                    console.log(error1)                 
+
+                                    // обноляем родительскую форму
+                                    this2.ref_to_parent.get_users();
+
+                                    //закрываем модальное окно
+                                    this2.CloseForm();
+
+                                });
+                            } else {
+                                //останавливаем спиннер    
+                                document.getElementById("id_spinner_panel").style.display = "none";
+
+                                // обноляем родительскую форму
+                                this2.ref_to_parent.get_users();
+
+                                //закрываем модальное окно
+                                this2.CloseForm();
+                            }
+
+
+
 
                         } else {
+                            //останавливаем спиннер    
+                            document.getElementById("id_spinner_panel").style.display = "none";
+
+                            this2.ref_to_parent.$refs.ref_FormModalMessage.init(this, "Ошибка: Ожидалось, что будет создана 1 запись, но что-то пошло не так. <br>Ответ: <br>" + response.data);
+                            //показываем сообщение    
+                            document.getElementById("id_FormModalMessage").style.display = "block";                            
+
                             console.error("Ошибка: Ожидалось, что будет создана 1 запись, но что-то пошло не так. Ответ: " + response.data);
-                            alert("Ошибка: Ожидалось, что будет создана 1 запись, но что-то пошло не так. Ответ: " + response.data);
                             
                             // обноляем родительскую форму
                             this2.ref_to_parent.get_users();
@@ -86,8 +162,15 @@ export default {
                         }
                     })
                     .catch(function (error) {
+                        //останавливаем спиннер    
+                        document.getElementById("id_spinner_panel").style.display = "none";
+
+                        this2.ref_to_parent.$refs.ref_FormModalMessage.init(this, "Что-то пошло не так при обновлении пользователя. Пользователь не обновлён.<br>" + error);
+                        //показываем сообщение    
+                        document.getElementById("id_FormModalMessage").style.display = "block";                            
+
+
                         console.error(error);
-                        alert(error);
 
                         // обноляем родительскую форму
                         this2.ref_to_parent.get_users();
@@ -111,22 +194,33 @@ export default {
                 },
 
                 checkForReady(){
-                    /*
+                    /*                    
+                    console.log("=================================");
                     console.log("is_user_username_ready: " + this.is_user_username_ready);
                     console.log("is_user_email_entered: " + this.is_user_email_entered ); 
                     console.log("is_user_email_formate_correct: " + this.is_user_email_formate_correct );
                     console.log("is_user_email_no_dublicate: " + this.is_user_email_no_dublicate );
                     console.log("is_user_user_group_ready: " + this.is_user_user_group_ready);
                     console.log("is_ValueNotEqual: " + this.is_ValueNotEqual());
+                    console.log("is_generate_password: " + this.is_generate_password);
+                                        
+                    if (this.is_generate_password){
+                        console.log("is_generate_password: bool");
+                    }
+
+                    if (this.is_generate_password=="true"){
+                        console.log("is_generate_password: string");
+                    }
                     */
 
-                    if (this.is_user_username_ready && 
+
+                    if ((this.is_user_username_ready && 
                         this.is_user_email_entered && 
                         this.is_user_email_formate_correct &&
                         this.is_user_email_no_dublicate &&
                         this.is_user_user_group_ready &&
                         this.is_ValueNotEqual()
-                       ){
+                       )||(this.is_generate_password)){
                         document.getElementById("buttonUpdateUser").disabled = false;
                         //console.log("disabled = false");
                     }else{
@@ -139,6 +233,7 @@ export default {
                     if(!this.is_user_email_no_dublicate && this.user_email.length > 0){
                         this.WarningMessage = "Такой E-mail уже зарегистрирован в системе. "
                     }
+
                 },
 /*
                 checkForDublicateLogin(in_user_login){
@@ -206,8 +301,8 @@ export default {
                     this.CloseForm();
                 },
 
-                onClickCreateNewUser(){
-                    this.CreateNewUser();
+                onClickUpdateUser(){
+                    this.UpdateUser();
                 },
 
                 onClickCancel(){
@@ -288,6 +383,10 @@ export default {
                     this.checkForReady();                 
                 },
 
+                onChangeSignGeneratePassword(){ 
+                    this.checkForReady();
+                }
+
 
     },
     template: 
@@ -324,10 +423,20 @@ export default {
 
             </div>
             <div class="form-element">
+                <div class="width95">
+                    <div class="container_inline2">
+                        <input class="checkbox-height25" type="checkbox" v-model="is_generate_password" @change="onChangeSignGeneratePassword"/>
+                        <label class="label-align-left">Сменить пароль</label>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="form-element">
                 <div class="error" style="height: 50px"><h2>{{WarningMessage}}</h2></div>
             </div>
             
-            <input class="msll_middle_button" type="button" value = "Обновить" @click="onClickCreateNewUser()" id="buttonUpdateUser" disabled>
+            <input class="msll_middle_button" type="button" value = "Обновить" @click="onClickUpdateUser()" id="buttonUpdateUser" disabled>
             <input class="msll_middle_button" type="button" value = "Отменить" @click="onClickCancel()">
 
         </div>

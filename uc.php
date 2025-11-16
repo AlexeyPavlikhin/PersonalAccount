@@ -41,13 +41,18 @@
                 <li class='right' >
                     {{ user_name }}
                     <ul>
-                        <li><a href='#'>Профиль</a></li>
-                        <li><input class="msll_button_in_table" type="button" value = "Профиль" @click="ChangeUser(user)"></li>
+                        <li @click="onClickMenuProfile()">Профиль</li>
+                        <!--li style='height: 20px'><input class="msll_button_in_table" type="button" value = "Профиль" @click="onClickMenuProfile()"></li-->
                         <li><a href='login.php'>Выход</a></li>
                     </ul>
                 </li>
             </ul>
         </div>
+
+        <div id="id_FormEditProfile" class="modal">
+            <Form-Edit-Profile ref="ref_FormEditProfile"/>
+        </div>         
+        
         </header>
         <main id='main'>
             <br/><br/>
@@ -87,8 +92,16 @@
                     <Form-Create-New-User ref="ref_FormCreateNewUser"/>
                 </div>  
 
-                <div id="id_FormEditUserID" class="modal">
+                <div id="id_FormUpdateUserID" class="modal">
                     <Form-Edit-User ref="ref_FormEditUser"/>
+                </div>  
+
+                <div id="id_spinner_panel" class="spinner">
+                    <pulse-loader :color="p_color" :size="p_size"></pulse-loader>
+                </div>
+
+                <div id="id_FormModalMessage" class="modal">
+                    <Form-Modal-Message ref="ref_FormModalMessage"/>
                 </div>  
                 
             </div>  
@@ -110,18 +123,43 @@
   }
 </script>
 
+<script src="./js/vue-spinner.js"></script>
+<script>
+  var PulseLoader = VueSpinner.PulseLoader;
+</script>
+
 <script type="module">
     import FormCreateNewUser from './components/Form_Create_New_User.js';
     import FormEditUser from './components/Form_Edit_User.js';
+    import FormEditProfile from './components/Form_Edit_Profile.js';
+    import FormModalMessage from './components/Form_Modal_Message.js';
+    
 
     import { createApp } from 'vue';
 
     const app = createApp({
+        components: {
+            FormEditProfile
+        },        
         data() {
             return {
                user_name: 'Имя Пользователя' 
 
             }
+        },
+        methods: {
+            onClickMenuProfile(){
+                //console.log(this.user_name)
+
+                this.$refs.ref_FormEditProfile.init(this, this.user_name);
+
+                //отключить прокрутку страницы
+                document.body.style.overflow = 'hidden';
+
+                //сделать элемент модальным     
+                document.getElementById("id_FormEditProfile").style.display = "block";                
+
+            }            
         },
         async mounted() {
             try {
@@ -149,11 +187,16 @@
     const app2 = createApp({
         components: {
             FormCreateNewUser,
-            FormEditUser
+            FormEditUser,
+            PulseLoader,
+            FormModalMessage
         },
         data() {
             return {
-                users: []
+                users: [],
+                p_color: "#bd162b",
+                p_size: "20px"
+
             }
         },
         async mounted() {
@@ -186,18 +229,45 @@
                 document.body.style.overflow = 'hidden';
 
                 //сделать элемент модальным     
-                document.getElementById("id_FormCreateNewUserID").style.display = "block";                
+                document.getElementById("id_FormCreateNewUserID").style.display = "block";    
 
+                /*
+                var opts = {
+                lines: 10, // The number of lines to draw
+                length: 80, // The length of each line
+                width: 16, // The line thickness
+                radius: 38, // The radius of the inner circle
+                scale: 0.5, // Scales overall size of the spinner
+                corners: 1, // Corner roundness (0..1)
+                speed: 0.8, // Rounds per second
+                rotate: 0, // The rotation offset
+                animation: 'spinner-line-fade-default', // The CSS animation name for the lines
+                direction: 1, // 1: clockwise, -1: counterclockwise
+                color: '#f5f5f5', // CSS color or array of colors
+                fadeColor: 'transparent', // CSS color or array of colors
+                top: '50%', // Top position relative to parent
+                left: '50%', // Left position relative to parent
+                shadow: '0 0 1px transparent', // Box-shadow for the lines
+                zIndex: 2000000000, // The z-index (defaults to 2e9)
+                className: 'spinner', // The CSS class to assign to the spinner
+                position: 'absolute', // Element positioning
+                };                
+                
+                var target = document.getElementById('id_FormCreateNewUserID');
+                var spinner = new Spinner(opts).spin(target);            
+                */
             },
 
             ChangeUser(in_user){
+                //console.log(in_user)
+
                 this.$refs.ref_FormEditUser.init(this, in_user);
 
                 //отключить прокрутку страницы
                 document.body.style.overflow = 'hidden';
 
                 //сделать элемент модальным     
-                document.getElementById("id_FormEditUserID").style.display = "block";                
+                document.getElementById("id_FormUpdateUserID").style.display = "block";                
 
             }
 

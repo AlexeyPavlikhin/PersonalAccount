@@ -1,8 +1,15 @@
 <?php
     define('USER', 'usr_msll');
     define('PASSWORD', 'MSLL The best!');
-    define('HOST', '188.127.239.143');
+    define('HOST', 'localhost');
     define('DATABASE', 'msll_lk_db');
+
+    define('EML_EMAIL_FROM', 'pavlikhin@yandex.ru');
+    define('EML_NAME_FROM', 'Администратор сайта msll-ip.ru');
+    define('EML_PASSWORD', 'xktxjpuuifzpeqoa');
+    define('EML_HOST', 'smtp.yandex.ru');
+    define('EML_PORT', '465');
+
     try {
         $connection = new PDO("mysql:host=".HOST.";dbname=".DATABASE, USER, PASSWORD);
     } catch (PDOException $e) {

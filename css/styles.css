@@ -686,6 +686,40 @@ padding: 10px;
     margin: 0;
 }
 
+div.width95{
+  width: 95%;
+  margin-left: 2%;
+
+  /*border: #000;*/
+  /*border-style: dotted;*/
+}
+
+div.container_inline2 {
+    margin: 20px 0;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: left;
+    /*float: left;*/
+    /*width: 100%;*/
+    
+
+    /*border: #000;*/
+    /*border-style: dotted;*/
+}
+
+input.checkbox-height25{
+  width: 25px;
+  margin-right: 15px;
+}
+label.label-align-left {
+    width: 100%;
+    display: inline-block;
+    text-align: left;
+    font-size: 1.5rem;
+    font-family: 'Jost';
+}
+
 .form_login {
     margin: 150px auto;
     padding: 20px;
@@ -703,4 +737,21 @@ padding: 10px;
   height: 100%;
   padding-top: 7;
   padding-bottom: 7;
+}
+
+.spinner {
+  display: none; /* Hidden by default */
+  border: 1px solid #000;
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  padding-top: 25%; /* Location of the box */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+p.p-text-aligan-justify{
+  text-align: justify;
 }

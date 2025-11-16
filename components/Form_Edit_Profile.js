@@ -5,114 +5,80 @@ export default {
                     user_username: "",
                     user_email: "",
                     user_user_group: "",
+                                        
+                    user_login_save: "",
+                    user_username_save: "",
+                    user_email_save: "",
+                    user_user_group_save: "",
+
                     ref_to_parent: "",
                     WarningMessage: "",
+/*                    
                     is_user_login_entered: false,
                     is_user_login_no_dublicate: false,
                     is_user_login_formate_correct: false,
+*/                    
                     is_user_username_ready: false,
                     is_user_email_entered: false,
                     is_user_email_formate_correct: false,
                     is_user_email_ready: false,
                     is_user_user_group_ready: false
+
+
         }
     },
     methods: {
-                init(in_ref_to_parent){
+                init(in_ref_to_parent, in_user){
+/*                    
                     this.ref_to_parent = in_ref_to_parent;
 
-                    this.user_login = "";
-                    this.user_username = "";
-                    this.user_email = "";
-                    this.user_user_group = "";
+                    this.user_login = in_user.login;
+                    this.user_username = in_user.username;
+                    this.user_email = in_user.email;
+                    this.user_user_group = in_user.user_group;
+
+                    // создаём копии переменных (для последующего отслеживания изменений)
+                    this.user_username_save = this.user_username.repeat(1);
+                    this.user_email_save = this.user_email.repeat(1);
+                    this.user_user_group_save = this.user_user_group.repeat(1);
+
                     this.WarningMessage = "";
-                    this.is_user_login_entered = false;
-                    this.is_user_login_no_dublicate = false;
-                    this.is_user_login_formate_correct = false;
+                  
                     this.is_user_username_ready = false;
                     this.is_user_email_entered = false;
                     this.is_user_email_formate_correct = false;
                     this.is_user_email_ready = false;
                     this.is_user_user_group_ready = false;
 
+                    this.onChangeUserName(this.user_username);
+                    this.onChangeUserEmail(this.user_email, this.user_login);
+                    this.onChangeUserGroup(this.user_user_group);
+*/
                 },                
 
                 CloseForm(){
-                    document.getElementById("id_FormCreateNewUserID").style.display = "none";
+                    document.getElementById("id_FormEditUserID").style.display = "none";
                     document.body.style.overflow = '';
                 },
 
                 CreateNewUser(){
                     let this2 = this;
-                    //запускаем спиннер    
-                    document.getElementById("id_spinner_panel").style.display = "block";                     
-
-                    axios.post("./queries/create_new_user.php", {user_login: this.user_login, user_username: this.user_username, user_email: this.user_email, user_user_group: this.user_user_group})
+                    
+                    axios.post("./queries/update_user.php", {user_login: this.user_login, user_username: this.user_username, user_email: this.user_email, user_user_group: this.user_user_group})
                     .then(function (response) {
-                        console.log(response.data);
+                        //console.log(response.data);
                         if (response.data == "1"){
 
-                            axios.post("./queries/generate_password.php", {user_login: this2.user_login})
-                            .then(function (response1) {      
-                                //останавливаем спиннер    
-                                document.getElementById("id_spinner_panel").style.display = "none";
+                            // обноляем родительскую форму
+                            this2.ref_to_parent.get_users();
 
-                                //console.log(response1.data)     
-                                //console.log(response1.data.new_pass)
+                            //закрываем модальное окно
+                            this2.CloseForm();
 
-                                if (response1.data.status_send_status != 0){
-                                    this2.ref_to_parent.$refs.ref_FormModalMessage.init(this, 
-                                        "Установлен новый пароль для пользователя " + "<br>" +
-                                        "login: " + this2.user_login + "<br>" +
-                                        "Пароль: " + response1.data.new_pass +"<br>"+
-                                        
-                                        "При попытке отправки письма с новым паролем на адрес "+ this2.user_email +" произошла ошибка и письмо не отправилось, поэтому нужно этот пароль как-то сообщить пользователю.<br>" + 
-                                        "<br>" +
-                                        "Информация об ошибке: <br>"+ response1.data.send_error);
-                                    //показываем сообщение    
-                                    document.getElementById("id_FormModalMessage").style.display = "block"; 
-                                } else {
-                                    this2.ref_to_parent.$refs.ref_FormModalMessage.init(this, 
-                                        "Установлен новый пароль для пользователя " + "<br>" +
-                                        "Информация о пароле отправлна на адрес электронной почты: "+ this2.user_email + ".");
-                                    //показываем сообщение    
-                                    document.getElementById("id_FormModalMessage").style.display = "block"; 
-                                }
-
-                                // обноляем родительскую форму
-                                this2.ref_to_parent.get_users();
-
-                                //закрываем модальное окно
-                                this2.CloseForm();
-
-                            })
-                            .catch(function (error1) {
-                                //останавливаем спиннер    
-                                document.getElementById("id_spinner_panel").style.display = "none";
-
-                                this2.ref_to_parent.$refs.ref_FormModalMessage.init(this, "Что-то пошло не так при генерации пароля. Пароль не создан <br>" + error1);
-                                //показываем сообщение    
-                                document.getElementById("id_FormModalMessage").style.display = "block";                            
-                                
-                                console.error(error1);
-
-                                // обноляем родительскую форму
-                                this2.ref_to_parent.get_users();
-
-                                //закрываем модальное окно
-                                this2.CloseForm();
-
-                            });
                         } else {
-                            //останавливаем спиннер    
-                            document.getElementById("id_spinner_panel").style.display = "none";
-
-                            this2.ref_to_parent.$refs.ref_FormModalMessage.init(this, "Ошибка: Ожидалось, что будет создана 1 запись, но что-то пошло не так. <br>Ответ: <br>" + response.data);
-                            //показываем сообщение    
-                            document.getElementById("id_FormModalMessage").style.display = "block";                            
-                            
                             console.error("Ошибка: Ожидалось, что будет создана 1 запись, но что-то пошло не так. Ответ: " + response.data);
-                                                        
+                            alert("Ошибка: Ожидалось, что будет создана 1 запись, но что-то пошло не так. Ответ: " + response.data);
+                            
                             // обноляем родительскую форму
                             this2.ref_to_parent.get_users();
 
@@ -121,14 +87,9 @@ export default {
                         }
                     })
                     .catch(function (error) {
-                        //останавливаем спиннер    
-                        document.getElementById("id_spinner_panel").style.display = "none";
-
-                        this2.ref_to_parent.$refs.ref_FormModalMessage.init(this, "Что-то пошло не так при создании пользователя. Пользователь не создан.<br>" + error);
-                        //показываем сообщение    
-                        document.getElementById("id_FormModalMessage").style.display = "block";                            
                         console.error(error);
-                        
+                        alert(error);
+
                         // обноляем родительскую форму
                         this2.ref_to_parent.get_users();
 
@@ -138,39 +99,49 @@ export default {
                     });
                 },
 
+                is_ValueNotEqual(){
+                    if (
+                        (this.user_username_save == this.user_username) && 
+                        (this.user_email_save == this.user_email) &&
+                        (this.user_user_group_save == this.user_user_group)){
+                        return false;
+                    } else {
+                        return true;
+                    }
+
+                },
+
                 checkForReady(){
-                    
-                    if (this.is_user_login_entered && 
-                        this.is_user_login_formate_correct &&
-                        this.is_user_login_no_dublicate &&
-                        this.is_user_username_ready && 
+                    /*
+                    console.log("is_user_username_ready: " + this.is_user_username_ready);
+                    console.log("is_user_email_entered: " + this.is_user_email_entered ); 
+                    console.log("is_user_email_formate_correct: " + this.is_user_email_formate_correct );
+                    console.log("is_user_email_no_dublicate: " + this.is_user_email_no_dublicate );
+                    console.log("is_user_user_group_ready: " + this.is_user_user_group_ready);
+                    console.log("is_ValueNotEqual: " + this.is_ValueNotEqual());
+                    */
+
+                    if (this.is_user_username_ready && 
                         this.is_user_email_entered && 
                         this.is_user_email_formate_correct &&
                         this.is_user_email_no_dublicate &&
-                        this.is_user_user_group_ready
+                        this.is_user_user_group_ready &&
+                        this.is_ValueNotEqual()
                        ){
-                        document.getElementById("buttonCreateNewUser").disabled = false;
+                        document.getElementById("buttonUpdateUser").disabled = false;
                         //console.log("disabled = false");
                     }else{
-                        document.getElementById("buttonCreateNewUser").disabled = true;
+                        document.getElementById("buttonUpdateUser").disabled = true;
                         //console.log("disabled = true");
                     }
 
                     this.WarningMessage = "";
                     
-                    if(!this.is_user_login_formate_correct && this.user_login.length > 0){
-                        this.WarningMessage = "Login содержит Недопустимые символы. "
-                    }
-
-                    if(!this.is_user_login_no_dublicate && this.user_login.length > 0){
-                        this.WarningMessage = "Такой Login уже зарегистрирован в системе. "
-                    }
-
                     if(!this.is_user_email_no_dublicate && this.user_email.length > 0){
                         this.WarningMessage = "Такой E-mail уже зарегистрирован в системе. "
                     }
                 },
-
+/*
                 checkForDublicateLogin(in_user_login){
                     try {
                         axios.get('./queries/get_count_users_by_login.php', {
@@ -200,16 +171,17 @@ export default {
                         }
                     }
                 },
-
-                checkForDublicatEmail(in_user_email){
+*/
+                checkForDublicatEmail(in_user_email, in_user_login){
                     try {
-                        axios.get('./queries/get_count_users_by_email.php', {
+                        axios.get('./queries/get_count_other_users_by_email.php', {
                             params: {
+                                user_login: in_user_login,
                                 user_email: in_user_email
                             }
                         })
                         .then((response2) => {
-                            //console.log(response.data)
+                            //console.log(response2.data)
                             if (response2.data) {
                                 if (response2.data[0].count == '0'){
                                     this.is_user_email_no_dublicate = true;
@@ -243,6 +215,7 @@ export default {
                     this.CloseForm();
                 },
 
+/*                
                 onChangeUserLogin(in_user_login){
                                      
                     console.log("start onChangeUserLogin")  
@@ -269,7 +242,7 @@ export default {
                     this.checkForReady();
 
                 },
-
+*/
                 onChangeUserName(in_user_username){
                     
                     if(in_user_username.length > 0){
@@ -280,14 +253,14 @@ export default {
                     this.checkForReady();
                 },
 
-                onChangeUserEmail(in_user_email){
-                    console.log("start onChangeUserEmail")  
+                onChangeUserEmail(in_user_email, in_user_login){
+                    //console.log("start onChangeUserEmail")  
 
                     if(in_user_email.length > 0){
                         this.is_user_email_entered = true;
 
                         //проверяем на дубликаты
-                        this.checkForDublicatEmail(in_user_email);
+                        this.checkForDublicatEmail(in_user_email, in_user_login);
 
                     } else {
                         this.is_user_email_entered = false;
@@ -324,7 +297,7 @@ export default {
     <div class="modal-content-40">
         <div class="modal-header">
             <span class="close" @click="onClickCloseForm()">&times;</span>
-            <h2>Создание нового пользователя</h2>
+            <h2>Редактирование данных пользователя</h2>
          
         </div>
         <div class="modal-body">
@@ -332,7 +305,7 @@ export default {
         
             <div class="form-element">
                 <label>Login</label>
-                <input class="msll_filter" type="text" v-model="user_login" placeholder="Введите login пользователя (буквы латинского алфавита и цифры без пробелов)" @input="onChangeUserLogin(user_login)"/>
+                <input class="msll_filter" type="text" v-model="user_login" placeholder="Введите login пользователя (буквы латинского алфавита и цифры без пробелов)" @input="onChangeUserLogin(user_login)" disabled/>
             </div>
             <div class="form-element">
                 <label>Имя пользователя</label>
@@ -340,7 +313,7 @@ export default {
             </div>
             <div class="form-element">
                 <label>E-mail</label>
-                <input class="msll_filter" type="text" v-model="user_email" placeholder="Введите e-mail пользователя (на этот email будет отправлен пароль)" @input="onChangeUserEmail(user_email)"/>
+                <input class="msll_filter" type="text" v-model="user_email" placeholder="Введите e-mail пользователя (на этот email будет отправлен пароль)" @input="onChangeUserEmail(user_email, user_login)"/>
             </div>
             <div class="form-element">
                 <label>Группа</label>
@@ -355,7 +328,7 @@ export default {
                 <div class="error" style="height: 50px"><h2>{{WarningMessage}}</h2></div>
             </div>
             
-            <input class="msll_middle_button" type="button" value = "Создать" @click="onClickCreateNewUser()" id="buttonCreateNewUser" disabled>
+            <input class="msll_middle_button" type="button" value = "Обновить" @click="onClickCreateNewUser()" id="buttonUpdateProfile" disabled>
             <input class="msll_middle_button" type="button" value = "Отменить" @click="onClickCancel()">
 
         </div>
