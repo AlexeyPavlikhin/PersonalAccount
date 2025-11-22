@@ -37,128 +37,144 @@
 
     </head> 
     <body>
+        <div id='app'>
+            <header class='my_header'>
+                <div class='logo'> </div>
+                <div class='my_header_polygon'></div>
+            </header>
 
-        <header class='my_header'>
-        <div class='logo'> </div>
-        <div class='my_header_polygon'></div>
-        </header>
-            
-        <header class='my_header2' id='header_menu'>
-        <div class='menu-bar'>
-            <ul>
-                <li class='right' >
-                    {{ user_name }}
-                    <ul>
-                        <li><a href='#'>Профиль</a></li>
-                        <li><a href='login.php'>Выход</a></li>
-                    </ul>
-                </li>
-            </ul>
-        </div>
-        </header>
-        <main id='main'>
-            <br/><br/>
-            <div class='menu'>
+            <header class='my_header2' id='header_menu'>
+                <div id="id_MenuProfileAndExit">
+                    <Menu-Profile-And-Exit ref="ref_MenuProfileAndExit"/>
+                </div> 
+            </header>        
+
+    <!--        
+            <header class='my_header2' id='header_menu'>
+            <div class='menu-bar'>
                 <ul>
-                    <li><a class='menu_button' href='lk.php'><div class='menu_button_text'>Управление заказами</div></a></li>
-                    <li><a class='menu_button' href='uc.php'><div class='menu_button_text'>Управление пользователями</div></a></li>
-                    <li><a class='menu_button_atcive' href='sales.php'><div class='menu_button_text_active'>Управление продажами</div></a></li>
+                    <li class='right' >
+                        {{ user_name }}
+                        <ul>
+                            <li><a href='#'>Профиль</a></li>
+                            <li><a href='login.php'>Выход</a></li>
+                        </ul>
+                    </li>
                 </ul>
             </div>
-            <div class='sidenav'>
-                <form method='GET' action='' id='filter'>
-                    <input class="msll_button" type="button" value = "Новый клиент" @click="onClikCreateNewClient">
-                    <label>Фильтр</label>
+            </header>
+    -->        
+            <main id='main'>
+                <br/><br/>
+                <div class='menu'>
+                    <ul>
+                        <li><a class='menu_button' href='lk.php'><div class='menu_button_text'>Управление заказами</div></a></li>
+                        <li><a class='menu_button' href='uc.php'><div class='menu_button_text'>Управление пользователями</div></a></li>
+                        <li><a class='menu_button_atcive' href='sales.php'><div class='menu_button_text_active'>Управление продажами</div></a></li>
+                    </ul>
+                </div>
+                <div class='sidenav'>
+                    <!--form method='GET' action='' id='filter'-->
+                        <div class="form-element">
+                            <input class="msll_button" type="button" value = "Новый клиент" @click="onClikCreateNewClient">
+                            <label>Фильтр</label>
 
-                    <select class='msll_filter' name='fieldFirstFilter' id='fieldFirstFilter' required @change='onSelectFirstFilter();'>
-                        <option disabled value=''>Выберите поле</option>
-                        <option v-for="option in options1" :value="option.value">{{ option.text }}</option>
-                    </select>
+                            <select class='msll_filter' name='fieldFirstFilter' id='fieldFirstFilter' required @change='onSelectFirstFilter();'>
+                                <option disabled value=''>Выберите поле</option>
+                                <option v-for="option in options1" :value="option.value">{{ option.text }}</option>
+                            </select>
 
-                    <select class='msll_filter' name='search_operation' id='search_operation' required>
-                        <option v-for="option in options2" :value="option.value">{{ option.text }}</option>
-                    </select>
+                            <select class='msll_filter' name='search_operation' id='search_operation' required>
+                                <option v-for="option in options2" :value="option.value">{{ option.text }}</option>
+                            </select>
+                            
+                            <input class='msll_filter' type="search" list="options" id=item_for_search>
+                            <datalist class='msll_filter' id="options">
+                                <option v-for="item in items_for_search" :value="item">
+                            </datalist>
+
+                            <a class='msll_button' href='#'  id='BtnApply' @click='onClikBtnApply(true);'>Применить</a>
+
+                            <label>Применённые фильтры</label>
+                            <div>
+                                <table class='msll_table'>
+                                    <tr v-for="condition in conditions">
+                                        <td>{{condition.object}}</td>
+                                        <td>{{condition.operation}}</td>
+                                        <td>{{condition.value}}</td>
+                                        <!--<td><a href='#'  v-on:click='onClikDeleteItemOfConditions(condition.item_id)'>{{condition.item_id}}</a></td>-->
+                                        <td><input type="button" value = "Х" @click='onClikDeleteItemOfConditions(condition.item_id)'></td>
+                                    <tr>
+                                </table>
+                            </div>
+                        </div>
+
+                    <!--/form-->
                     
-                    <input class='msll_filter' type="search" list="options" id=item_for_search>
-                    <datalist class='msll_filter' id="options">
-                        <option v-for="item in items_for_search" :value="item">
-                    </datalist>
+                </div>
+                <div class='msll_body'>
 
-                    <a class='msll_button' href='#'  id='BtnApply' @click='onClikBtnApply(true);'>Применить</a>
-
-                    <label>Применённые фильтры</label>
-                    <div>
+                    <form method='GET' action=''>
                         <table class='msll_table'>
-                            <tr v-for="condition in conditions">
-                                <td>{{condition.object}}</td>
-                                <td>{{condition.operation}}</td>
-                                <td>{{condition.value}}</td>
-                                <!--<td><a href='#'  v-on:click='onClikDeleteItemOfConditions(condition.item_id)'>{{condition.item_id}}</a></td>-->
-                                <td><input type="button" value = "Х" @click='onClikDeleteItemOfConditions(condition.item_id)'></td>
                             <tr>
+                                <th width='3%'>№</th>
+                                <th width='22%'>ФИО</th>
+                                <th width='15%'>Почта</th>
+                                <th width='10%'>Телефон</th>
+                                <th width='15%'>Telegram</th>
+                                <th width='48%'>Комментарий</th>
+                                
+                            </tr>
+
+                            <tr v-for="client_item in list_of_clients">
+                                <td>{{client_item.num}}</td>
+                                <!--<td><a href='#'  @click='onClikClientDetail(client_item.client_id)'>{{client_item.client_last_name}} {{client_item.client_first_name}} {{client_item.client_patronymic}}</a></td>-->
+                                <td style='position: relative;'><button  class="msll_button_in_table" type="button" @click='onClikClientDetail(client_item.client_id)'> {{client_item.client_last_name}} {{client_item.client_first_name}} {{client_item.client_patronymic}}</button></td>
+                                
+                                <td>
+                                    <div v-for="item in client_item.client_emails">
+                                        <a :href=createMTLink(item) target="_blank">{{item}}</a>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div v-for="item in client_item.client_phones">
+                                        <a :href=createTelLink(item) target="_blank">{{formate_phone(item)}}</a>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div v-for="item in client_item.client_telegrams">
+                                        <a :href=createTGLink(item) target="_blank">{{item}}</a>
+                                    </div>
+                                </td>
+                                <td>{{client_item.client_comment}}</td>
+                                <!--<td>{{client_item.client_id}}</td>-->
+                            </tr>
                         </table>
+                        <br/><br/>
+                    </form>
+                    <div id="form_Detail_Info_Of_Client" class="modal">
+                        <Detail-Info-Of-Client ref="childRef" @update_client_data="onChangeClientData"/>
+                    </div>            
+
+                    <div id="form_Create_New_Client" class="modal">
+                        <Form-Create-New-Client ref="FormCreateNewClientRef" @client_created="onClientCreted"/>
+                    </div>     
+                    <div id="id_spinner_panel" class="spinner">
+                        <pulse-loader :color="p_color" :size="p_size"></pulse-loader>
                     </div>
+                    <div id="id_FormModalMessage" class="modal">
+                        <Form-Modal-Message ref="ref_FormModalMessage"/>
+                    </div>  
 
-                </form>
-                
-            </div>
-            <div class='msll_body'>
-
-                <form method='GET' action=''>
-                    <table class='msll_table'>
-                        <tr>
-                            <th width='3%'>№</th>
-                            <th width='22%'>ФИО</th>
-                            <th width='15%'>Почта</th>
-                            <th width='10%'>Телефон</th>
-                            <th width='15%'>Telegram</th>
-                            <th width='48%'>Комментарий</th>
-                            
-                        </tr>
-
-                        <tr v-for="client_item in list_of_clients">
-                            <td>{{client_item.num}}</td>
-                            <!--<td><a href='#'  @click='onClikClientDetail(client_item.client_id)'>{{client_item.client_last_name}} {{client_item.client_first_name}} {{client_item.client_patronymic}}</a></td>-->
-                            <td style='position: relative;'><button  class="msll_button_in_table" type="button" @click='onClikClientDetail(client_item.client_id)'> {{client_item.client_last_name}} {{client_item.client_first_name}} {{client_item.client_patronymic}}</button></td>
-                            
-                            <td>
-                                <div v-for="item in client_item.client_emails">
-                                    <a :href=createMTLink(item) target="_blank">{{item}}</a>
-                                </div>
-                            </td>
-                            <td>
-                                <div v-for="item in client_item.client_phones">
-                                    <a :href=createTelLink(item) target="_blank">{{formate_phone(item)}}</a>
-                                </div>
-                            </td>
-                            <td>
-                                <div v-for="item in client_item.client_telegrams">
-                                    <a :href=createTGLink(item) target="_blank">{{item}}</a>
-                                </div>
-                            </td>
-                            <td>{{client_item.client_comment}}</td>
-                            <!--<td>{{client_item.client_id}}</td>-->
-                        </tr>
-                    </table>
-                    <br/><br/>
-                </form>
-                <div id="form_Detail_Info_Of_Client" class="modal">
-                    <Detail-Info-Of-Client ref="childRef" @update_client_data="onChangeClientData"/>
-                </div>            
-
-                <div id="form_Create_New_Client" class="modal">
-                    <Form-Create-New-Client ref="FormCreateNewClientRef" @client_created="onClientCreted"/>
-                </div>     
-            </div>  
+                </div>  
+            </main>
             
-        
-        </main>
-        
-        <footer class='msll_footer'>
-            <div class='msll_footer_polygon_dark_gray'></div>
-            <div class='msll_footer_polygon_light_gray'></div>
-            <div class='msll_footer_polygon_red'></div>
-        </footer>
+            <footer class='msll_footer'>
+                <div class='msll_footer_polygon_dark_gray'></div>
+                <div class='msll_footer_polygon_light_gray'></div>
+                <div class='msll_footer_polygon_red'></div>
+            </footer>
+        </div>
     </body>
 </html>
 
@@ -169,52 +185,26 @@
   }
 </script>
 
+<script src="./js/vue-spinner.min.js"></script>
+<script>
+  var PulseLoader = VueSpinner.PulseLoader;
+</script>
+
 <script type="module">
     import DetailInfoOfClient from './components/detail_info_of_client.js';
     import FormCreateNewClient from './components/Form_Create_New_Client.js';
+    import FormModalMessage from './components/Form_Modal_Message.js';
+    import MenuProfileAndExit from './components/Menu_Profile_And_Exit.js';
    
     import { createApp } from 'vue';
 
-    const app = createApp({
-
-
-    //const { createApp } = Vue
-    //createApp({
-        data() {
-            return {
-               user_name: 'Имя Пользователя' 
-
-            }
-        },
-        async mounted() {
-            try {
-                    const response = await axios.get('./queries/get_current_user_name.php');
-                    if (response.data) {
-                        //обрабатываем ответ
-                        this.user_name=response.data;
-                        //console.log(response.data);
-                    } else {
-                        // пустой ответ
-                        console.log('Ответ от сервера пустой (data undefined/null)');
-                    }
-                } catch (error) {
-                    // Обработка ошибки
-                    console.error('Ошибка при запросе:', error);
-                    if (error.response) {
-                        console.error('Статус ошибки:', error.response.status);
-                        console.error('Данные ошибки:', error.response.data);
-                    }
-                }               
-        }    
-    });     
- //   }).mount('#header_menu')
-    app.mount('#header_menu');
-
-    //createApp({
     const app2 = createApp({
         components: {
             DetailInfoOfClient,
-            FormCreateNewClient
+            FormCreateNewClient,
+            PulseLoader,
+            FormModalMessage,
+            MenuProfileAndExit            
         },
         data() {
             return {
@@ -235,39 +225,29 @@
                 
                 items_for_search: [],
                 conditions: [],
-                list_of_clients: []
+                list_of_clients: [],
+                p_color: "#bd162b",
+                p_size: "20px"
+
 
             }
         },
         async mounted() {
             this.onSelectFirstFilter();
             try {
+                    
+                    //запускаем спиннер    
+                    document.getElementById("id_spinner_panel").style.display = "block"; 
+
                     //const response = await axios.get('./queries/get_default_list_of_clients_limit.php');
                     const response = await axios.get('./queries/get_default_list_of_clients.php');
+
+                    //останавливаем спиннер    
+                    document.getElementById("id_spinner_panel").style.display = "none";
+
                     if (response.data) {
                         //обрабатываем ответ
                         this.list_of_clients=response.data;
-/*
-                        try {
-                                const response = await axios.get('./queries/get_default_list_of_clients.php');
-                                if (response.data) {
-                                    //обрабатываем ответ
-                                    this.list_of_clients=response.data;
-                                    
-                                    //console.log(response.data);
-                                } else {
-                                    // пустой ответ
-                                    console.log('Ответ от сервера пустой (data undefined/null)');
-                                }
-                            } catch (error) {
-                                // Обработка ошибки
-                                console.error('Ошибка при запросе:', error);
-                                if (error.response) {
-                                    console.error('Статус ошибки:', error.response.status);
-                                    console.error('Данные ошибки:', error.response.data);
-                                }
-                            } 
-*/
                         //console.log(response.data);
                     } else {
                         // пустой ответ
@@ -292,41 +272,30 @@
 
                 if (selectElement.value=="ФИО"){
                     url="./queries/get_all_fio.php";
-
                 } else if (selectElement.value=="Продукт"){
                     url="./queries/get_all_products.php";
-
-                /*} else if (selectElement.value=="Подпродукт"){
-                    url="./queries/get_all_subproducts.php";*/
-
                 }
+                try {
+                    const response = await axios.get(url);
 
-                //alert(message);
-                
-                    try {
-                        //const response = await axios.get('./queries/get_all_items_of_selected_object.php');
-                        const response = await axios.get(url);
+                    // Обработка успешного ответа
+                    if (response.data) {
+                    // Далее работаем с данными
+                    this.items_for_search=response.data;
 
-                        // Обработка успешного ответа
-                        if (response.data) {
-                        // Далее работаем с данными
-                        this.items_for_search=response.data;
-
-                        } else {
-                            console.log('Ответ от сервера пустой (data undefined/null)');
-                        }
-
-                    } catch (error) {
-                        // Обработка ошибки
-                        console.error('Ошибка при запросе:', error);
-                        if (error.response) {
-                            console.error('Статус ошибки:', error.response.status);
-                            console.error('Данные ошибки:', error.response.data);
-                        }
+                    } else {
+                        console.log('Ответ от сервера пустой (data undefined/null)');
                     }
-                //selectElement.value = "";
-                document.getElementById('item_for_search').value="";
 
+                } catch (error) {
+                    // Обработка ошибки
+                    console.error('Ошибка при запросе:', error);
+                    if (error.response) {
+                        console.error('Статус ошибки:', error.response.status);
+                        console.error('Данные ошибки:', error.response.data);
+                    }
+                }
+                document.getElementById('item_for_search').value="";
                 
             },
             async onClikBtnApply(is_need_add_condition){
@@ -337,24 +306,6 @@
                     }
                 }
 
-/*
-                try {
-                    const response = await axios.get('./queries/get_list_of_cliets_by_conditions2.php?conditions='+JSON.stringify(this.conditions));
-                    if (response.data) {
-                        console.log(response.data);
-                    } else {
-                        console.log('Ответ от сервера пустой (data undefined/null)');
-                    }
-                } catch (error) {
-                    // Обработка ошибки
-                    console.error('Ошибка при запросе:', error);
-                    if (error.response) {
-                        console.error('Статус ошибки:', error.response.status);
-                        console.error('Данные ошибки:', error.response.data);
-                    }
-                }
-*/
-                
                 try {
                     //console.log(JSON.stringify(this.conditions));
                     const response = await axios.get('./queries/get_list_of_cliets_by_conditions.php?conditions='+JSON.stringify(this.conditions));
@@ -457,8 +408,8 @@
             }
         }
     });
-    app2.mount('#main');
-//    }).mount('#main')
+    app2.mount('#app');
+
 </script>
 
  

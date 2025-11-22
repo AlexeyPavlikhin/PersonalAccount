@@ -43,7 +43,7 @@ export default {
                     this.user_email_save = this.user_email.repeat(1);
                     this.user_user_group_save = this.user_user_group.repeat(1);
 
-                    this.WarningMessage = "";
+                    this.WarningMessage = [];
                   
                     this.is_user_username_ready = false;
                     this.is_user_email_entered = false;
@@ -60,7 +60,7 @@ export default {
                 },                
 
                 CloseForm(){
-                    document.getElementById("id_FormUpdateUserID").style.display = "none";
+                    document.getElementById("id_FormUpdateUser").style.display = "none";
                     document.body.style.overflow = '';
                 },
 
@@ -194,7 +194,7 @@ export default {
                 },
 
                 checkForReady(){
-                    /*                    
+                    /*                                        
                     console.log("=================================");
                     console.log("is_user_username_ready: " + this.is_user_username_ready);
                     console.log("is_user_email_entered: " + this.is_user_email_entered ); 
@@ -211,8 +211,8 @@ export default {
                     if (this.is_generate_password=="true"){
                         console.log("is_generate_password: string");
                     }
+                    
                     */
-
 
                     if ((this.is_user_username_ready && 
                         this.is_user_email_entered && 
@@ -228,10 +228,10 @@ export default {
                         //console.log("disabled = true");
                     }
 
-                    this.WarningMessage = "";
+                    this.WarningMessage = [];
                     
                     if(!this.is_user_email_no_dublicate && this.user_email.length > 0){
-                        this.WarningMessage = "Такой E-mail уже зарегистрирован в системе. "
+                        this.WarningMessage.push("Такой E-mail уже зарегистрирован в системе.");
                     }
 
                 },
@@ -429,16 +429,14 @@ export default {
                         <label class="label-align-left">Сменить пароль</label>
                     </div>
                 </div>
-
             </div>
 
-            <div class="form-element">
-                <div class="error" style="height: 50px"><h2>{{WarningMessage}}</h2></div>
-            </div>
-            
             <input class="msll_middle_button" type="button" value = "Обновить" @click="onClickUpdateUser()" id="buttonUpdateUser" disabled>
             <input class="msll_middle_button" type="button" value = "Отменить" @click="onClickCancel()">
-
+            
+            <div class="container_left" v-for="item in WarningMessage">
+                <div class="error">{{item}}</div>
+            </div>
         </div>
         <div class="modal-footer">
         </div>

@@ -68,7 +68,7 @@ emits: ["update_client_data"],
             } finally {
                 this.v_current_step_count ++;
                 if (this.v_current_step_count == this.v_step_cont_all){
-                    document.getElementById("spinner_panel").style.display = "none";
+                    document.getElementById("id_spinner_panel").style.display = "none";
                 }
             }
     
@@ -94,7 +94,7 @@ emits: ["update_client_data"],
             } finally {
                 this.v_current_step_count ++;
                 if (this.v_current_step_count == this.v_step_cont_all){
-                    document.getElementById("spinner_panel").style.display = "none";
+                    document.getElementById("id_spinner_panel").style.display = "none";
                 }
             }
         },
@@ -119,7 +119,7 @@ emits: ["update_client_data"],
             } finally {
                 this.v_current_step_count ++;
                 if (this.v_current_step_count == this.v_step_cont_all){
-                    document.getElementById("spinner_panel").style.display = "none";
+                    document.getElementById("id_spinner_panel").style.display = "none";
                 }
             }                
         },
@@ -145,7 +145,7 @@ emits: ["update_client_data"],
             } finally {
                 this.v_current_step_count ++;
                 if (this.v_current_step_count == this.v_step_cont_all){
-                    document.getElementById("spinner_panel").style.display = "none";
+                    document.getElementById("id_spinner_panel").style.display = "none";
                 }
             }                
         },
@@ -170,7 +170,7 @@ emits: ["update_client_data"],
             } finally {
                 this.v_current_step_count ++;
                 if (this.v_current_step_count == this.v_step_cont_all){
-                    document.getElementById("spinner_panel").style.display = "none";
+                    document.getElementById("id_spinner_panel").style.display = "none";
                 }
             }
         },
@@ -195,7 +195,7 @@ emits: ["update_client_data"],
             } finally {
                 this.v_current_step_count ++;
                 if (this.v_current_step_count == this.v_step_cont_all){
-                    document.getElementById("spinner_panel").style.display = "none";
+                    document.getElementById("id_spinner_panel").style.display = "none";
                 }
             }
         },
@@ -220,7 +220,7 @@ emits: ["update_client_data"],
             } finally {
                 this.v_current_step_count ++;
                 if (this.v_current_step_count == this.v_step_cont_all){
-                    document.getElementById("spinner_panel").style.display = "none";
+                    document.getElementById("id_spinner_panel").style.display = "none";
                 }
             }
         },
@@ -245,7 +245,7 @@ emits: ["update_client_data"],
             } finally {
                 this.v_current_step_count ++;
                 if (this.v_current_step_count == this.v_step_cont_all){
-                    document.getElementById("spinner_panel").style.display = "none";
+                    document.getElementById("id_spinner_panel").style.display = "none";
                 }
             }                  
         },
@@ -270,7 +270,7 @@ emits: ["update_client_data"],
             } finally {
                 this.v_current_step_count ++;
                 if (this.v_current_step_count == this.v_step_cont_all){
-                    document.getElementById("spinner_panel").style.display = "none";
+                    document.getElementById("id_spinner_panel").style.display = "none";
                 }
             }  
         },
@@ -278,7 +278,7 @@ emits: ["update_client_data"],
 
 
             //сделать спиннер модальным     
-            document.getElementById("spinner_panel").style.display = "block";
+            document.getElementById("id_spinner_panel").style.display = "block";
             
             // инициируем свойство currentClientID
             this.currentClientID=clientID;
@@ -555,20 +555,6 @@ emits: ["update_client_data"],
 
         <div id="Form_Editor_Comment_Of_Client" class="modal">
             <Form-Editor-Comment-Of-Client ref="FormEditorCommentOfClientRef" @update_client_data="onChangeClientData"/>
-        </div> 
-
-        <div id="spinner_panel" class="modal">
-            <!-- Modal content -->
-            <div class="modal-content-40">
-                <div class="modal-header">
-                </div>
-                <div class="modal-body">
-                    <p>Загрузка...</p>
-                    <img src="./pictures/Hourglass.gif"
-                </div>
-                <div class="modal-footer">
-                </div>
-            </div>
         </div> 
 
     </div>      

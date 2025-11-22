@@ -38,7 +38,7 @@ export default {
                 },                
 
                 CloseForm(){
-                    document.getElementById("id_FormCreateNewUserID").style.display = "none";
+                    document.getElementById("id_FormCreateNewUser").style.display = "none";
                     document.body.style.overflow = '';
                 },
 

@@ -66,8 +66,7 @@ body{
   
 }
 .menu_button_text_active:hover {
-  /*color: #fff;*/
-;
+  color: #fff;
 }
 
 
@@ -266,12 +265,18 @@ table.msll_table th:first-child, table.msll_table td:first-child {
     position: fixed;
     top: 0px;
     z-index: 1;
-    box-shadow: rgba(0, 0, 0, 0.08) 0px 1.2px 18px, rgba(0, 0, 0, 0.12) 0px 6.4px 28px;
+    /*box-shadow: rgba(0, 0, 0, 0.08) 0px 1.2px 18px, rgba(0, 0, 0, 0.12) 0px 6.4px 28px;*/
     height: 50px;
     min-height: 50px;
     padding: 0px 0px;
     text-align: right;
-    right: 1%;
+    right: 2%;
+}
+
+.my_unheader2{
+	padding: 0px;
+	margin: 0px;
+	border: none;
 }
 
 .my_header_polygon{
@@ -288,60 +293,37 @@ table.msll_table th:first-child, table.msll_table td:first-child {
     color: #fff;
 }
 
-
-
-.menu-bar {
-  border-radius: 25px;
-  height: -webkit-fit-content;
-  height: -moz-fit-content;
-  height: fit-content;
-  display: inline-flex;
-  /*background-color: rgba(0, 0, 0, 0.4);*/
-  -webkit-backdrop-filter: blur(10px);
-  backdrop-filter: blur(10px);
-  align-items: center;
-  padding: 0 10px;
-  /*margin: 50px 0 0 0;*/
-}
-
 /*начало*/
 .menu-bar {
 	width: 100%;
-	display: table;
+	display: table-cell;
 }
 .menu-bar ul {
-	display: table-row;
+	display: table-cell;
+
 }
 .menu-bar li {
 	display: table-cell;
 	position: relative;
 	/*background: #bcbdbe;*/
   z-index: 10;
+  color: #000;
 }
+  
 .menu-bar li a {
 	display: block;
 	padding: 15px 15px;
-	color: #fff;
-	text-align: center;
-  z-index: 1;
+	color: inherit;
   
+	text-align: center;
+  z-index: 1;   
 }
-.menu-bar-caret:after {
-	display: inline-block;
-	width: 0;
-	height: 0;
-	margin-left: .255em;
-	vertical-align: .255em;
-	content: "";
-	border-top: 3px solid;
-	border-right: 3px solid transparent;
-	border-bottom: 0;
-	border-left: 3px solid transparent;
+
+.menu-bar ul li:hover, .menu-bar a:hover {
+	/*background: #8594ae; /*#666*/
+  color: #fff; /*тут надо цвет текста поменять*/ 
 }
-.menu-bar ul li:hover, .menu a:hover {
-	background: #8594ae; /*#666*/
-  color: #fff; /*тут надо цвет текста поменять*/
-}
+
 .menu-bar li:hover ul  {
 	display: block;
 	position: absolute;
@@ -349,17 +331,18 @@ table.msll_table th:first-child, table.msll_table td:first-child {
 	left: 0px;
 	/*background: #666;*/
 	margin: 0;
-	padding: 10px 20px;
-	width: 150px;
+	padding: 10px 0;
+	width: 160px;
 	/*z-index: 9999;*/
 }
 .menu-bar ul ul  {
 	display: none;
+  text-align: left;
 }
 .menu-bar ul ul li  {
 	display: block;
 	/*background: #666;*/
-	padding: 5px 0;
+	padding: 5px 20px;
 }
 .menu-bar ul ul li a  {
 	display: block;
@@ -367,6 +350,17 @@ table.msll_table th:first-child, table.msll_table td:first-child {
 	/*background: #666;*/
 	text-align: left;
 }
+
+.menu-bar ul li ul li {
+  color: black;
+  background: rgba(189, 22, 43, 0);
+  border-color:  rgba(189, 22, 43, 1);
+  border-style: groove;
+
+  margin-bottom: 10px;
+}
+
+
 /*конец*/
 
 
@@ -379,8 +373,11 @@ table.msll_table th:first-child, table.msll_table td:first-child {
   margin: 0 8px;
   position: relative;
   cursor: pointer;
-  white-space: nowrap;
-}
+  white-space: nowrap;  
+
+ 
+
+  }
 .menu-bar li::before {
   content: " ";
   position: absolute;
@@ -390,16 +387,21 @@ table.msll_table th:first-child, table.msll_table td:first-child {
   width: 100%;
   z-index: -1;
   transition: 0.2s;
-  border-radius: 25px;
-}
-.menu-bar li:hover {
-  color: black;
-}
+  border-radius: 0px;
+  }
+
 .menu-bar li:hover::before {
-  background: linear-gradient(to bottom, #e8edec, #d2d1d3);
+  /*background: linear-gradient(to bottom, #e8edec, #d2d1d3);*/
   box-shadow: 0px 3px 20px 0px black;
-  transform: scale(1.2);
-}
+  transform: scale(1);
+  }
+
+  .menu-bar ul li ul li:hover {
+    background: rgba(189, 22, 43, 1);;
+  }
+
+
+/*-------------------------*/
 
 div.logo{
   height: 100%;
@@ -507,13 +509,15 @@ form.change_users div.form-element {
 }
 
 p.error {
-    background: orangered;
+    background: red;
+    color: #000;
 } 
 
 .error {
-    color: orangered;
+    color: red;
     font-weight: bold;
-    animation: pulse 1.5s infinite;
+    /*animation: pulse 0.6s infinite;*/
+    animation: pulse 1.5s 3;
 } 
 @keyframes pulse {
 from { opacity: 1; /* Непрозрачный текст */ }
@@ -533,9 +537,10 @@ to { opacity: 0; /* Прозрачный текст */ }
   background-repeat: no-repeat;
   background-size: cover;
   overflow-x: hidden; /* Отключить горизонтальную прокрутку */
-  padding-top: 20px;
   box-shadow: rgba(0, 0, 0, 0.08) 0px 1.2px 18px, rgba(0, 0, 0, 0.12) 0px 6.4px 28px;
   margin-top: 48px;
+  padding: 10px;
+  padding-top: 20px;
 }
 /* Тело сайта, при наличии бокового меню */
 .msll_body{
@@ -543,9 +548,8 @@ to { opacity: 0; /* Прозрачный текст */ }
 }
 
 .msll_filter{
-width: 95%;
-padding: 10px;
-
+  width: 100%;
+  padding: 10px;
 }
 
 /* The Modal (background) */
@@ -563,6 +567,22 @@ padding: 10px;
   background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
 }
 
+.modal2 {
+  all: unset;
+  /*display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  padding-top: 100px; /* Location of the box */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+
 /* Modal Content */
 .modal-content-40 {
   position: relative;
@@ -577,8 +597,6 @@ padding: 10px;
   -webkit-animation-duration: 0.4s;
   animation-name: animatetop;
   animation-duration: 0.4s;
-  margin-top: 5%;
-  margin-bottom: 200px;
 }
 
 /* Modal Content */
@@ -686,6 +704,7 @@ padding: 10px;
     margin: 0;
 }
 
+
 div.width95{
   width: 95%;
   margin-left: 2%;
@@ -696,16 +715,27 @@ div.width95{
 
 div.container_inline2 {
     margin: 20px 0;
-
     display: flex;
     flex-direction: row;
     justify-content: left;
     /*float: left;*/
     /*width: 100%;*/
-    
-
     /*border: #000;*/
     /*border-style: dotted;*/
+}
+
+div.container_inline_center{
+  margin: 20px 0;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+} 
+
+div.container_left{
+  margin: 0;
+  justify-content: left;
+  text-align: left;
+
 }
 
 input.checkbox-height25{

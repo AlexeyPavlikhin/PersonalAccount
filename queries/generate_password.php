@@ -35,7 +35,7 @@ if(isset($_SESSION['current_user_id'])){
 
     } catch(PDOException $e) {
         $objResult->write_status = 0;
-        $objResult->write_error = getMessage()." ".$sql;        
+        $objResult->write_error = $e->getMessage()." ".$sql;        
         //echo $e->getMessage()." ".$sql;
     }    
 

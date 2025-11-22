@@ -25,7 +25,7 @@
     echo "      <li class='right'>";
     echo "          ".$_SESSION['current_user_name'];
     echo "          <ul>";
-    echo "              <li><a href='#'>Профиль</a></li>";
+    echo "              <!--li><a href='#'>Профиль</a></li-->";
     echo "              <li><a href='login.php'>Выход</a></li>";
     echo "          </ul>";
     echo "        </li>";
