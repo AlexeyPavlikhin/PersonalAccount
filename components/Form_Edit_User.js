@@ -10,29 +10,18 @@ export default {
                     user_username_save: "",
                     user_email_save: "",
                     user_user_group_save: "",
-
-                    ref_to_parent: "",
                     WarningMessage: "",
-/*                    
-                    is_user_login_entered: false,
-                    is_user_login_no_dublicate: false,
-                    is_user_login_formate_correct: false,
-*/                    
                     is_user_username_ready: false,
                     is_user_email_entered: false,
                     is_user_email_formate_correct: false,
                     is_user_email_ready: false,
                     is_user_user_group_ready: false,
-
                     is_generate_password: false
-
-
         }
     },
     methods: {
-                init(in_ref_to_parent, in_user){
-                    this.ref_to_parent = in_ref_to_parent;
-
+                init(in_user){
+                    
                     this.user_login = in_user.login;
                     this.user_username = in_user.username;
                     this.user_email = in_user.email;
@@ -88,7 +77,7 @@ export default {
                                     //console.log(response1.data.new_pass)
 
                                     if (response1.data.send_status == 0){
-                                        this2.ref_to_parent.$refs.ref_FormModalMessage.init(this, 
+                                        this2.$root.$refs.ref_FormModalMessage.init(this, 
                                             "Установлен новый пароль для пользователя " + "<br>" +
                                             "login: " + this2.user_login + "<br>" +
                                             "Пароль: " + response1.data.new_pass +"<br>"+
@@ -99,7 +88,7 @@ export default {
                                         //показываем сообщение    
                                         document.getElementById("id_FormModalMessage").style.display = "block"; 
                                     } else {
-                                        this2.ref_to_parent.$refs.ref_FormModalMessage.init(this, 
+                                        this2.$root.$refs.ref_FormModalMessage.init(this, 
                                             "Установлен новый пароль для пользователя " + "<br>" +
                                             "Информация о пароле отправлна на адрес электронной почты: "+ this2.user_email + ".");
                                         //показываем сообщение    
@@ -107,7 +96,7 @@ export default {
                                     }
 
                                     // обноляем родительскую форму
-                                    this2.ref_to_parent.get_users();
+                                    this2.$root.callback_profile();
 
                                     //закрываем модальное окно
                                     this2.CloseForm();
@@ -117,14 +106,14 @@ export default {
                                     //останавливаем спиннер    
                                     document.getElementById("id_spinner_panel").style.display = "none";
 
-                                    this2.ref_to_parent.$refs.ref_FormModalMessage.init(this, "Что-то пошло не так при генерации пароля. Пароль не создан <br>" + error1);
+                                    this2.$root.$refs.ref_FormModalMessage.init(this, "Что-то пошло не так при генерации пароля. Пароль не создан <br>" + error1);
                                     //показываем сообщение    
                                     document.getElementById("id_FormModalMessage").style.display = "block";           
                                     
                                     console.log(error1)                 
 
                                     // обноляем родительскую форму
-                                    this2.ref_to_parent.get_users();
+                                    this2.$root.callback_profile();
 
                                     //закрываем модальное окно
                                     this2.CloseForm();
@@ -135,7 +124,7 @@ export default {
                                 document.getElementById("id_spinner_panel").style.display = "none";
 
                                 // обноляем родительскую форму
-                                this2.ref_to_parent.get_users();
+                                this2.$root.callback_profile();
 
                                 //закрываем модальное окно
                                 this2.CloseForm();
@@ -148,14 +137,14 @@ export default {
                             //останавливаем спиннер    
                             document.getElementById("id_spinner_panel").style.display = "none";
 
-                            this2.ref_to_parent.$refs.ref_FormModalMessage.init(this, "Ошибка: Ожидалось, что будет создана 1 запись, но что-то пошло не так. <br>Ответ: <br>" + response.data);
+                            this2.$root.$refs.ref_FormModalMessage.init(this, "Ошибка: Ожидалось, что будет создана 1 запись, но что-то пошло не так. <br>Ответ: <br>" + response.data);
                             //показываем сообщение    
                             document.getElementById("id_FormModalMessage").style.display = "block";                            
 
                             console.error("Ошибка: Ожидалось, что будет создана 1 запись, но что-то пошло не так. Ответ: " + response.data);
                             
                             // обноляем родительскую форму
-                            this2.ref_to_parent.get_users();
+                            this2.$root.callback_profile();
 
                             //закрываем модальное окно
                             this2.CloseForm();
@@ -165,7 +154,7 @@ export default {
                         //останавливаем спиннер    
                         document.getElementById("id_spinner_panel").style.display = "none";
 
-                        this2.ref_to_parent.$refs.ref_FormModalMessage.init(this, "Что-то пошло не так при обновлении пользователя. Пользователь не обновлён.<br>" + error);
+                        this2.$root.$refs.ref_FormModalMessage.init(this, "Что-то пошло не так при обновлении пользователя. Пользователь не обновлён.<br>" + error);
                         //показываем сообщение    
                         document.getElementById("id_FormModalMessage").style.display = "block";                            
 
@@ -173,7 +162,7 @@ export default {
                         console.error(error);
 
                         // обноляем родительскую форму
-                        this2.ref_to_parent.get_users();
+                        this2.$root.callback_profile();
 
                         //закрываем модальное окно
                         this2.CloseForm();

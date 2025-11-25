@@ -13,7 +13,7 @@ export default {
         onClickMenuProfile(){
             //console.log(this.user_name)
 
-            this.$refs.ref_FormEditProfile.init(this);
+            this.$refs.ref_FormEditProfile.init();
 
             //отключить прокрутку страницы
             document.body.style.overflow = 'hidden';

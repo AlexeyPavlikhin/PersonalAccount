@@ -13,7 +13,7 @@ export default {
                     user_password: "",
                     user_repassword: "",
 
-                    ref_to_parent: "",
+                    //ref_to_parent: "",
                     WarningMessage: [],
 /*                    
                     is_user_login_entered: false,
@@ -35,7 +35,8 @@ export default {
         }
     },
     methods: {
-                async init(in_ref_to_parent){
+                //async init(in_ref_to_parent){
+                async init(){
                     //получаем инфо о текущем пользователе
                     
                     try {
@@ -61,7 +62,7 @@ export default {
                     } 
 
                     
-                    this.ref_to_parent = in_ref_to_parent;
+                    //this.ref_to_parent = in_ref_to_parent;
                     
                     // создаём копии переменных (для последующего отслеживания изменений)
                     this.user_username_save = this.user_username.repeat(1);
@@ -112,7 +113,7 @@ export default {
                             //this2.ref_to_parent.refresh();
                             //this2.$root.refresh();
                             this2.$parent.refresh();
-                            this2.$root.get_users();
+                            this2.$root.callback_profile();
 
                             //закрываем модальное окно
                             this2.CloseForm();
@@ -120,14 +121,14 @@ export default {
                             //останавливаем спиннер    
                             document.getElementById("id_spinner_panel").style.display = "none";
 
-                            this2.ref_to_parent.$refs.ref_FormModalMessage.init(this, "Ошибка: Ожидалось, что будет создана 1 запись, но что-то пошло не так. <br>Ответ: <br>" + response.data);
+                            this2.$root.$refs.ref_FormModalMessage.init(this, "Ошибка: Ожидалось, что будет создана 1 запись, но что-то пошло не так. <br>Ответ: <br>" + response.data);
                             //показываем сообщение    
                             document.getElementById("id_FormModalMessage").style.display = "block";                            
 
                             console.error("Ошибка: Ожидалось, что будет создана 1 запись, но что-то пошло не так. Ответ: " + response.data);
                             
                             // обноляем родительскую форму
-                            this2.ref_to_parent.refresh();
+                            this2.$parent.refresh();
 
                             //закрываем модальное окно
                             this2.CloseForm();
@@ -137,7 +138,7 @@ export default {
                         //останавливаем спиннер    
                         document.getElementById("id_spinner_panel").style.display = "none";
 
-                        this2.ref_to_parent.$refs.ref_FormModalMessage.init(this, "Что-то пошло не так при обновлении пользователя. Пользователь не обновлён.<br>" + error);
+                        this2.$root.$refs.ref_FormModalMessage.init(this, "Что-то пошло не так при обновлении пользователя. Пользователь не обновлён.<br>" + error);
                         //показываем сообщение    
                         document.getElementById("id_FormModalMessage").style.display = "block";                            
 
@@ -145,7 +146,7 @@ export default {
                         console.error(error);
 
                         // обноляем родительскую форму
-                        this2.ref_to_parent.refresh();
+                        this2.$parent.refresh();
 
                         //закрываем модальное окно
                         this2.CloseForm();

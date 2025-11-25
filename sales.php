@@ -263,7 +263,8 @@
                 }            
         },
         methods: {
-
+            callback_profile(){
+            },
             async onSelectFirstFilter(){
                 // Assuming you have a select element with id="mySelect"
                 const selectElement = document.getElementById('fieldFirstFilter');

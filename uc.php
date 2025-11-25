@@ -145,6 +145,9 @@
             this.get_users();
         },
         methods: {
+            callback_profile(){
+                this.get_users();
+            },
             async get_users(){
                 try {
                     const response = await axios.get("./queries/get_all_users.php");
@@ -165,7 +168,7 @@
                 }                
             },
             onClikCreateNewUser(){
-                this.$refs.ref_FormCreateNewUser.init(this);
+                this.$refs.ref_FormCreateNewUser.init();
 
                 //отключить прокрутку страницы
                 document.body.style.overflow = 'hidden';
@@ -178,7 +181,7 @@
             ChangeUser(in_user){
                 //console.log(in_user)
 
-                this.$refs.ref_FormEditUser.init(this, in_user);
+                this.$refs.ref_FormEditUser.init(in_user);
 
                 //отключить прокрутку страницы
                 document.body.style.overflow = 'hidden';

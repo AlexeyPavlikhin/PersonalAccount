@@ -79,6 +79,32 @@ if(isset($_SESSION['current_user_id'])){
         echo $e->getMessage()." ".$sql;
     }
     
+    // записываем в аудит
+    $audit_event_type = "Добавлена запись о новом клиенте";
+    $audit_event_data = "ФИО клиента: ".$data['client_LastName']." ".$data['client_FirstName']." ".$data['client_Patronymic']."\n";
+    $audit_event_data = $audit_event_data."Продукт: НЕТ ПРОДУКТА\n";
+    $audit_event_data = $audit_event_data."Статус: НЕ ОПРЕДЕЛЁН\n";
+
+    try {
+        $sql_audit = 
+        "INSERT 
+            INTO audit 
+            (
+                user_login, 
+                operation_type, 
+                event_data
+            ) VALUES (
+                '".$_SESSION['current_user_login']."', 
+                '".$audit_event_type."', 
+                '".str_replace('"', '\\"', str_replace("'", "\\'", $audit_event_data))."'
+            )
+        ";
+        $query = $connection->prepare($sql_audit);
+        $query->execute();
+    } catch(PDOException $e) {
+        echo $e->getMessage()." ".$sql_audit;
+    }
+
 }
 ?>
 
