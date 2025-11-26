@@ -114,7 +114,8 @@
                 </div>
                 <div class='msll_body'>
 
-                    <form method='GET' action=''>
+                    <!--form method='GET' action=''-->
+                    <div class='no-copy'>
                         <table class='msll_table'>
                             <tr>
                                 <th width='3%'>№</th>
@@ -151,7 +152,8 @@
                             </tr>
                         </table>
                         <br/><br/>
-                    </form>
+                    <div>
+                    <!--/form-->
                     <div id="form_Detail_Info_Of_Client" class="modal">
                         <Detail-Info-Of-Client ref="childRef" @update_client_data="onChangeClientData"/>
                     </div>            

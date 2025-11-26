@@ -1,28 +1,25 @@
 <?php
     session_start();
     include('config.php');
-
-    if (isset($_POST['btn_login'])) {
-        $usr_login = $_POST['usr_login'];
-        $usr_password = $_POST['usr_password'];
-        if ($usr_login != ""){
-          $query = $connection->prepare("SELECT * FROM users WHERE login=:usr_login");
-          $query->bindParam("usr_login", $usr_login, PDO::PARAM_STR);
-          $query->execute();
-          $result = $query->fetch(PDO::FETCH_ASSOC);
-          if (!$result) {
-              echo '<p class="error"> Неверные имя пользователя!</p>';
-          } else {
-              if (password_verify($usr_password, $result['password'])) {
-                  $_SESSION['current_user_id'] = $result['id'];
-                  $_SESSION['current_user_login'] = $result['login'];
-                  $_SESSION['current_user_group'] = $result['user_group'];
-                  $_SESSION['current_user_name'] = $result['username'];
-                  header('Location: lk.php');
-              } else {
-                  echo '<p class="error"> Неверные пароль или имя пользователя!</p>';
-              }
-          }
+    if (isset($_GET['btn_login'])) {
+        $usr_login = $_GET['usr_login'];
+        $usr_password = $_GET['usr_password'];
+        $query = $connection->prepare("SELECT * FROM users WHERE login=:usr_login");
+        $query->bindParam("usr_login", $usr_login, PDO::PARAM_STR);
+        $query->execute();
+        $result = $query->fetch(PDO::FETCH_ASSOC);
+        if (!$result) {
+            echo '<p class="error"> Неверные имя пользователя!</p>';
+        } else {
+            if (password_verify($usr_password, $result['password'])) {
+                $_SESSION['current_user_id'] = $result['id'];
+                $_SESSION['current_user_login'] = $result['login'];
+                $_SESSION['current_user_group'] = $result['user_group'];
+                $_SESSION['current_user_name'] = $result['username'];
+                header('Location: lk.php');
+            } else {
+                echo '<p class="error"> Неверные пароль или имя пользователя!</p>';
+            }
         }
     }
 ?>
@@ -51,7 +48,7 @@
       <!--<link rel="stylesheet" href="styles2.css">-->
     </head> 
     <body>
-      <form method="post" action="" name="signin-form">
+      <form method="get" action="" name="signin-form">
         <div class="form_login">
           <div>
             <label>Логин</label>
