@@ -130,8 +130,9 @@
                             <tr v-for="client_item in list_of_clients">
                                 <td>{{client_item.num}}</td>
                                 <!--<td><a href='#'  @click='onClikClientDetail(client_item.client_id)'>{{client_item.client_last_name}} {{client_item.client_first_name}} {{client_item.client_patronymic}}</a></td>-->
-                                <td style='position: relative;'><button  class="msll_button_in_table" type="button" @click='onClikClientDetail(client_item.client_id)'> {{client_item.client_last_name}} {{client_item.client_first_name}} {{client_item.client_patronymic}}</button></td>
-                                
+                                <!--td style='position: relative;'><button  class="msll_button_in_table" type="button" @click='onClikClientDetail(client_item.client_id)'> {{client_item.client_last_name}} {{client_item.client_first_name}} {{client_item.client_patronymic}}</button></td-->
+                                <td style='position: relative;'><button  class="msll_button_in_table" type="button" @click='onClikClientDetail(client_item.client_id)'> {{client_item.fio}}</button></td>
+
                                 <td>
                                     <div v-for="item in client_item.client_emails">
                                         <a :href=createMTLink(item) target="_blank">{{item}}</a>
@@ -214,8 +215,9 @@
 
                 options1: [
                     { text: 'ФИО', value: 'ФИО' },
-                    { text: 'Продукт', value: 'Продукт' }/*,
-                    { text: 'Подпродукт', value: 'Подпродукт' }*/
+                    { text: 'Продукт', value: 'Продукт' },
+                    { text: 'Место работы', value: 'Место работы' },
+                    { text: 'Статус продажи', value: 'Статус продажи' }
                 ],
 
                 options2: [
@@ -242,15 +244,23 @@
                     document.getElementById("id_spinner_panel").style.display = "block"; 
 
                     //const response = await axios.get('./queries/get_default_list_of_clients_limit.php');
-                    const response = await axios.get('./queries/get_default_list_of_clients.php');
-
+                    //const response = await axios.get('./queries/get_default_list_of_clients.php');
+                    
+                    const response = await axios.get('./queries/get_list_of_cliets_by_conditions.php?conditions='+encodeURIComponent(JSON.stringify(this.conditions)));
+                    
+                    
                     //останавливаем спиннер    
                     document.getElementById("id_spinner_panel").style.display = "none";
 
                     if (response.data) {
-                        //обрабатываем ответ
-                        this.list_of_clients=response.data;
                         //console.log(response.data);
+                        if (response.data[0]+response.data[1]+response.data[2] != "<br"){
+                            this.list_of_clients=response.data;
+                        } else {
+                            console.error('Ошибка в ответе от сервера');
+                            console.log(response.data);
+                            this.list_of_clients = "";
+                        }                        
                     } else {
                         // пустой ответ
                         console.log('Ответ от сервера пустой (data undefined/null)');
@@ -277,15 +287,21 @@
                     url="./queries/get_all_fio.php";
                 } else if (selectElement.value=="Продукт"){
                     url="./queries/get_all_products.php";
+                } else if (selectElement.value=="Место работы"){
+                    url="./queries/get_all_jobs.php";
+                } else if (selectElement.value=="Статус продажи"){
+                    url="./queries/get_all_sales_status.php";
                 }
                 try {
                     const response = await axios.get(url);
 
                     // Обработка успешного ответа
                     if (response.data) {
-                    // Далее работаем с данными
-                    this.items_for_search=response.data;
-
+                        // Далее работаем с данными
+                        this.items_for_search = [];
+                        for (const obj of response.data) {
+                            this.items_for_search.push(obj.data_for_filter);
+                        }
                     } else {
                         console.log('Ответ от сервера пустой (data undefined/null)');
                     }
@@ -310,13 +326,28 @@
                 }
 
                 try {
+                    //запускаем спиннер    
+                    document.getElementById("id_spinner_panel").style.display = "block"; 
+
+                    //console.log(encodeURIComponent(JSON.stringify(this.conditions)));
                     //console.log(JSON.stringify(this.conditions));
-                    const response = await axios.get('./queries/get_list_of_cliets_by_conditions.php?conditions='+JSON.stringify(this.conditions));
+                    const response = await axios.get('./queries/get_list_of_cliets_by_conditions.php?conditions='+encodeURIComponent(JSON.stringify(this.conditions)));
+                    //const response = await axios.get('./queries/get_list_of_cliets_by_conditions.php?conditions='+JSON.stringify(this.conditions));
                     //const response = await axios.get('./queries/get_list_of_cliets_by_conditions.php', conditions, {headers: { 'Content-Type': 'application/x-www-form-urlencoded' } });
+                    
+                    //останавливаем спиннер    
+                    document.getElementById("id_spinner_panel").style.display = "none";
+
                     // Обработка успешного ответа
                     if (response.data) {
-                        this.list_of_clients=response.data;
-
+                        //console.log(response.data);
+                        if (response.data[0]+response.data[1]+response.data[2] != "<br"){
+                            this.list_of_clients=response.data;
+                        } else {
+                            console.error('Ошибка в ответе от сервера');
+                            console.log(response.data);
+                            this.list_of_clients = "";
+                        }
                     } else {
                         console.log('Ответ от сервера пустой (data undefined/null)');
                     }
@@ -377,7 +408,7 @@
             },
             onClikCreateNewClient(){
 
-                this.$refs.FormCreateNewClientRef.activate(this.list_of_clients);
+                this.$refs.FormCreateNewClientRef.activate();
 
                 //отключить прокрутку страницы
                 document.body.style.overflow = 'hidden';

@@ -30,8 +30,8 @@ export default {
 
                 },
 
-                async activate(in_list_of_clients){
-                    this.list_of_clients_all;
+                async activate(){
+                    //this.list_of_clients_all;
                     try {
                         //const response = await axios.get('./queries/get_default_list_of_clients_limit.php');
                         const response = await axios.get('./queries/get_default_list_of_clients.php');
@@ -258,11 +258,11 @@ export default {
                     //this.new_client_Phone = "qqq"
                     
                     this.new_client_Phone=this.formate_phone2(this.to_clear_number(this.new_client_Phone));
-                    this.onCangeKeyData();
+                    this.onChangeKeyData();
 
                 },
 
-                onCangeKeyData(){
+                onChangeKeyData(){
 
                     //console.log(this.list_of_clients_all)
                     this.list_of_selected_clients = [];
@@ -460,7 +460,7 @@ export default {
                     </tr>
                     <tr>
                         <td>Почта</td>
-                        <td><input class="msll_filter" type="input" v-model="new_client_Email" @input="onCangeKeyData"/></td>
+                        <td><input class="msll_filter" type="input" v-model="new_client_Email" @input="onChangeKeyData"/></td>
                     </tr>
                     <tr>
                         <td>Телефон</td>
@@ -470,7 +470,7 @@ export default {
                     </tr>
                     <tr>
                         <td>Telegram</td>
-                        <td><input class="msll_filter" type="text" v-model="new_client_Telegram" @input="onCangeKeyData"/></td>
+                        <td><input class="msll_filter" type="text" v-model="new_client_Telegram" @input="onChangeKeyData"/></td>
                     </tr>
 
                 </tbody>

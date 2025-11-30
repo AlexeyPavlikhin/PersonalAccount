@@ -23,7 +23,7 @@ export default {
                     try {
                         this.detail_client_id=clientID;
                         
-                        const response = await axios.get('./queries/get_all_products2.php');
+                        const response = await axios.get('./queries/get_all_products.php');
                         if (response.data) {
                             //console.log(response.data);
                             this.spr_products = response.data; 
@@ -188,7 +188,7 @@ export default {
                     let date = new Date();
                     let v_usdate = date.toISOString().slice(0, 10);
                     //console.log(v_usdate);
-                    this.detail_client_products.push({ sale_id: Date.now(), usdate: v_usdate, product_name: "", status: "", comment: "", is_disable: false}); 
+                    this.detail_client_products.push({ sale_id: Date.now(), usdate: v_usdate, product_name: "", status: "НЕ ОПРЕДЕЛЁН", comment: "", is_disable: false}); 
                 }
                 
     },
@@ -220,10 +220,15 @@ export default {
                             </datalist>
                         </td>
                         <td>
+                            <select class="msll_filter" v-model="item.status">
+                                <option v-for="spr_item in spr_sales_status" :value="spr_item.status_name" :key="spr_item.status_name">{{ spr_item.status_name }}</option>
+                            </select>                        
+<!--
                             <input class="msll_filter" type="input" list="datalist_spr_sales_status" v-model="item.status"/>
                             <datalist class="msll_filter" id="datalist_spr_sales_status">
                                 <option v-for="spr_item in spr_sales_status" :value="spr_item.status_name"/>
                             </datalist>
+-->                            
                         </td>
                         <td><input class="msll_filter" type="input" v-model="item.comment"/></td>
                         <td><input type="button" value = "&times;" @click='onClikDeleteDeleteProduct(item.sale_id)'></td>
