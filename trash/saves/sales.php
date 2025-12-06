@@ -65,14 +65,14 @@
             </header>
     -->        
             <main id='main'>
-                <br/><br/>
-                <div class='menu'>
+                <!--br/><br/-->
+                <!--div class='menu'>
                     <ul>
                         <li><a class='menu_button' href='lk.php'><div class='menu_button_text'>Управление заказами</div></a></li>
                         <li><a class='menu_button' href='uc.php'><div class='menu_button_text'>Управление пользователями</div></a></li>
                         <li><a class='menu_button_atcive' href='sales.php'><div class='menu_button_text_active'>Управление продажами</div></a></li>
                     </ul>
-                </div>
+                </div-->
                 <div class='sidenav'>
                     <!--form method='GET' action='' id='filter'-->
                         <div class="form-element">
@@ -113,7 +113,7 @@
                     
                 </div>
                 <div class='msll_body'>
-
+                    <Navigation-Menu ref="ref_NavigationMenu"></Navigation-Menu>
                     <!--form method='GET' action=''-->
                     <div class='no-copy'>
                         <table class='msll_table'>
@@ -198,6 +198,7 @@
     import FormCreateNewClient from './components/Form_Create_New_Client.js';
     import FormModalMessage from './components/Form_Modal_Message.js';
     import MenuProfileAndExit from './components/Menu_Profile_And_Exit.js';
+    import NavigationMenu from './components/Navigation_Menu.js';    
    
     import { createApp } from 'vue';
 
@@ -207,7 +208,8 @@
             FormCreateNewClient,
             PulseLoader,
             FormModalMessage,
-            MenuProfileAndExit            
+            MenuProfileAndExit,
+            NavigationMenu
         },
         data() {
             return {
@@ -237,6 +239,7 @@
             }
         },
         async mounted() {
+            this.$refs.ref_NavigationMenu.init("sales.php");
             this.onSelectFirstFilter();
             try {
                     

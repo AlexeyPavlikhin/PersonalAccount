@@ -13,14 +13,44 @@ body{
     font-family: 'Jost';
 }
 
-.menu {
-	display: table;
-  margin-left: auto;
-  margin-right: auto;
+div.container_inline_center2 {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: nowrap;
+	justify-content: center;
+	align-items: center;
+  margin-top: 10px;
+  margin-bottom: 10px;
 }
 
+div.margin-left-200 {
+  margin-left: 420px;
+}
+
+
+.inline_item{
+  border-style: groove;
+  margin: 0;
+}
+
+.menu {
+	ddisplay: table;
+  display: flex;
+  margin-left: auto;
+  margin-right: auto;
+
+}
+
+div.container_inline_center2{
+  display: flex;
+  flex-direction: row;
+	flex-wrap: nowrap;
+	justify-content: center;
+	align-items: center;  
+
+} 
+
 .menu_button {
-  display: inline-block;
   padding: 15px;
   background: #bd162b;
   transform: skew(45deg);
@@ -28,11 +58,10 @@ body{
   border-color: #8594ae;
   border-width: 5px;
   border-style: outset;
-  width: 300px;
+  width: 220px;
   margin: 5px;
 }
-.menu_button_atcive {
-  display: inline-block;
+.menu_button_active {
   padding: 15px;
   background: #dddae0;;
   transform: skew(45deg);
@@ -40,7 +69,7 @@ body{
   border-color: #8594ae;
   border-width: 5px;
   border-style: outset;
-  width: 300px;
+  width: 220px;
   margin: 5px;
   color: #000;
 }
@@ -62,19 +91,19 @@ body{
 .menu_button_text_active {
   display: inline-block;
   transform: skew(-45deg);
-  /*color: #000000;*/
-  
 }
+
 .menu_button_text_active:hover {
-  color: #fff;
+  color: #000;
 }
 
 
-li {
-	display: table-cell;
-	/*position: relative;*/
-	/*background: #bcbdbe;*/
-  /*z-index: 1;*/
+.item_of_menu_permited {
+	display: flex;
+}
+
+.item_of_menu {
+	display: none;
 }
 
 .msll_button{
@@ -544,7 +573,7 @@ to { opacity: 0; /* Прозрачный текст */ }
 }
 /* Тело сайта, при наличии бокового меню */
 .msll_body{
-  margin-left: 400px;
+  margin-left: 420px;
 }
 
 .msll_filter{

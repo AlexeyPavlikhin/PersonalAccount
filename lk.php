@@ -49,7 +49,7 @@
             
             echo "<div class='menu'>";
             echo "    <ul>";
-            echo "        <li><a class='menu_button_atcive' href='lk.php'><div class='menu_button_text_active'>Управление заказами</div></a></li>";
+            echo "        <li><a class='menu_button_active' href='lk.php'><div class='menu_button_text_active'>Управление заказами</div></a></li>";
             echo "        <li><a class='menu_button' href='uc.php'><div class='menu_button_text'>Управление пользователями</div></a></li>";
             echo "        <li><a class='menu_button' href='sales.php'><div class='menu_button_text'>Управление продажами</div></a></li>";
             echo "    </ul>";

@@ -19,7 +19,7 @@
         <link href="./css/jost.css" rel="stylesheet">
         <script src="./js/axios.min.js"></script>
         
-        <title>Личный кабинет: Управление пользователями</title>
+        <title>Личный кабинет: Сатус услуг</title>
 
         <link rel="icon" type="image/png" sizes="32x32" href="./pictures/Iogo-1.png" media="(prefers-color-scheme: light)">
         <link rel="icon" type="image/png" sizes="32x32" href="-./pictures/Iogo-2.png" media="(prefers-color-scheme: dark)">
@@ -41,46 +41,38 @@
                 </div> 
             </header>   
             <main>
-                <br/><br/>
-                <div class='menu'>
+                <!--br/><br/-->
+                <!--div class='menu'>
                     <ul>
                         <li><a class='menu_button' href='lk.php'><div class='menu_button_text'>Управление заказами</div></a></li>
                         <li><a class='menu_button_atcive' href='uc.php'><div class='menu_button_text_active'>Управление пользователями</div></a></li>
                         <li><a class='menu_button' href='sales.php'><div class='menu_button_text'>Управление продажами</div></a></li>
                     </ul>
-                </div>
+                </div-->
                     
                 <div class='sidenav'>
-                    <input class="msll_button" type="button" value = "Новый пользователь" @click="onClikCreateNewUser()">
                 </div>
 
                 <div class='msll_body'>
+                    <Navigation-Menu ref="ref_NavigationMenu"></Navigation-Menu>
                     <table class='msll_table'>
                         <tbody>
                             <tr>
-                                <th>Login</th>
-                                <th>Имя пользователя</th>
-                                <th>E-mail</th>
-                                <th>Группа пользователей</th>
-                                <th></th>
+                                <th width='5%'>№ заказа</th>
+                                <th width='10%'>Дата изменения</th>
+                                <th width='25%'>Статус (для клиента)</th>
+                                <th width='50%'>Комментарий (для сотрудников)</th>
+                                <th width='10%'>Подробно</th>
                             </tr>
-                            <tr v-for="user in users">
-                                <td>{{user.login}}</td>
-                                <td>{{user.username}}</td>
-                                <td>{{user.email}}</td>
-                                <td>{{user.user_group}}</td>
-                                <td><input class="msll_small_button" type="button" value = "Изменить" @click="ChangeUser(user)"></td>
+                            <tr v-for="order in orders">
+                                <td>{{order.order_id}}</td>
+                                <td>{{order.formated_row_creation_time}}</td>
+                                <td>{{order.order_status}}</td>
+                                <td>{{order.order_description}}</td>
+                                <td><input class="msll_small_button" type="button" value = "Подробно" @click="DetailOrderStatus(order.order_id)"></td>
                             </tr>
                         </tbody>
                     </table>
-
-                    <div id="id_FormCreateNewUser" class="modal">
-                        <Form-Create-New-User ref="ref_FormCreateNewUser"/>
-                    </div>  
-
-                    <div id="id_FormUpdateUser" class="modal">
-                        <Form-Edit-User ref="ref_FormEditUser"/>
-                    </div>  
 
                     <div id="id_spinner_panel" class="spinner">
                         <pulse-loader :color="p_color" :size="p_size"></pulse-loader>
@@ -115,45 +107,41 @@
 </script>
 
 <script type="module">
-    import FormCreateNewUser from './components/Form_Create_New_User.js';
-    import FormEditUser from './components/Form_Edit_User.js';
-    //import FormEditProfile from './components/Form_Edit_Profile.js';
     import FormModalMessage from './components/Form_Modal_Message.js';
     import MenuProfileAndExit from './components/Menu_Profile_And_Exit.js';
+    import NavigationMenu from './components/Navigation_Menu.js';
     
-    
-
     import { createApp } from 'vue';
 
     const app = createApp({
         components: {
-            FormCreateNewUser,
-            FormEditUser,
             PulseLoader,
             FormModalMessage,
-            MenuProfileAndExit
+            MenuProfileAndExit,
+            NavigationMenu
         },
         data() {
             return {
-                users: [],
+                orders: [],
                 p_color: "#bd162b",
                 p_size: "20px"
 
             }
         },
         async mounted() {
-            this.get_users();
+            this.$refs.ref_NavigationMenu.init("ss.php");
+            this.get_orders();
+
         },
         methods: {
             callback_profile(){
-                this.get_users();
             },
-            async get_users(){
+            async get_orders(){
                 try {
-                    const response = await axios.get("./queries/get_all_users.php");
+                    const response = await axios.get("./queries/get_orders.php");
                     if (response.data) {
                         //console.log(response.data);
-                        this.users=response.data;
+                        this.orders=response.data;
 
                     } else {
                         console.log('Ответ от сервера пустой (data undefined/null)');
@@ -167,27 +155,17 @@
                     }
                 }                
             },
-            onClikCreateNewUser(){
-                this.$refs.ref_FormCreateNewUser.init();
 
-                //отключить прокрутку страницы
-                document.body.style.overflow = 'hidden';
-
-                //сделать элемент модальным     
-                document.getElementById("id_FormCreateNewUser").style.display = "block";    
-
-            },
-
-            ChangeUser(in_user){
+            DetailOrderStatus(in_order){
                 //console.log(in_user)
 
-                this.$refs.ref_FormEditUser.init(in_user);
+                //this.$refs.ref_FormEditUser.init(in_order);
 
                 //отключить прокрутку страницы
-                document.body.style.overflow = 'hidden';
+                //document.body.style.overflow = 'hidden';
 
                 //сделать элемент модальным     
-                document.getElementById("id_FormUpdateUser").style.display = "block";                
+                //document.getElementById("id_FormUpdateUser").style.display = "block";                
 
             }
 

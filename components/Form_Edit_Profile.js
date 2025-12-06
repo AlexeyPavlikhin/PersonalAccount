@@ -113,7 +113,9 @@ export default {
                             //this2.ref_to_parent.refresh();
                             //this2.$root.refresh();
                             this2.$parent.refresh();
-                            this2.$root.callback_profile();
+                            if (this2.$root.$route.path == "/uc"){
+                                this2.$root.$refs.mainContent.get_users();
+                            }
 
                             //закрываем модальное окно
                             this2.CloseForm();

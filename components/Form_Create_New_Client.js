@@ -34,7 +34,8 @@ export default {
                     //this.list_of_clients_all;
                     try {
                         //const response = await axios.get('./queries/get_default_list_of_clients_limit.php');
-                        const response = await axios.get('./queries/get_default_list_of_clients.php');
+                        //const response = await axios.get('./queries/get_default_list_of_clients.php');
+                        const response = await axios.get('./queries/get_list_of_cliets_by_conditions.php?conditions=[]');
                         if (response.data) {
                             //обрабатываем ответ
                             this.list_of_clients_all=response.data;
@@ -269,78 +270,83 @@ export default {
                     let is_searched = false;
 
                     this.list_of_clients_all.forEach((item) => {
+                        //console.log(item);
+                        //console.log(item.client_emails);
+                        
                         // ищем совпадения email
-                        if (this.new_client_Email != ""){
-                            item.client_emails.forEach((item_email) => {
-                                //console.log(item_email);
-                                //if (item_email.toUpperCase().indexOf(this.new_client_Email.toUpperCase())>-1) {
-                                if (item_email.toUpperCase() == this.new_client_Email.toUpperCase()){
-                                    //console.log(item_email)
-                                    this.list_of_selected_clients.push(item)
-                                }
-                            });
+                        if (this.new_client_Email && (this.new_client_Email != "")){
+                            if (item.client_emails){
+                                item.client_emails.forEach((item_email) => {
+                                    //console.log(item_email);
+                                    //if (item_email.toUpperCase().indexOf(this.new_client_Email.toUpperCase())>-1) {
+                                    if (item_email.toUpperCase() == this.new_client_Email.toUpperCase()){
+                                        //console.log(item_email)
+                                        this.list_of_selected_clients.push(item)
+                                    }
+                                });
+                            }
+                            
                         }
                     
                         // ищем совпадения телефонов
-                        if (this.new_client_Phone != ""){                        
-                            item.client_phones.forEach((item_phone) => {
-                                //console.log(item_phone);
-                                //if (item_phone.toString().toUpperCase().indexOf(this.to_clear_number(this.new_client_Phone).toString().toUpperCase())>-1) {
-                                //if (this.formate_phone2(item_phone).indexOf(this.new_client_Phone)>-1){
-                                if (this.formate_phone2(item_phone) == this.new_client_Phone){    
-                                    //console.log(item_phone)
-                                    // проверяем не добавляли ли этого клиента в список? (чтоб не было задвоений)
-                                    //console.log(item.client_id);
-                                    is_searched = false;
-                                    this.list_of_selected_clients.forEach((selected_client) => {
-                                        //console.log(selected_client.client_id);
-                                        if (selected_client.client_id == item.client_id){
-                                            //console.log("нашел");
-                                            is_searched = true;
+                        if (this.new_client_Phone && (this.new_client_Phone != "")){ 
+                            if (item.client_phones){                      
+                                item.client_phones.forEach((item_phone) => {
+                                    //console.log(item_phone);
+                                    //if (item_phone.toString().toUpperCase().indexOf(this.to_clear_number(this.new_client_Phone).toString().toUpperCase())>-1) {
+                                    //if (this.formate_phone2(item_phone).indexOf(this.new_client_Phone)>-1){
+                                    if (this.formate_phone2(item_phone) == this.new_client_Phone){    
+                                        //console.log(item_phone)
+                                        // проверяем не добавляли ли этого клиента в список? (чтоб не было задвоений)
+                                        //console.log(item.client_id);
+                                        is_searched = false;
+                                        this.list_of_selected_clients.forEach((selected_client) => {
+                                            //console.log(selected_client.client_id);
+                                            if (selected_client.client_id == item.client_id){
+                                                //console.log("нашел");
+                                                is_searched = true;
+                                            }
+                                        });
+                                        if (!is_searched){
+                                            //console.log("добавляем");
+                                            this.list_of_selected_clients.push(item);
                                         }
-                                    });
-                                    if (!is_searched){
-                                        //console.log("добавляем");
-                                        this.list_of_selected_clients.push(item);
                                     }
-                                }
-                            });
+                                });
+                            }
                         }
+
                         // ищем совпадения телеграм
-                        if (this.new_client_Telegram != ""){                        
-                            item.client_telegrams.forEach((item_telegram) => {
-                                //console.log(item_telegram);
-                                //if (item_telegram.toUpperCase().indexOf(this.new_client_Telegram.toUpperCase())>-1) {
-                                if (item_telegram.toUpperCase() == this.new_client_Telegram.toUpperCase()){     
-                                    //  console.log(item_telegram)
-                                    // проверяем не добавляли ли этого клиента в спиок? (чтоб не было задвоений)
-                                    //console.log(item.client_id);
-                                    is_searched = false;
-                                    this.list_of_selected_clients.forEach((selected_client) => {
-                                        //console.log(selected_client.client_id);
-                                        if (selected_client.client_id == item.client_id){
-                                            //console.log("нашел");
-                                            is_searched = true;
+                        if (this.new_client_Telegram && (this.new_client_Telegram != "")){  
+                            if (item.client_telegrams){  
+                                item.client_telegrams.forEach((item_telegram) => {
+                                    //console.log(item_telegram);
+                                    //if (item_telegram.toUpperCase().indexOf(this.new_client_Telegram.toUpperCase())>-1) {
+                                    if (item_telegram.toUpperCase() == this.new_client_Telegram.toUpperCase()){     
+                                        //  console.log(item_telegram)
+                                        // проверяем не добавляли ли этого клиента в спиок? (чтоб не было задвоений)
+                                        //console.log(item.client_id);
+                                        is_searched = false;
+                                        this.list_of_selected_clients.forEach((selected_client) => {
+                                            //console.log(selected_client.client_id);
+                                            if (selected_client.client_id == item.client_id){
+                                                //console.log("нашел");
+                                                is_searched = true;
+                                            }
+                                        });
+                                        if (!is_searched){
+                                            //console.log("добавляем");
+                                            this.list_of_selected_clients.push(item);
                                         }
-                                    });
-                                    if (!is_searched){
-                                        //console.log("добавляем");
-                                        this.list_of_selected_clients.push(item);
+
                                     }
-
-                                }
-                            });
+                                });
+                            }
                         }
-
-                        
-                        /*
-                        if (item.client_last_name.indexOf(this.new_client_LastName)>-1) {
-                            console.log(item.client_last_name)
-                            this.list_of_selected_clients.push(item)
-                        }
-                        */
                        this.check_for_creating_client();
+                   
                     });
+
  /*
                     let i;
 

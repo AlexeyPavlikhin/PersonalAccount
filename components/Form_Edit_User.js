@@ -96,7 +96,7 @@ export default {
                                     }
 
                                     // обноляем родительскую форму
-                                    this2.$root.callback_profile();
+                                    this2.$root.$refs.mainContent.get_users();
 
                                     //закрываем модальное окно
                                     this2.CloseForm();
@@ -113,7 +113,7 @@ export default {
                                     console.log(error1)                 
 
                                     // обноляем родительскую форму
-                                    this2.$root.callback_profile();
+                                    this2.$root.$refs.mainContent.get_users();
 
                                     //закрываем модальное окно
                                     this2.CloseForm();
@@ -124,7 +124,7 @@ export default {
                                 document.getElementById("id_spinner_panel").style.display = "none";
 
                                 // обноляем родительскую форму
-                                this2.$root.callback_profile();
+                                this2.$root.$refs.mainContent.get_users();
 
                                 //закрываем модальное окно
                                 this2.CloseForm();
@@ -144,7 +144,7 @@ export default {
                             console.error("Ошибка: Ожидалось, что будет создана 1 запись, но что-то пошло не так. Ответ: " + response.data);
                             
                             // обноляем родительскую форму
-                            this2.$root.callback_profile();
+                            this2.$root.$refs.mainContent.get_users();
 
                             //закрываем модальное окно
                             this2.CloseForm();
@@ -162,7 +162,7 @@ export default {
                         console.error(error);
 
                         // обноляем родительскую форму
-                        this2.$root.callback_profile();
+                        this2.$parent.$refs.mainContent.get_users();
 
                         //закрываем модальное окно
                         this2.CloseForm();

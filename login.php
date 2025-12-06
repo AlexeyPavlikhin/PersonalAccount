@@ -18,7 +18,7 @@
                   $_SESSION['current_user_login'] = $result['login'];
                   $_SESSION['current_user_group'] = $result['user_group'];
                   $_SESSION['current_user_name'] = $result['username'];
-                  header('Location: lk.php');
+                  header('Location: ./');
               } else {
                   echo '<p class="error"> Неверные пароль или имя пользователя!</p>';
               }
