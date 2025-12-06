@@ -29,17 +29,6 @@ export default {
                 }
             }
         },
-        isPermitedRoute(in_route){
-            console.log("isPermitedRoute start");
-
-            for (const item_of_user_permition of this.users_permitions) {
-                console.log(item_of_user_permition.permition_name +" vs "+in_route);
-                if (item_of_user_permition.permition_name == in_route){
-                    return(true);
-                }
-            }
-            return(false);
-        },
 
         async init(){
             //определяем разрешения пользователя
@@ -57,14 +46,16 @@ export default {
                         this.users_permitions = response.data;
                         this.$root.set_route_to_first_menu_item();
                         //this.$root.set_route_to_first_menu_item();
-                        //console.log(this.users_permitions);
-                        for (const item_of_user_permition of this.users_permitions) {
-                            for (const item_menu_data of this.menu_data) {
-                                if (item_menu_data.page_name==item_of_user_permition.permition_name){
-                                    item_menu_data.item_of_menu_class = "item_of_menu_permited";
-                                } 
+                        //console.log(this.users_permitions.length);
+                        if (this.users_permitions.length > 1){
+                            for (const item_of_user_permition of this.users_permitions) {
+                                for (const item_menu_data of this.menu_data) {
+                                    if (item_menu_data.page_name==item_of_user_permition.permition_name){
+                                        item_menu_data.item_of_menu_class = "item_of_menu_permited";
+                                    } 
+                                }
+                                //console.log(item_of_user_permition);
                             }
-                            //console.log(item_of_user_permition);
                         }
                         
                     } else {

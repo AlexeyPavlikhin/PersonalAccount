@@ -1,11 +1,12 @@
 /**
-* vue v3.5.25
+* vue v3.5.20
 * (c) 2018-present Yuxi (Evan) You and Vue contributors
 * @license MIT
 **/
 var Vue = (function (exports) {
   'use strict';
 
+  /*! #__NO_SIDE_EFFECTS__ */
   // @__NO_SIDE_EFFECTS__
   function makeMap(str) {
     const map = /* @__PURE__ */ Object.create(null);
@@ -63,10 +64,10 @@ var Vue = (function (exports) {
       return hit || (cache[str] = fn(str));
     });
   };
-  const camelizeRE = /-\w/g;
+  const camelizeRE = /-(\w)/g;
   const camelize = cacheStringFunction(
     (str) => {
-      return str.replace(camelizeRE, (c) => c.slice(1).toUpperCase());
+      return str.replace(camelizeRE, (_, c) => c ? c.toUpperCase() : "");
     }
   );
   const hyphenateRE = /\B([A-Z])/g;
@@ -1119,16 +1120,10 @@ var Vue = (function (exports) {
     track(arr = toRaw(arr), "iterate", ARRAY_ITERATE_KEY);
     return arr;
   }
-  function toWrapped(target, item) {
-    if (isReadonly(target)) {
-      return isReactive(target) ? toReadonly(toReactive(item)) : toReadonly(item);
-    }
-    return toReactive(item);
-  }
   const arrayInstrumentations = {
     __proto__: null,
     [Symbol.iterator]() {
-      return iterator(this, Symbol.iterator, (item) => toWrapped(this, item));
+      return iterator(this, Symbol.iterator, toReactive);
     },
     concat(...args) {
       return reactiveReadArray(this).concat(
@@ -1137,7 +1132,7 @@ var Vue = (function (exports) {
     },
     entries() {
       return iterator(this, "entries", (value) => {
-        value[1] = toWrapped(this, value[1]);
+        value[1] = toReactive(value[1]);
         return value;
       });
     },
@@ -1145,37 +1140,16 @@ var Vue = (function (exports) {
       return apply(this, "every", fn, thisArg, void 0, arguments);
     },
     filter(fn, thisArg) {
-      return apply(
-        this,
-        "filter",
-        fn,
-        thisArg,
-        (v) => v.map((item) => toWrapped(this, item)),
-        arguments
-      );
+      return apply(this, "filter", fn, thisArg, (v) => v.map(toReactive), arguments);
     },
     find(fn, thisArg) {
-      return apply(
-        this,
-        "find",
-        fn,
-        thisArg,
-        (item) => toWrapped(this, item),
-        arguments
-      );
+      return apply(this, "find", fn, thisArg, toReactive, arguments);
     },
     findIndex(fn, thisArg) {
       return apply(this, "findIndex", fn, thisArg, void 0, arguments);
     },
     findLast(fn, thisArg) {
-      return apply(
-        this,
-        "findLast",
-        fn,
-        thisArg,
-        (item) => toWrapped(this, item),
-        arguments
-      );
+      return apply(this, "findLast", fn, thisArg, toReactive, arguments);
     },
     findLastIndex(fn, thisArg) {
       return apply(this, "findLastIndex", fn, thisArg, void 0, arguments);
@@ -1235,7 +1209,7 @@ var Vue = (function (exports) {
       return noTracking(this, "unshift", args);
     },
     values() {
-      return iterator(this, "values", (item) => toWrapped(this, item));
+      return iterator(this, "values", toReactive);
     }
   };
   function iterator(self, method, wrapValue) {
@@ -1245,7 +1219,7 @@ var Vue = (function (exports) {
       iter._next = iter.next;
       iter.next = () => {
         const result = iter._next();
-        if (!result.done) {
+        if (result.value) {
           result.value = wrapValue(result.value);
         }
         return result;
@@ -1266,7 +1240,7 @@ var Vue = (function (exports) {
     if (arr !== self) {
       if (needsWrap) {
         wrappedFn = function(item, index) {
-          return fn.call(this, toWrapped(self, item), index, self);
+          return fn.call(this, toReactive(item), index, self);
         };
       } else if (fn.length > 2) {
         wrappedFn = function(item, index) {
@@ -1283,7 +1257,7 @@ var Vue = (function (exports) {
     if (arr !== self) {
       if (!isShallow(self)) {
         wrappedFn = function(acc, item, index) {
-          return fn.call(this, acc, toWrapped(self, item), index, self);
+          return fn.call(this, acc, toReactive(item), index, self);
         };
       } else if (fn.length > 3) {
         wrappedFn = function(acc, item, index) {
@@ -1372,8 +1346,7 @@ var Vue = (function (exports) {
         return res;
       }
       if (isRef(res)) {
-        const value = targetIsArray && isIntegerKey(key) ? res : res.value;
-        return isReadonly2 && isObject(value) ? readonly(value) : value;
+        return targetIsArray && isIntegerKey(key) ? res : res.value;
       }
       if (isObject(res)) {
         return isReadonly2 ? readonly(res) : reactive(res);
@@ -1387,14 +1360,13 @@ var Vue = (function (exports) {
     }
     set(target, key, value, receiver) {
       let oldValue = target[key];
-      const isArrayWithIntegerKey = isArray(target) && isIntegerKey(key);
       if (!this._isShallow) {
         const isOldValueReadonly = isReadonly(oldValue);
         if (!isShallow(value) && !isReadonly(value)) {
           oldValue = toRaw(oldValue);
           value = toRaw(value);
         }
-        if (!isArrayWithIntegerKey && isRef(oldValue) && !isRef(value)) {
+        if (!isArray(target) && isRef(oldValue) && !isRef(value)) {
           if (isOldValueReadonly) {
             {
               warn$2(
@@ -1409,7 +1381,7 @@ var Vue = (function (exports) {
           }
         }
       }
-      const hadKey = isArrayWithIntegerKey ? Number(key) < target.length : hasOwn(target, key);
+      const hadKey = isArray(target) && isIntegerKey(key) ? Number(key) < target.length : hasOwn(target, key);
       const result = Reflect.set(
         target,
         key,
@@ -1939,35 +1911,16 @@ var Vue = (function (exports) {
       this._defaultValue = _defaultValue;
       this["__v_isRef"] = true;
       this._value = void 0;
-      this._raw = toRaw(_object);
-      let shallow = true;
-      let obj = _object;
-      if (!isArray(_object) || !isIntegerKey(String(_key))) {
-        do {
-          shallow = !isProxy(obj) || isShallow(obj);
-        } while (shallow && (obj = obj["__v_raw"]));
-      }
-      this._shallow = shallow;
     }
     get value() {
-      let val = this._object[this._key];
-      if (this._shallow) {
-        val = unref(val);
-      }
+      const val = this._object[this._key];
       return this._value = val === void 0 ? this._defaultValue : val;
     }
     set value(newVal) {
-      if (this._shallow && isRef(this._raw[this._key])) {
-        const nestedRef = this._object[this._key];
-        if (isRef(nestedRef)) {
-          nestedRef.value = newVal;
-          return;
-        }
-      }
       this._object[this._key] = newVal;
     }
     get dep() {
-      return getDepFromReactive(this._raw, this._key);
+      return getDepFromReactive(toRaw(this._object), this._key);
     }
   }
   class GetterRefImpl {
@@ -1993,7 +1946,8 @@ var Vue = (function (exports) {
     }
   }
   function propertyToRef(source, key, defaultValue) {
-    return new ObjectRefImpl(source, key, defaultValue);
+    const val = source[key];
+    return isRef(val) ? val : new ObjectRefImpl(source, key, defaultValue);
   }
 
   class ComputedRefImpl {
@@ -2276,11 +2230,11 @@ var Vue = (function (exports) {
     if (depth <= 0 || !isObject(value) || value["__v_skip"]) {
       return value;
     }
-    seen = seen || /* @__PURE__ */ new Map();
-    if ((seen.get(value) || 0) >= depth) {
+    seen = seen || /* @__PURE__ */ new Set();
+    if (seen.has(value)) {
       return value;
     }
-    seen.set(value, depth);
+    seen.add(value);
     depth--;
     if (isRef(value)) {
       traverse(value.value, depth, seen);
@@ -2819,12 +2773,10 @@ var Vue = (function (exports) {
         dirtyInstances.delete(instance);
       } else if (instance.parent) {
         queueJob(() => {
-          if (!(instance.job.flags & 8)) {
-            isHmrUpdating = true;
-            instance.parent.update();
-            isHmrUpdating = false;
-            dirtyInstances.delete(instance);
-          }
+          isHmrUpdating = true;
+          instance.parent.update();
+          isHmrUpdating = false;
+          dirtyInstances.delete(instance);
         });
       } else if (instance.appContext.reload) {
         instance.appContext.reload();
@@ -2928,6 +2880,7 @@ var Vue = (function (exports) {
       _devtoolsComponentRemoved(component);
     }
   };
+  /*! #__NO_SIDE_EFFECTS__ */
   // @__NO_SIDE_EFFECTS__
   function createDevtoolsComponentHook(hook) {
     return (component) => {
@@ -3113,6 +3066,9 @@ var Vue = (function (exports) {
         insert(mainAnchor, container, anchor);
         const mount = (container2, anchor2) => {
           if (shapeFlag & 16) {
+            if (parentComponent && parentComponent.isCE) {
+              parentComponent.ce._teleportTarget = container2;
+            }
             mountChildren(
               children,
               container2,
@@ -3133,9 +3089,6 @@ var Vue = (function (exports) {
               namespace = "svg";
             } else if (namespace !== "mathml" && isTargetMathML(target)) {
               namespace = "mathml";
-            }
-            if (parentComponent && parentComponent.isCE) {
-              (parentComponent.ce._teleportTargets || (parentComponent.ce._teleportTargets = /* @__PURE__ */ new Set())).add(target);
             }
             if (!disabled) {
               mount(target, targetAnchor);
@@ -3325,34 +3278,26 @@ var Vue = (function (exports) {
   function hydrateTeleport(node, vnode, parentComponent, parentSuspense, slotScopeIds, optimized, {
     o: { nextSibling, parentNode, querySelector, insert, createText }
   }, hydrateChildren) {
-    function hydrateDisabledTeleport(node2, vnode2, targetStart, targetAnchor) {
-      vnode2.anchor = hydrateChildren(
-        nextSibling(node2),
-        vnode2,
-        parentNode(node2),
-        parentComponent,
-        parentSuspense,
-        slotScopeIds,
-        optimized
-      );
-      vnode2.targetStart = targetStart;
-      vnode2.targetAnchor = targetAnchor;
-    }
     const target = vnode.target = resolveTarget(
       vnode.props,
       querySelector
     );
-    const disabled = isTeleportDisabled(vnode.props);
     if (target) {
+      const disabled = isTeleportDisabled(vnode.props);
       const targetNode = target._lpa || target.firstChild;
       if (vnode.shapeFlag & 16) {
         if (disabled) {
-          hydrateDisabledTeleport(
-            node,
+          vnode.anchor = hydrateChildren(
+            nextSibling(node),
             vnode,
-            targetNode,
-            targetNode && nextSibling(targetNode)
+            parentNode(node),
+            parentComponent,
+            parentSuspense,
+            slotScopeIds,
+            optimized
           );
+          vnode.targetStart = targetNode;
+          vnode.targetAnchor = targetNode && nextSibling(targetNode);
         } else {
           vnode.anchor = nextSibling(node);
           let targetAnchor = targetNode;
@@ -3383,10 +3328,6 @@ var Vue = (function (exports) {
         }
       }
       updateCssVars(vnode, disabled);
-    } else if (disabled) {
-      if (vnode.shapeFlag & 16) {
-        hydrateDisabledTeleport(node, vnode, node, nextSibling(node));
-      }
     }
     return vnode.anchor && nextSibling(vnode.anchor);
   }
@@ -3498,7 +3439,7 @@ var Vue = (function (exports) {
           setTransitionHooks(innerChild, enterHooks);
         }
         let oldInnerChild = instance.subTree && getInnerChild$1(instance.subTree);
-        if (oldInnerChild && oldInnerChild.type !== Comment && !isSameVNodeType(oldInnerChild, innerChild) && recursiveGetSubtree(instance).type !== Comment) {
+        if (oldInnerChild && oldInnerChild.type !== Comment && !isSameVNodeType(innerChild, oldInnerChild) && recursiveGetSubtree(instance).type !== Comment) {
           let leavingHooks = resolveTransitionHooks(
             oldInnerChild,
             rawProps,
@@ -3778,6 +3719,7 @@ var Vue = (function (exports) {
     return ret;
   }
 
+  /*! #__NO_SIDE_EFFECTS__ */
   // @__NO_SIDE_EFFECTS__
   function defineComponent(options, extraOptions) {
     return isFunction(options) ? (
@@ -3830,7 +3772,6 @@ var Vue = (function (exports) {
     return ret;
   }
 
-  const pendingSetRefMap = /* @__PURE__ */ new WeakMap();
   function setRef(rawRef, oldRawRef, parentSuspense, vnode, isUnmount = false) {
     if (isArray(rawRef)) {
       rawRef.forEach(
@@ -3880,7 +3821,6 @@ var Vue = (function (exports) {
       return !knownTemplateRefs.has(ref2);
     };
     if (oldRef != null && oldRef !== ref) {
-      invalidatePendingSetRef(oldRawRef);
       if (isString(oldRef)) {
         refs[oldRef] = null;
         if (canSetSetupRef(oldRef)) {
@@ -3938,27 +3878,14 @@ var Vue = (function (exports) {
           }
         };
         if (value) {
-          const job = () => {
-            doSet();
-            pendingSetRefMap.delete(rawRef);
-          };
-          job.id = -1;
-          pendingSetRefMap.set(rawRef, job);
-          queuePostRenderEffect(job, parentSuspense);
+          doSet.id = -1;
+          queuePostRenderEffect(doSet, parentSuspense);
         } else {
-          invalidatePendingSetRef(rawRef);
           doSet();
         }
       } else {
         warn$1("Invalid template ref type:", ref, `(${typeof ref})`);
       }
-    }
-  }
-  function invalidatePendingSetRef(rawRef) {
-    const pendingSetRef = pendingSetRefMap.get(rawRef);
-    if (pendingSetRef) {
-      pendingSetRef.flags |= 8;
-      pendingSetRefMap.delete(rawRef);
     }
   }
 
@@ -4243,16 +4170,14 @@ Server rendered element contains more child nodes than client vdom.`
           if (clientText[0] === "\n" && (el.tagName === "PRE" || el.tagName === "TEXTAREA")) {
             clientText = clientText.slice(1);
           }
-          const { textContent } = el;
-          if (textContent !== clientText && // innerHTML normalize \r\n or \r into a single \n in the DOM
-          textContent !== clientText.replace(/\r\n|\r/g, "\n")) {
+          if (el.textContent !== clientText) {
             if (!isMismatchAllowed(el, 0 /* TEXT */)) {
               warn$1(
                 `Hydration text content mismatch on`,
                 el,
                 `
-  - rendered on server: ${textContent}
-  - expected on client: ${clientText}`
+  - rendered on server: ${el.textContent}
+  - expected on client: ${vnode.children}`
               );
               logMismatchError();
             }
@@ -4695,6 +4620,7 @@ Server rendered element contains fewer child nodes than client vdom.`
   }
 
   const isAsyncWrapper = (i) => !!i.type.__asyncLoader;
+  /*! #__NO_SIDE_EFFECTS__ */
   // @__NO_SIDE_EFFECTS__
   function defineAsyncComponent(source) {
     if (isFunction(source)) {
@@ -4847,10 +4773,7 @@ Server rendered element contains fewer child nodes than client vdom.`
               error: error.value
             });
           } else if (loadingComponent && !delayed.value) {
-            return createInnerComp(
-              loadingComponent,
-              instance
-            );
+            return createVNode(loadingComponent);
           }
         };
       }
@@ -5301,13 +5224,12 @@ If this is a native custom element, make sure to exclude it from component resol
 
   function renderSlot(slots, name, props = {}, fallback, noSlotted) {
     if (currentRenderingInstance.ce || currentRenderingInstance.parent && isAsyncWrapper(currentRenderingInstance.parent) && currentRenderingInstance.parent.ce) {
-      const hasProps = Object.keys(props).length > 0;
       if (name !== "default") props.name = name;
       return openBlock(), createBlock(
         Fragment,
         null,
         [createVNode("slot", props, fallback && fallback())],
-        hasProps ? -2 : 64
+        64
       );
     }
     let slot = slots[name];
@@ -5403,6 +5325,7 @@ If this is a native custom element, make sure to exclude it from component resol
       if (key === "__isVue") {
         return true;
       }
+      let normalizedProps;
       if (key[0] !== "$") {
         const n = accessCache[key];
         if (n !== void 0) {
@@ -5422,7 +5345,11 @@ If this is a native custom element, make sure to exclude it from component resol
         } else if (data !== EMPTY_OBJ && hasOwn(data, key)) {
           accessCache[key] = 2 /* DATA */;
           return data[key];
-        } else if (hasOwn(props, key)) {
+        } else if (
+          // only cache other properties when instance has declared (thus stable)
+          // props
+          (normalizedProps = instance.propsOptions[0]) && hasOwn(normalizedProps, key)
+        ) {
           accessCache[key] = 3 /* PROPS */;
           return props[key];
         } else if (ctx !== EMPTY_OBJ && hasOwn(ctx, key)) {
@@ -5507,10 +5434,10 @@ If this is a native custom element, make sure to exclude it from component resol
       return true;
     },
     has({
-      _: { data, setupState, accessCache, ctx, appContext, props, type }
+      _: { data, setupState, accessCache, ctx, appContext, propsOptions, type }
     }, key) {
-      let cssModules;
-      return !!(accessCache[key] || data !== EMPTY_OBJ && key[0] !== "$" && hasOwn(data, key) || hasSetupBinding(setupState, key) || hasOwn(props, key) || hasOwn(ctx, key) || hasOwn(publicPropertiesMap, key) || hasOwn(appContext.config.globalProperties, key) || (cssModules = type.__cssModules) && cssModules[key]);
+      let normalizedProps, cssModules;
+      return !!(accessCache[key] || data !== EMPTY_OBJ && key[0] !== "$" && hasOwn(data, key) || hasSetupBinding(setupState, key) || (normalizedProps = propsOptions[0]) && hasOwn(normalizedProps, key) || hasOwn(ctx, key) || hasOwn(publicPropertiesMap, key) || hasOwn(appContext.config.globalProperties, key) || (cssModules = type.__cssModules) && cssModules[key]);
     },
     defineProperty(target, key, descriptor) {
       if (descriptor.get != null) {
@@ -6341,12 +6268,11 @@ If you want to remount the same app, move your app creation logic into a factory
   let currentApp = null;
 
   function provide(key, value) {
-    {
-      if (!currentInstance || currentInstance.isMounted) {
+    if (!currentInstance) {
+      {
         warn$1(`provide() can only be used inside setup().`);
       }
-    }
-    if (currentInstance) {
+    } else {
       let provides = currentInstance.provides;
       const parentProvides = currentInstance.parent && currentInstance.parent.provides;
       if (parentProvides === provides) {
@@ -6372,611 +6298,6 @@ If you want to remount the same app, move your app creation logic into a factory
   }
   function hasInjectionContext() {
     return !!(getCurrentInstance() || currentApp);
-  }
-
-  const ssrContextKey = Symbol.for("v-scx");
-  const useSSRContext = () => {
-    {
-      warn$1(`useSSRContext() is not supported in the global build.`);
-    }
-  };
-
-  function watchEffect(effect, options) {
-    return doWatch(effect, null, options);
-  }
-  function watchPostEffect(effect, options) {
-    return doWatch(
-      effect,
-      null,
-      extend({}, options, { flush: "post" }) 
-    );
-  }
-  function watchSyncEffect(effect, options) {
-    return doWatch(
-      effect,
-      null,
-      extend({}, options, { flush: "sync" }) 
-    );
-  }
-  function watch(source, cb, options) {
-    if (!isFunction(cb)) {
-      warn$1(
-        `\`watch(fn, options?)\` signature has been moved to a separate API. Use \`watchEffect(fn, options?)\` instead. \`watch\` now only supports \`watch(source, cb, options?) signature.`
-      );
-    }
-    return doWatch(source, cb, options);
-  }
-  function doWatch(source, cb, options = EMPTY_OBJ) {
-    const { immediate, deep, flush, once } = options;
-    if (!cb) {
-      if (immediate !== void 0) {
-        warn$1(
-          `watch() "immediate" option is only respected when using the watch(source, callback, options?) signature.`
-        );
-      }
-      if (deep !== void 0) {
-        warn$1(
-          `watch() "deep" option is only respected when using the watch(source, callback, options?) signature.`
-        );
-      }
-      if (once !== void 0) {
-        warn$1(
-          `watch() "once" option is only respected when using the watch(source, callback, options?) signature.`
-        );
-      }
-    }
-    const baseWatchOptions = extend({}, options);
-    baseWatchOptions.onWarn = warn$1;
-    const instance = currentInstance;
-    baseWatchOptions.call = (fn, type, args) => callWithAsyncErrorHandling(fn, instance, type, args);
-    let isPre = false;
-    if (flush === "post") {
-      baseWatchOptions.scheduler = (job) => {
-        queuePostRenderEffect(job, instance && instance.suspense);
-      };
-    } else if (flush !== "sync") {
-      isPre = true;
-      baseWatchOptions.scheduler = (job, isFirstRun) => {
-        if (isFirstRun) {
-          job();
-        } else {
-          queueJob(job);
-        }
-      };
-    }
-    baseWatchOptions.augmentJob = (job) => {
-      if (cb) {
-        job.flags |= 4;
-      }
-      if (isPre) {
-        job.flags |= 2;
-        if (instance) {
-          job.id = instance.uid;
-          job.i = instance;
-        }
-      }
-    };
-    const watchHandle = watch$1(source, cb, baseWatchOptions);
-    return watchHandle;
-  }
-  function instanceWatch(source, value, options) {
-    const publicThis = this.proxy;
-    const getter = isString(source) ? source.includes(".") ? createPathGetter(publicThis, source) : () => publicThis[source] : source.bind(publicThis, publicThis);
-    let cb;
-    if (isFunction(value)) {
-      cb = value;
-    } else {
-      cb = value.handler;
-      options = value;
-    }
-    const reset = setCurrentInstance(this);
-    const res = doWatch(getter, cb.bind(publicThis), options);
-    reset();
-    return res;
-  }
-  function createPathGetter(ctx, path) {
-    const segments = path.split(".");
-    return () => {
-      let cur = ctx;
-      for (let i = 0; i < segments.length && cur; i++) {
-        cur = cur[segments[i]];
-      }
-      return cur;
-    };
-  }
-
-  function useModel(props, name, options = EMPTY_OBJ) {
-    const i = getCurrentInstance();
-    if (!i) {
-      warn$1(`useModel() called without active instance.`);
-      return ref();
-    }
-    const camelizedName = camelize(name);
-    if (!i.propsOptions[0][camelizedName]) {
-      warn$1(`useModel() called with prop "${name}" which is not declared.`);
-      return ref();
-    }
-    const hyphenatedName = hyphenate(name);
-    const modifiers = getModelModifiers(props, camelizedName);
-    const res = customRef((track, trigger) => {
-      let localValue;
-      let prevSetValue = EMPTY_OBJ;
-      let prevEmittedValue;
-      watchSyncEffect(() => {
-        const propValue = props[camelizedName];
-        if (hasChanged(localValue, propValue)) {
-          localValue = propValue;
-          trigger();
-        }
-      });
-      return {
-        get() {
-          track();
-          return options.get ? options.get(localValue) : localValue;
-        },
-        set(value) {
-          const emittedValue = options.set ? options.set(value) : value;
-          if (!hasChanged(emittedValue, localValue) && !(prevSetValue !== EMPTY_OBJ && hasChanged(value, prevSetValue))) {
-            return;
-          }
-          const rawProps = i.vnode.props;
-          if (!(rawProps && // check if parent has passed v-model
-          (name in rawProps || camelizedName in rawProps || hyphenatedName in rawProps) && (`onUpdate:${name}` in rawProps || `onUpdate:${camelizedName}` in rawProps || `onUpdate:${hyphenatedName}` in rawProps))) {
-            localValue = value;
-            trigger();
-          }
-          i.emit(`update:${name}`, emittedValue);
-          if (hasChanged(value, emittedValue) && hasChanged(value, prevSetValue) && !hasChanged(emittedValue, prevEmittedValue)) {
-            trigger();
-          }
-          prevSetValue = value;
-          prevEmittedValue = emittedValue;
-        }
-      };
-    });
-    res[Symbol.iterator] = () => {
-      let i2 = 0;
-      return {
-        next() {
-          if (i2 < 2) {
-            return { value: i2++ ? modifiers || EMPTY_OBJ : res, done: false };
-          } else {
-            return { done: true };
-          }
-        }
-      };
-    };
-    return res;
-  }
-  const getModelModifiers = (props, modelName) => {
-    return modelName === "modelValue" || modelName === "model-value" ? props.modelModifiers : props[`${modelName}Modifiers`] || props[`${camelize(modelName)}Modifiers`] || props[`${hyphenate(modelName)}Modifiers`];
-  };
-
-  function emit(instance, event, ...rawArgs) {
-    if (instance.isUnmounted) return;
-    const props = instance.vnode.props || EMPTY_OBJ;
-    {
-      const {
-        emitsOptions,
-        propsOptions: [propsOptions]
-      } = instance;
-      if (emitsOptions) {
-        if (!(event in emitsOptions) && true) {
-          if (!propsOptions || !(toHandlerKey(camelize(event)) in propsOptions)) {
-            warn$1(
-              `Component emitted event "${event}" but it is neither declared in the emits option nor as an "${toHandlerKey(camelize(event))}" prop.`
-            );
-          }
-        } else {
-          const validator = emitsOptions[event];
-          if (isFunction(validator)) {
-            const isValid = validator(...rawArgs);
-            if (!isValid) {
-              warn$1(
-                `Invalid event arguments: event validation failed for event "${event}".`
-              );
-            }
-          }
-        }
-      }
-    }
-    let args = rawArgs;
-    const isModelListener = event.startsWith("update:");
-    const modifiers = isModelListener && getModelModifiers(props, event.slice(7));
-    if (modifiers) {
-      if (modifiers.trim) {
-        args = rawArgs.map((a) => isString(a) ? a.trim() : a);
-      }
-      if (modifiers.number) {
-        args = rawArgs.map(looseToNumber);
-      }
-    }
-    {
-      devtoolsComponentEmit(instance, event, args);
-    }
-    {
-      const lowerCaseEvent = event.toLowerCase();
-      if (lowerCaseEvent !== event && props[toHandlerKey(lowerCaseEvent)]) {
-        warn$1(
-          `Event "${lowerCaseEvent}" is emitted in component ${formatComponentName(
-          instance,
-          instance.type
-        )} but the handler is registered for "${event}". Note that HTML attributes are case-insensitive and you cannot use v-on to listen to camelCase events when using in-DOM templates. You should probably use "${hyphenate(
-          event
-        )}" instead of "${event}".`
-        );
-      }
-    }
-    let handlerName;
-    let handler = props[handlerName = toHandlerKey(event)] || // also try camelCase event handler (#2249)
-    props[handlerName = toHandlerKey(camelize(event))];
-    if (!handler && isModelListener) {
-      handler = props[handlerName = toHandlerKey(hyphenate(event))];
-    }
-    if (handler) {
-      callWithAsyncErrorHandling(
-        handler,
-        instance,
-        6,
-        args
-      );
-    }
-    const onceHandler = props[handlerName + `Once`];
-    if (onceHandler) {
-      if (!instance.emitted) {
-        instance.emitted = {};
-      } else if (instance.emitted[handlerName]) {
-        return;
-      }
-      instance.emitted[handlerName] = true;
-      callWithAsyncErrorHandling(
-        onceHandler,
-        instance,
-        6,
-        args
-      );
-    }
-  }
-  const mixinEmitsCache = /* @__PURE__ */ new WeakMap();
-  function normalizeEmitsOptions(comp, appContext, asMixin = false) {
-    const cache = asMixin ? mixinEmitsCache : appContext.emitsCache;
-    const cached = cache.get(comp);
-    if (cached !== void 0) {
-      return cached;
-    }
-    const raw = comp.emits;
-    let normalized = {};
-    let hasExtends = false;
-    if (!isFunction(comp)) {
-      const extendEmits = (raw2) => {
-        const normalizedFromExtend = normalizeEmitsOptions(raw2, appContext, true);
-        if (normalizedFromExtend) {
-          hasExtends = true;
-          extend(normalized, normalizedFromExtend);
-        }
-      };
-      if (!asMixin && appContext.mixins.length) {
-        appContext.mixins.forEach(extendEmits);
-      }
-      if (comp.extends) {
-        extendEmits(comp.extends);
-      }
-      if (comp.mixins) {
-        comp.mixins.forEach(extendEmits);
-      }
-    }
-    if (!raw && !hasExtends) {
-      if (isObject(comp)) {
-        cache.set(comp, null);
-      }
-      return null;
-    }
-    if (isArray(raw)) {
-      raw.forEach((key) => normalized[key] = null);
-    } else {
-      extend(normalized, raw);
-    }
-    if (isObject(comp)) {
-      cache.set(comp, normalized);
-    }
-    return normalized;
-  }
-  function isEmitListener(options, key) {
-    if (!options || !isOn(key)) {
-      return false;
-    }
-    key = key.slice(2).replace(/Once$/, "");
-    return hasOwn(options, key[0].toLowerCase() + key.slice(1)) || hasOwn(options, hyphenate(key)) || hasOwn(options, key);
-  }
-
-  let accessedAttrs = false;
-  function markAttrsAccessed() {
-    accessedAttrs = true;
-  }
-  function renderComponentRoot(instance) {
-    const {
-      type: Component,
-      vnode,
-      proxy,
-      withProxy,
-      propsOptions: [propsOptions],
-      slots,
-      attrs,
-      emit,
-      render,
-      renderCache,
-      props,
-      data,
-      setupState,
-      ctx,
-      inheritAttrs
-    } = instance;
-    const prev = setCurrentRenderingInstance(instance);
-    let result;
-    let fallthroughAttrs;
-    {
-      accessedAttrs = false;
-    }
-    try {
-      if (vnode.shapeFlag & 4) {
-        const proxyToUse = withProxy || proxy;
-        const thisProxy = setupState.__isScriptSetup ? new Proxy(proxyToUse, {
-          get(target, key, receiver) {
-            warn$1(
-              `Property '${String(
-              key
-            )}' was accessed via 'this'. Avoid using 'this' in templates.`
-            );
-            return Reflect.get(target, key, receiver);
-          }
-        }) : proxyToUse;
-        result = normalizeVNode(
-          render.call(
-            thisProxy,
-            proxyToUse,
-            renderCache,
-            true ? shallowReadonly(props) : props,
-            setupState,
-            data,
-            ctx
-          )
-        );
-        fallthroughAttrs = attrs;
-      } else {
-        const render2 = Component;
-        if (attrs === props) {
-          markAttrsAccessed();
-        }
-        result = normalizeVNode(
-          render2.length > 1 ? render2(
-            true ? shallowReadonly(props) : props,
-            true ? {
-              get attrs() {
-                markAttrsAccessed();
-                return shallowReadonly(attrs);
-              },
-              slots,
-              emit
-            } : { attrs, slots, emit }
-          ) : render2(
-            true ? shallowReadonly(props) : props,
-            null
-          )
-        );
-        fallthroughAttrs = Component.props ? attrs : getFunctionalFallthrough(attrs);
-      }
-    } catch (err) {
-      blockStack.length = 0;
-      handleError(err, instance, 1);
-      result = createVNode(Comment);
-    }
-    let root = result;
-    let setRoot = void 0;
-    if (result.patchFlag > 0 && result.patchFlag & 2048) {
-      [root, setRoot] = getChildRoot(result);
-    }
-    if (fallthroughAttrs && inheritAttrs !== false) {
-      const keys = Object.keys(fallthroughAttrs);
-      const { shapeFlag } = root;
-      if (keys.length) {
-        if (shapeFlag & (1 | 6)) {
-          if (propsOptions && keys.some(isModelListener)) {
-            fallthroughAttrs = filterModelListeners(
-              fallthroughAttrs,
-              propsOptions
-            );
-          }
-          root = cloneVNode(root, fallthroughAttrs, false, true);
-        } else if (!accessedAttrs && root.type !== Comment) {
-          const allAttrs = Object.keys(attrs);
-          const eventAttrs = [];
-          const extraAttrs = [];
-          for (let i = 0, l = allAttrs.length; i < l; i++) {
-            const key = allAttrs[i];
-            if (isOn(key)) {
-              if (!isModelListener(key)) {
-                eventAttrs.push(key[2].toLowerCase() + key.slice(3));
-              }
-            } else {
-              extraAttrs.push(key);
-            }
-          }
-          if (extraAttrs.length) {
-            warn$1(
-              `Extraneous non-props attributes (${extraAttrs.join(", ")}) were passed to component but could not be automatically inherited because component renders fragment or text or teleport root nodes.`
-            );
-          }
-          if (eventAttrs.length) {
-            warn$1(
-              `Extraneous non-emits event listeners (${eventAttrs.join(", ")}) were passed to component but could not be automatically inherited because component renders fragment or text root nodes. If the listener is intended to be a component custom event listener only, declare it using the "emits" option.`
-            );
-          }
-        }
-      }
-    }
-    if (vnode.dirs) {
-      if (!isElementRoot(root)) {
-        warn$1(
-          `Runtime directive used on component with non-element root node. The directives will not function as intended.`
-        );
-      }
-      root = cloneVNode(root, null, false, true);
-      root.dirs = root.dirs ? root.dirs.concat(vnode.dirs) : vnode.dirs;
-    }
-    if (vnode.transition) {
-      if (!isElementRoot(root)) {
-        warn$1(
-          `Component inside <Transition> renders non-element root node that cannot be animated.`
-        );
-      }
-      setTransitionHooks(root, vnode.transition);
-    }
-    if (setRoot) {
-      setRoot(root);
-    } else {
-      result = root;
-    }
-    setCurrentRenderingInstance(prev);
-    return result;
-  }
-  const getChildRoot = (vnode) => {
-    const rawChildren = vnode.children;
-    const dynamicChildren = vnode.dynamicChildren;
-    const childRoot = filterSingleRoot(rawChildren, false);
-    if (!childRoot) {
-      return [vnode, void 0];
-    } else if (childRoot.patchFlag > 0 && childRoot.patchFlag & 2048) {
-      return getChildRoot(childRoot);
-    }
-    const index = rawChildren.indexOf(childRoot);
-    const dynamicIndex = dynamicChildren ? dynamicChildren.indexOf(childRoot) : -1;
-    const setRoot = (updatedRoot) => {
-      rawChildren[index] = updatedRoot;
-      if (dynamicChildren) {
-        if (dynamicIndex > -1) {
-          dynamicChildren[dynamicIndex] = updatedRoot;
-        } else if (updatedRoot.patchFlag > 0) {
-          vnode.dynamicChildren = [...dynamicChildren, updatedRoot];
-        }
-      }
-    };
-    return [normalizeVNode(childRoot), setRoot];
-  };
-  function filterSingleRoot(children, recurse = true) {
-    let singleRoot;
-    for (let i = 0; i < children.length; i++) {
-      const child = children[i];
-      if (isVNode(child)) {
-        if (child.type !== Comment || child.children === "v-if") {
-          if (singleRoot) {
-            return;
-          } else {
-            singleRoot = child;
-            if (recurse && singleRoot.patchFlag > 0 && singleRoot.patchFlag & 2048) {
-              return filterSingleRoot(singleRoot.children);
-            }
-          }
-        }
-      } else {
-        return;
-      }
-    }
-    return singleRoot;
-  }
-  const getFunctionalFallthrough = (attrs) => {
-    let res;
-    for (const key in attrs) {
-      if (key === "class" || key === "style" || isOn(key)) {
-        (res || (res = {}))[key] = attrs[key];
-      }
-    }
-    return res;
-  };
-  const filterModelListeners = (attrs, props) => {
-    const res = {};
-    for (const key in attrs) {
-      if (!isModelListener(key) || !(key.slice(9) in props)) {
-        res[key] = attrs[key];
-      }
-    }
-    return res;
-  };
-  const isElementRoot = (vnode) => {
-    return vnode.shapeFlag & (6 | 1) || vnode.type === Comment;
-  };
-  function shouldUpdateComponent(prevVNode, nextVNode, optimized) {
-    const { props: prevProps, children: prevChildren, component } = prevVNode;
-    const { props: nextProps, children: nextChildren, patchFlag } = nextVNode;
-    const emits = component.emitsOptions;
-    if ((prevChildren || nextChildren) && isHmrUpdating) {
-      return true;
-    }
-    if (nextVNode.dirs || nextVNode.transition) {
-      return true;
-    }
-    if (optimized && patchFlag >= 0) {
-      if (patchFlag & 1024) {
-        return true;
-      }
-      if (patchFlag & 16) {
-        if (!prevProps) {
-          return !!nextProps;
-        }
-        return hasPropsChanged(prevProps, nextProps, emits);
-      } else if (patchFlag & 8) {
-        const dynamicProps = nextVNode.dynamicProps;
-        for (let i = 0; i < dynamicProps.length; i++) {
-          const key = dynamicProps[i];
-          if (nextProps[key] !== prevProps[key] && !isEmitListener(emits, key)) {
-            return true;
-          }
-        }
-      }
-    } else {
-      if (prevChildren || nextChildren) {
-        if (!nextChildren || !nextChildren.$stable) {
-          return true;
-        }
-      }
-      if (prevProps === nextProps) {
-        return false;
-      }
-      if (!prevProps) {
-        return !!nextProps;
-      }
-      if (!nextProps) {
-        return true;
-      }
-      return hasPropsChanged(prevProps, nextProps, emits);
-    }
-    return false;
-  }
-  function hasPropsChanged(prevProps, nextProps, emitsOptions) {
-    const nextKeys = Object.keys(nextProps);
-    if (nextKeys.length !== Object.keys(prevProps).length) {
-      return true;
-    }
-    for (let i = 0; i < nextKeys.length; i++) {
-      const key = nextKeys[i];
-      if (nextProps[key] !== prevProps[key] && !isEmitListener(emitsOptions, key)) {
-        return true;
-      }
-    }
-    return false;
-  }
-  function updateHOCHostEl({ vnode, parent }, el) {
-    while (parent) {
-      const root = parent.subTree;
-      if (root.suspense && root.suspense.activeBranch === vnode) {
-        root.el = vnode.el;
-      }
-      if (root === vnode) {
-        (vnode = parent.vnode).el = el;
-        parent = parent.parent;
-      } else {
-        break;
-      }
-    }
   }
 
   const internalObjectProto = {};
@@ -7743,25 +7064,15 @@ If you want to remount the same app, move your app creation logic into a factory
           optimized
         );
       } else {
-        const customElement = !!(n1.el && n1.el._isVueCE) ? n1.el : null;
-        try {
-          if (customElement) {
-            customElement._beginPatch();
-          }
-          patchElement(
-            n1,
-            n2,
-            parentComponent,
-            parentSuspense,
-            namespace,
-            slotScopeIds,
-            optimized
-          );
-        } finally {
-          if (customElement) {
-            customElement._endPatch();
-          }
-        }
+        patchElement(
+          n1,
+          n2,
+          parentComponent,
+          parentSuspense,
+          namespace,
+          slotScopeIds,
+          optimized
+        );
       }
     };
     const mountElement = (vnode, container, anchor, parentComponent, parentSuspense, namespace, slotScopeIds, optimized) => {
@@ -9047,6 +8358,610 @@ If you want to remount the same app, move your app creation logic into a factory
     }
   }
 
+  const ssrContextKey = Symbol.for("v-scx");
+  const useSSRContext = () => {
+    {
+      warn$1(`useSSRContext() is not supported in the global build.`);
+    }
+  };
+
+  function watchEffect(effect, options) {
+    return doWatch(effect, null, options);
+  }
+  function watchPostEffect(effect, options) {
+    return doWatch(
+      effect,
+      null,
+      extend({}, options, { flush: "post" }) 
+    );
+  }
+  function watchSyncEffect(effect, options) {
+    return doWatch(
+      effect,
+      null,
+      extend({}, options, { flush: "sync" }) 
+    );
+  }
+  function watch(source, cb, options) {
+    if (!isFunction(cb)) {
+      warn$1(
+        `\`watch(fn, options?)\` signature has been moved to a separate API. Use \`watchEffect(fn, options?)\` instead. \`watch\` now only supports \`watch(source, cb, options?) signature.`
+      );
+    }
+    return doWatch(source, cb, options);
+  }
+  function doWatch(source, cb, options = EMPTY_OBJ) {
+    const { immediate, deep, flush, once } = options;
+    if (!cb) {
+      if (immediate !== void 0) {
+        warn$1(
+          `watch() "immediate" option is only respected when using the watch(source, callback, options?) signature.`
+        );
+      }
+      if (deep !== void 0) {
+        warn$1(
+          `watch() "deep" option is only respected when using the watch(source, callback, options?) signature.`
+        );
+      }
+      if (once !== void 0) {
+        warn$1(
+          `watch() "once" option is only respected when using the watch(source, callback, options?) signature.`
+        );
+      }
+    }
+    const baseWatchOptions = extend({}, options);
+    baseWatchOptions.onWarn = warn$1;
+    const instance = currentInstance;
+    baseWatchOptions.call = (fn, type, args) => callWithAsyncErrorHandling(fn, instance, type, args);
+    let isPre = false;
+    if (flush === "post") {
+      baseWatchOptions.scheduler = (job) => {
+        queuePostRenderEffect(job, instance && instance.suspense);
+      };
+    } else if (flush !== "sync") {
+      isPre = true;
+      baseWatchOptions.scheduler = (job, isFirstRun) => {
+        if (isFirstRun) {
+          job();
+        } else {
+          queueJob(job);
+        }
+      };
+    }
+    baseWatchOptions.augmentJob = (job) => {
+      if (cb) {
+        job.flags |= 4;
+      }
+      if (isPre) {
+        job.flags |= 2;
+        if (instance) {
+          job.id = instance.uid;
+          job.i = instance;
+        }
+      }
+    };
+    const watchHandle = watch$1(source, cb, baseWatchOptions);
+    return watchHandle;
+  }
+  function instanceWatch(source, value, options) {
+    const publicThis = this.proxy;
+    const getter = isString(source) ? source.includes(".") ? createPathGetter(publicThis, source) : () => publicThis[source] : source.bind(publicThis, publicThis);
+    let cb;
+    if (isFunction(value)) {
+      cb = value;
+    } else {
+      cb = value.handler;
+      options = value;
+    }
+    const reset = setCurrentInstance(this);
+    const res = doWatch(getter, cb.bind(publicThis), options);
+    reset();
+    return res;
+  }
+  function createPathGetter(ctx, path) {
+    const segments = path.split(".");
+    return () => {
+      let cur = ctx;
+      for (let i = 0; i < segments.length && cur; i++) {
+        cur = cur[segments[i]];
+      }
+      return cur;
+    };
+  }
+
+  function useModel(props, name, options = EMPTY_OBJ) {
+    const i = getCurrentInstance();
+    if (!i) {
+      warn$1(`useModel() called without active instance.`);
+      return ref();
+    }
+    const camelizedName = camelize(name);
+    if (!i.propsOptions[0][camelizedName]) {
+      warn$1(`useModel() called with prop "${name}" which is not declared.`);
+      return ref();
+    }
+    const hyphenatedName = hyphenate(name);
+    const modifiers = getModelModifiers(props, camelizedName);
+    const res = customRef((track, trigger) => {
+      let localValue;
+      let prevSetValue = EMPTY_OBJ;
+      let prevEmittedValue;
+      watchSyncEffect(() => {
+        const propValue = props[camelizedName];
+        if (hasChanged(localValue, propValue)) {
+          localValue = propValue;
+          trigger();
+        }
+      });
+      return {
+        get() {
+          track();
+          return options.get ? options.get(localValue) : localValue;
+        },
+        set(value) {
+          const emittedValue = options.set ? options.set(value) : value;
+          if (!hasChanged(emittedValue, localValue) && !(prevSetValue !== EMPTY_OBJ && hasChanged(value, prevSetValue))) {
+            return;
+          }
+          const rawProps = i.vnode.props;
+          if (!(rawProps && // check if parent has passed v-model
+          (name in rawProps || camelizedName in rawProps || hyphenatedName in rawProps) && (`onUpdate:${name}` in rawProps || `onUpdate:${camelizedName}` in rawProps || `onUpdate:${hyphenatedName}` in rawProps))) {
+            localValue = value;
+            trigger();
+          }
+          i.emit(`update:${name}`, emittedValue);
+          if (hasChanged(value, emittedValue) && hasChanged(value, prevSetValue) && !hasChanged(emittedValue, prevEmittedValue)) {
+            trigger();
+          }
+          prevSetValue = value;
+          prevEmittedValue = emittedValue;
+        }
+      };
+    });
+    res[Symbol.iterator] = () => {
+      let i2 = 0;
+      return {
+        next() {
+          if (i2 < 2) {
+            return { value: i2++ ? modifiers || EMPTY_OBJ : res, done: false };
+          } else {
+            return { done: true };
+          }
+        }
+      };
+    };
+    return res;
+  }
+  const getModelModifiers = (props, modelName) => {
+    return modelName === "modelValue" || modelName === "model-value" ? props.modelModifiers : props[`${modelName}Modifiers`] || props[`${camelize(modelName)}Modifiers`] || props[`${hyphenate(modelName)}Modifiers`];
+  };
+
+  function emit(instance, event, ...rawArgs) {
+    if (instance.isUnmounted) return;
+    const props = instance.vnode.props || EMPTY_OBJ;
+    {
+      const {
+        emitsOptions,
+        propsOptions: [propsOptions]
+      } = instance;
+      if (emitsOptions) {
+        if (!(event in emitsOptions) && true) {
+          if (!propsOptions || !(toHandlerKey(camelize(event)) in propsOptions)) {
+            warn$1(
+              `Component emitted event "${event}" but it is neither declared in the emits option nor as an "${toHandlerKey(camelize(event))}" prop.`
+            );
+          }
+        } else {
+          const validator = emitsOptions[event];
+          if (isFunction(validator)) {
+            const isValid = validator(...rawArgs);
+            if (!isValid) {
+              warn$1(
+                `Invalid event arguments: event validation failed for event "${event}".`
+              );
+            }
+          }
+        }
+      }
+    }
+    let args = rawArgs;
+    const isModelListener = event.startsWith("update:");
+    const modifiers = isModelListener && getModelModifiers(props, event.slice(7));
+    if (modifiers) {
+      if (modifiers.trim) {
+        args = rawArgs.map((a) => isString(a) ? a.trim() : a);
+      }
+      if (modifiers.number) {
+        args = rawArgs.map(looseToNumber);
+      }
+    }
+    {
+      devtoolsComponentEmit(instance, event, args);
+    }
+    {
+      const lowerCaseEvent = event.toLowerCase();
+      if (lowerCaseEvent !== event && props[toHandlerKey(lowerCaseEvent)]) {
+        warn$1(
+          `Event "${lowerCaseEvent}" is emitted in component ${formatComponentName(
+          instance,
+          instance.type
+        )} but the handler is registered for "${event}". Note that HTML attributes are case-insensitive and you cannot use v-on to listen to camelCase events when using in-DOM templates. You should probably use "${hyphenate(
+          event
+        )}" instead of "${event}".`
+        );
+      }
+    }
+    let handlerName;
+    let handler = props[handlerName = toHandlerKey(event)] || // also try camelCase event handler (#2249)
+    props[handlerName = toHandlerKey(camelize(event))];
+    if (!handler && isModelListener) {
+      handler = props[handlerName = toHandlerKey(hyphenate(event))];
+    }
+    if (handler) {
+      callWithAsyncErrorHandling(
+        handler,
+        instance,
+        6,
+        args
+      );
+    }
+    const onceHandler = props[handlerName + `Once`];
+    if (onceHandler) {
+      if (!instance.emitted) {
+        instance.emitted = {};
+      } else if (instance.emitted[handlerName]) {
+        return;
+      }
+      instance.emitted[handlerName] = true;
+      callWithAsyncErrorHandling(
+        onceHandler,
+        instance,
+        6,
+        args
+      );
+    }
+  }
+  function normalizeEmitsOptions(comp, appContext, asMixin = false) {
+    const cache = appContext.emitsCache;
+    const cached = cache.get(comp);
+    if (cached !== void 0) {
+      return cached;
+    }
+    const raw = comp.emits;
+    let normalized = {};
+    let hasExtends = false;
+    if (!isFunction(comp)) {
+      const extendEmits = (raw2) => {
+        const normalizedFromExtend = normalizeEmitsOptions(raw2, appContext, true);
+        if (normalizedFromExtend) {
+          hasExtends = true;
+          extend(normalized, normalizedFromExtend);
+        }
+      };
+      if (!asMixin && appContext.mixins.length) {
+        appContext.mixins.forEach(extendEmits);
+      }
+      if (comp.extends) {
+        extendEmits(comp.extends);
+      }
+      if (comp.mixins) {
+        comp.mixins.forEach(extendEmits);
+      }
+    }
+    if (!raw && !hasExtends) {
+      if (isObject(comp)) {
+        cache.set(comp, null);
+      }
+      return null;
+    }
+    if (isArray(raw)) {
+      raw.forEach((key) => normalized[key] = null);
+    } else {
+      extend(normalized, raw);
+    }
+    if (isObject(comp)) {
+      cache.set(comp, normalized);
+    }
+    return normalized;
+  }
+  function isEmitListener(options, key) {
+    if (!options || !isOn(key)) {
+      return false;
+    }
+    key = key.slice(2).replace(/Once$/, "");
+    return hasOwn(options, key[0].toLowerCase() + key.slice(1)) || hasOwn(options, hyphenate(key)) || hasOwn(options, key);
+  }
+
+  let accessedAttrs = false;
+  function markAttrsAccessed() {
+    accessedAttrs = true;
+  }
+  function renderComponentRoot(instance) {
+    const {
+      type: Component,
+      vnode,
+      proxy,
+      withProxy,
+      propsOptions: [propsOptions],
+      slots,
+      attrs,
+      emit,
+      render,
+      renderCache,
+      props,
+      data,
+      setupState,
+      ctx,
+      inheritAttrs
+    } = instance;
+    const prev = setCurrentRenderingInstance(instance);
+    let result;
+    let fallthroughAttrs;
+    {
+      accessedAttrs = false;
+    }
+    try {
+      if (vnode.shapeFlag & 4) {
+        const proxyToUse = withProxy || proxy;
+        const thisProxy = setupState.__isScriptSetup ? new Proxy(proxyToUse, {
+          get(target, key, receiver) {
+            warn$1(
+              `Property '${String(
+              key
+            )}' was accessed via 'this'. Avoid using 'this' in templates.`
+            );
+            return Reflect.get(target, key, receiver);
+          }
+        }) : proxyToUse;
+        result = normalizeVNode(
+          render.call(
+            thisProxy,
+            proxyToUse,
+            renderCache,
+            true ? shallowReadonly(props) : props,
+            setupState,
+            data,
+            ctx
+          )
+        );
+        fallthroughAttrs = attrs;
+      } else {
+        const render2 = Component;
+        if (attrs === props) {
+          markAttrsAccessed();
+        }
+        result = normalizeVNode(
+          render2.length > 1 ? render2(
+            true ? shallowReadonly(props) : props,
+            true ? {
+              get attrs() {
+                markAttrsAccessed();
+                return shallowReadonly(attrs);
+              },
+              slots,
+              emit
+            } : { attrs, slots, emit }
+          ) : render2(
+            true ? shallowReadonly(props) : props,
+            null
+          )
+        );
+        fallthroughAttrs = Component.props ? attrs : getFunctionalFallthrough(attrs);
+      }
+    } catch (err) {
+      blockStack.length = 0;
+      handleError(err, instance, 1);
+      result = createVNode(Comment);
+    }
+    let root = result;
+    let setRoot = void 0;
+    if (result.patchFlag > 0 && result.patchFlag & 2048) {
+      [root, setRoot] = getChildRoot(result);
+    }
+    if (fallthroughAttrs && inheritAttrs !== false) {
+      const keys = Object.keys(fallthroughAttrs);
+      const { shapeFlag } = root;
+      if (keys.length) {
+        if (shapeFlag & (1 | 6)) {
+          if (propsOptions && keys.some(isModelListener)) {
+            fallthroughAttrs = filterModelListeners(
+              fallthroughAttrs,
+              propsOptions
+            );
+          }
+          root = cloneVNode(root, fallthroughAttrs, false, true);
+        } else if (!accessedAttrs && root.type !== Comment) {
+          const allAttrs = Object.keys(attrs);
+          const eventAttrs = [];
+          const extraAttrs = [];
+          for (let i = 0, l = allAttrs.length; i < l; i++) {
+            const key = allAttrs[i];
+            if (isOn(key)) {
+              if (!isModelListener(key)) {
+                eventAttrs.push(key[2].toLowerCase() + key.slice(3));
+              }
+            } else {
+              extraAttrs.push(key);
+            }
+          }
+          if (extraAttrs.length) {
+            warn$1(
+              `Extraneous non-props attributes (${extraAttrs.join(", ")}) were passed to component but could not be automatically inherited because component renders fragment or text or teleport root nodes.`
+            );
+          }
+          if (eventAttrs.length) {
+            warn$1(
+              `Extraneous non-emits event listeners (${eventAttrs.join(", ")}) were passed to component but could not be automatically inherited because component renders fragment or text root nodes. If the listener is intended to be a component custom event listener only, declare it using the "emits" option.`
+            );
+          }
+        }
+      }
+    }
+    if (vnode.dirs) {
+      if (!isElementRoot(root)) {
+        warn$1(
+          `Runtime directive used on component with non-element root node. The directives will not function as intended.`
+        );
+      }
+      root = cloneVNode(root, null, false, true);
+      root.dirs = root.dirs ? root.dirs.concat(vnode.dirs) : vnode.dirs;
+    }
+    if (vnode.transition) {
+      if (!isElementRoot(root)) {
+        warn$1(
+          `Component inside <Transition> renders non-element root node that cannot be animated.`
+        );
+      }
+      setTransitionHooks(root, vnode.transition);
+    }
+    if (setRoot) {
+      setRoot(root);
+    } else {
+      result = root;
+    }
+    setCurrentRenderingInstance(prev);
+    return result;
+  }
+  const getChildRoot = (vnode) => {
+    const rawChildren = vnode.children;
+    const dynamicChildren = vnode.dynamicChildren;
+    const childRoot = filterSingleRoot(rawChildren, false);
+    if (!childRoot) {
+      return [vnode, void 0];
+    } else if (childRoot.patchFlag > 0 && childRoot.patchFlag & 2048) {
+      return getChildRoot(childRoot);
+    }
+    const index = rawChildren.indexOf(childRoot);
+    const dynamicIndex = dynamicChildren ? dynamicChildren.indexOf(childRoot) : -1;
+    const setRoot = (updatedRoot) => {
+      rawChildren[index] = updatedRoot;
+      if (dynamicChildren) {
+        if (dynamicIndex > -1) {
+          dynamicChildren[dynamicIndex] = updatedRoot;
+        } else if (updatedRoot.patchFlag > 0) {
+          vnode.dynamicChildren = [...dynamicChildren, updatedRoot];
+        }
+      }
+    };
+    return [normalizeVNode(childRoot), setRoot];
+  };
+  function filterSingleRoot(children, recurse = true) {
+    let singleRoot;
+    for (let i = 0; i < children.length; i++) {
+      const child = children[i];
+      if (isVNode(child)) {
+        if (child.type !== Comment || child.children === "v-if") {
+          if (singleRoot) {
+            return;
+          } else {
+            singleRoot = child;
+            if (recurse && singleRoot.patchFlag > 0 && singleRoot.patchFlag & 2048) {
+              return filterSingleRoot(singleRoot.children);
+            }
+          }
+        }
+      } else {
+        return;
+      }
+    }
+    return singleRoot;
+  }
+  const getFunctionalFallthrough = (attrs) => {
+    let res;
+    for (const key in attrs) {
+      if (key === "class" || key === "style" || isOn(key)) {
+        (res || (res = {}))[key] = attrs[key];
+      }
+    }
+    return res;
+  };
+  const filterModelListeners = (attrs, props) => {
+    const res = {};
+    for (const key in attrs) {
+      if (!isModelListener(key) || !(key.slice(9) in props)) {
+        res[key] = attrs[key];
+      }
+    }
+    return res;
+  };
+  const isElementRoot = (vnode) => {
+    return vnode.shapeFlag & (6 | 1) || vnode.type === Comment;
+  };
+  function shouldUpdateComponent(prevVNode, nextVNode, optimized) {
+    const { props: prevProps, children: prevChildren, component } = prevVNode;
+    const { props: nextProps, children: nextChildren, patchFlag } = nextVNode;
+    const emits = component.emitsOptions;
+    if ((prevChildren || nextChildren) && isHmrUpdating) {
+      return true;
+    }
+    if (nextVNode.dirs || nextVNode.transition) {
+      return true;
+    }
+    if (optimized && patchFlag >= 0) {
+      if (patchFlag & 1024) {
+        return true;
+      }
+      if (patchFlag & 16) {
+        if (!prevProps) {
+          return !!nextProps;
+        }
+        return hasPropsChanged(prevProps, nextProps, emits);
+      } else if (patchFlag & 8) {
+        const dynamicProps = nextVNode.dynamicProps;
+        for (let i = 0; i < dynamicProps.length; i++) {
+          const key = dynamicProps[i];
+          if (nextProps[key] !== prevProps[key] && !isEmitListener(emits, key)) {
+            return true;
+          }
+        }
+      }
+    } else {
+      if (prevChildren || nextChildren) {
+        if (!nextChildren || !nextChildren.$stable) {
+          return true;
+        }
+      }
+      if (prevProps === nextProps) {
+        return false;
+      }
+      if (!prevProps) {
+        return !!nextProps;
+      }
+      if (!nextProps) {
+        return true;
+      }
+      return hasPropsChanged(prevProps, nextProps, emits);
+    }
+    return false;
+  }
+  function hasPropsChanged(prevProps, nextProps, emitsOptions) {
+    const nextKeys = Object.keys(nextProps);
+    if (nextKeys.length !== Object.keys(prevProps).length) {
+      return true;
+    }
+    for (let i = 0; i < nextKeys.length; i++) {
+      const key = nextKeys[i];
+      if (nextProps[key] !== prevProps[key] && !isEmitListener(emitsOptions, key)) {
+        return true;
+      }
+    }
+    return false;
+  }
+  function updateHOCHostEl({ vnode, parent }, el) {
+    while (parent) {
+      const root = parent.subTree;
+      if (root.suspense && root.suspense.activeBranch === vnode) {
+        root.el = vnode.el;
+      }
+      if (root === vnode) {
+        (vnode = parent.vnode).el = el;
+        parent = parent.parent;
+      } else {
+        break;
+      }
+    }
+  }
+
   const isSuspense = (type) => type.__isSuspense;
   let suspenseId = 0;
   const SuspenseImpl = {
@@ -9155,7 +9070,7 @@ If you want to remount the same app, move your app creation logic into a factory
     const { activeBranch, pendingBranch, isInFallback, isHydrating } = suspense;
     if (pendingBranch) {
       suspense.pendingBranch = newBranch;
-      if (isSameVNodeType(pendingBranch, newBranch)) {
+      if (isSameVNodeType(newBranch, pendingBranch)) {
         patch(
           pendingBranch,
           newBranch,
@@ -9226,7 +9141,7 @@ If you want to remount the same app, move your app creation logic into a factory
             );
             setActiveBranch(suspense, newFallback);
           }
-        } else if (activeBranch && isSameVNodeType(activeBranch, newBranch)) {
+        } else if (activeBranch && isSameVNodeType(newBranch, activeBranch)) {
           patch(
             activeBranch,
             newBranch,
@@ -9257,7 +9172,7 @@ If you want to remount the same app, move your app creation logic into a factory
         }
       }
     } else {
-      if (activeBranch && isSameVNodeType(activeBranch, newBranch)) {
+      if (activeBranch && isSameVNodeType(newBranch, activeBranch)) {
         patch(
           activeBranch,
           newBranch,
@@ -9370,8 +9285,7 @@ If you want to remount the same app, move your app creation logic into a factory
           pendingId,
           effects,
           parentComponent: parentComponent2,
-          container: container2,
-          isInFallback
+          container: container2
         } = suspense;
         let delayEnter = false;
         if (suspense.isHydrating) {
@@ -9388,9 +9302,6 @@ If you want to remount the same app, move your app creation logic into a factory
                   0
                 );
                 queuePostFlushCb(effects);
-                if (isInFallback && vnode2.ssFallback) {
-                  vnode2.ssFallback.el = null;
-                }
               }
             };
           }
@@ -9399,9 +9310,6 @@ If you want to remount the same app, move your app creation logic into a factory
               anchor = next(activeBranch);
             }
             unmount(activeBranch, parentComponent2, suspense, true);
-            if (!delayEnter && isInFallback && vnode2.ssFallback) {
-              queuePostRenderEffect(() => vnode2.ssFallback.el = null, suspense);
-            }
           }
           if (!delayEnter) {
             move(pendingBranch, container2, anchor, 0);
@@ -9520,7 +9428,6 @@ If you want to remount the same app, move your app creation logic into a factory
             optimized2
           );
           if (placeholder) {
-            vnode2.placeholder = null;
             remove(placeholder);
           }
           updateHOCHostEl(instance, vnode2.el);
@@ -10165,6 +10072,7 @@ Component that was made reactive: `,
     return setupResult;
   }
   function setupStatefulComponent(instance, isSSR) {
+    var _a;
     const Component = instance.type;
     {
       if (Component.name) {
@@ -10224,7 +10132,7 @@ Component that was made reactive: `,
         } else {
           instance.asyncDep = setupResult;
           if (!instance.suspense) {
-            const name = formatComponentName(instance, Component);
+            const name = (_a = Component.name) != null ? _a : "Anonymous";
             warn$1(
               `Component <${name}>: setup function returned a promise, but no <Suspense> boundary was found in the parent component tree. A component with async setup() must be nested in a <Suspense> in order to be rendered.`
             );
@@ -10407,7 +10315,7 @@ Component that was made reactive: `,
       return instance.proxy;
     }
   }
-  const classifyRE = /(?:^|[-_])\w/g;
+  const classifyRE = /(?:^|[-_])(\w)/g;
   const classify = (str) => str.replace(classifyRE, (c) => c.toUpperCase()).replace(/[-_]/g, "");
   function getComponentName(Component, includeInferred = true) {
     return isFunction(Component) ? Component.displayName || Component.name : Component.name || includeInferred && Component.__name;
@@ -10420,7 +10328,7 @@ Component that was made reactive: `,
         name = match[1];
       }
     }
-    if (!name && instance) {
+    if (!name && instance && instance.parent) {
       const inferFromRegistry = (registry) => {
         for (const key in registry) {
           if (registry[key] === Component) {
@@ -10428,8 +10336,8 @@ Component that was made reactive: `,
           }
         }
       };
-      name = inferFromRegistry(instance.components) || instance.parent && inferFromRegistry(
-        instance.parent.type.components
+      name = inferFromRegistry(
+        instance.components || instance.parent.type.components
       ) || inferFromRegistry(instance.appContext.components);
     }
     return name ? classify(name) : isRoot ? `App` : `Anonymous`;
@@ -10450,28 +10358,23 @@ Component that was made reactive: `,
   };
 
   function h(type, propsOrChildren, children) {
-    try {
-      setBlockTracking(-1);
-      const l = arguments.length;
-      if (l === 2) {
-        if (isObject(propsOrChildren) && !isArray(propsOrChildren)) {
-          if (isVNode(propsOrChildren)) {
-            return createVNode(type, null, [propsOrChildren]);
-          }
-          return createVNode(type, propsOrChildren);
-        } else {
-          return createVNode(type, null, propsOrChildren);
+    const l = arguments.length;
+    if (l === 2) {
+      if (isObject(propsOrChildren) && !isArray(propsOrChildren)) {
+        if (isVNode(propsOrChildren)) {
+          return createVNode(type, null, [propsOrChildren]);
         }
+        return createVNode(type, propsOrChildren);
       } else {
-        if (l > 3) {
-          children = Array.prototype.slice.call(arguments, 2);
-        } else if (l === 3 && isVNode(children)) {
-          children = [children];
-        }
-        return createVNode(type, propsOrChildren, children);
+        return createVNode(type, null, propsOrChildren);
       }
-    } finally {
-      setBlockTracking(1);
+    } else {
+      if (l > 3) {
+        children = Array.prototype.slice.call(arguments, 2);
+      } else if (l === 3 && isVNode(children)) {
+        children = [children];
+      }
+      return createVNode(type, propsOrChildren, children);
     }
   }
 
@@ -10681,7 +10584,7 @@ Component that was made reactive: `,
     return true;
   }
 
-  const version = "3.5.25";
+  const version = "3.5.20";
   const warn = warn$1 ;
   const ErrorTypeStrings = ErrorTypeStrings$1 ;
   const devtools = devtools$1 ;
@@ -10898,11 +10801,11 @@ Component that was made reactive: `,
         const resolve = () => finishLeave(el, done);
         addTransitionClass(el, leaveFromClass);
         if (!el._enterCancelled) {
-          forceReflow(el);
+          forceReflow();
           addTransitionClass(el, leaveActiveClass);
         } else {
           addTransitionClass(el, leaveActiveClass);
-          forceReflow(el);
+          forceReflow();
         }
         nextFrame(() => {
           if (!el._isLeaving) {
@@ -11028,7 +10931,7 @@ Component that was made reactive: `,
       type = timeout > 0 ? transitionTimeout > animationTimeout ? TRANSITION$1 : ANIMATION : null;
       propCount = type ? type === TRANSITION$1 ? transitionDurations.length : animationDurations.length : 0;
     }
-    const hasTransform = type === TRANSITION$1 && /\b(?:transform|all)(?:,|$)/.test(
+    const hasTransform = type === TRANSITION$1 && /\b(transform|all)(,|$)/.test(
       getStyleProperties(`${TRANSITION$1}Property`).toString()
     );
     return {
@@ -11048,9 +10951,8 @@ Component that was made reactive: `,
     if (s === "auto") return 0;
     return Number(s.slice(0, -1).replace(",", ".")) * 1e3;
   }
-  function forceReflow(el) {
-    const targetDocument = el ? el.ownerDocument : document;
-    return targetDocument.body.offsetHeight;
+  function forceReflow() {
+    return document.body.offsetHeight;
   }
 
   function patchClass(el, value, isSVG) {
@@ -11183,7 +11085,7 @@ Component that was made reactive: `,
     }
   }
 
-  const displayRE = /(?:^|;)\s*display\s*:/;
+  const displayRE = /(^|;)\s*display\s*:/;
   function patchStyle(el, prev, next) {
     const style = el.style;
     const isCssString = isString(next);
@@ -11484,9 +11386,6 @@ Expected function or array of functions, received type ${typeof value}.`
     if (key === "spellcheck" || key === "draggable" || key === "translate" || key === "autocorrect") {
       return false;
     }
-    if (key === "sandbox" && el.tagName === "IFRAME") {
-      return false;
-    }
     if (key === "form") {
       return false;
     }
@@ -11509,10 +11408,11 @@ Expected function or array of functions, received type ${typeof value}.`
   }
 
   const REMOVAL = {};
+  /*! #__NO_SIDE_EFFECTS__ */
   // @__NO_SIDE_EFFECTS__
   function defineCustomElement(options, extraOptions, _createApp) {
-    let Comp = defineComponent(options, extraOptions);
-    if (isPlainObject(Comp)) Comp = extend({}, Comp, extraOptions);
+    const Comp = defineComponent(options, extraOptions);
+    if (isPlainObject(Comp)) extend(Comp, extraOptions);
     class VueCustomElement extends VueElement {
       constructor(initialProps) {
         super(Comp, initialProps, _createApp);
@@ -11521,6 +11421,7 @@ Expected function or array of functions, received type ${typeof value}.`
     VueCustomElement.def = Comp;
     return VueCustomElement;
   }
+
   const defineSSRCustomElement = (/* @__NO_SIDE_EFFECTS__ */ (options, extraOptions) => {
     return /* @__PURE__ */ defineCustomElement(options, extraOptions, createSSRApp);
   });
@@ -11547,8 +11448,6 @@ Expected function or array of functions, received type ${typeof value}.`
       this._nonce = this._def.nonce;
       this._connected = false;
       this._resolved = false;
-      this._patching = false;
-      this._dirty = false;
       this._numberProps = null;
       this._styleChildren = /* @__PURE__ */ new WeakSet();
       this._ob = null;
@@ -11561,11 +11460,7 @@ Expected function or array of functions, received type ${typeof value}.`
           );
         }
         if (_def.shadowRoot !== false) {
-          this.attachShadow(
-            extend({}, _def.shadowRootOptions, {
-              mode: "open"
-            })
-          );
+          this.attachShadow({ mode: "open" });
           this._root = this.shadowRoot;
         } else {
           this._root = this;
@@ -11625,17 +11520,8 @@ Expected function or array of functions, received type ${typeof value}.`
           this._app && this._app.unmount();
           if (this._instance) this._instance.ce = void 0;
           this._app = this._instance = null;
-          if (this._teleportTargets) {
-            this._teleportTargets.clear();
-            this._teleportTargets = void 0;
-          }
         }
       });
-    }
-    _processMutations(mutations) {
-      for (const m of mutations) {
-        this._setAttr(m.attributeName);
-      }
     }
     /**
      * resolve inner component definition (handle possible async component)
@@ -11647,7 +11533,11 @@ Expected function or array of functions, received type ${typeof value}.`
       for (let i = 0; i < this.attributes.length; i++) {
         this._setAttr(this.attributes[i].name);
       }
-      this._ob = new MutationObserver(this._processMutations.bind(this));
+      this._ob = new MutationObserver((mutations) => {
+        for (const m of mutations) {
+          this._setAttr(m.attributeName);
+        }
+      });
       this._ob.observe(this, { attributes: true });
       const resolve = (def, isAsync = false) => {
         this._resolved = true;
@@ -11724,7 +11614,7 @@ Expected function or array of functions, received type ${typeof value}.`
             return this._getProp(key);
           },
           set(val) {
-            this._setProp(key, val, true, !this._patching);
+            this._setProp(key, val, true, true);
           }
         });
       }
@@ -11750,7 +11640,6 @@ Expected function or array of functions, received type ${typeof value}.`
      */
     _setProp(key, val, shouldReflect = true, shouldUpdate = false) {
       if (val !== this._props[key]) {
-        this._dirty = true;
         if (val === REMOVAL) {
           delete this._props[key];
         } else {
@@ -11764,10 +11653,7 @@ Expected function or array of functions, received type ${typeof value}.`
         }
         if (shouldReflect) {
           const ob = this._ob;
-          if (ob) {
-            this._processMutations(ob.takeRecords());
-            ob.disconnect();
-          }
+          ob && ob.disconnect();
           if (val === true) {
             this.setAttribute(hyphenate(key), "");
           } else if (typeof val === "string" || typeof val === "number") {
@@ -11871,7 +11757,7 @@ Expected function or array of functions, received type ${typeof value}.`
      * Only called when shadowRoot is false
      */
     _renderSlots() {
-      const outlets = this._getSlots();
+      const outlets = (this._teleportTarget || this).querySelectorAll("slot");
       const scopeId = this._instance.type.__scopeId;
       for (let i = 0; i < outlets.length; i++) {
         const o = outlets[i];
@@ -11900,41 +11786,8 @@ Expected function or array of functions, received type ${typeof value}.`
     /**
      * @internal
      */
-    _getSlots() {
-      const roots = [this];
-      if (this._teleportTargets) {
-        roots.push(...this._teleportTargets);
-      }
-      const slots = /* @__PURE__ */ new Set();
-      for (const root of roots) {
-        const found = root.querySelectorAll("slot");
-        for (let i = 0; i < found.length; i++) {
-          slots.add(found[i]);
-        }
-      }
-      return Array.from(slots);
-    }
-    /**
-     * @internal
-     */
     _injectChildStyle(comp) {
       this._applyStyles(comp.styles, comp);
-    }
-    /**
-     * @internal
-     */
-    _beginPatch() {
-      this._patching = true;
-      this._dirty = false;
-    }
-    /**
-     * @internal
-     */
-    _endPatch() {
-      this._patching = false;
-      if (this._dirty && this._instance) {
-        this._update();
-      }
     }
     /**
      * @internal
@@ -12019,7 +11872,7 @@ Expected function or array of functions, received type ${typeof value}.`
         prevChildren.forEach(callPendingCbs);
         prevChildren.forEach(recordPosition);
         const movedChildren = prevChildren.filter(applyTranslation);
-        forceReflow(instance.vnode.el);
+        forceReflow();
         movedChildren.forEach((c) => {
           const el = c.el;
           const style = el.style;
@@ -12029,7 +11882,7 @@ Expected function or array of functions, received type ${typeof value}.`
             if (e && e.target !== el) {
               return;
             }
-            if (!e || e.propertyName.endsWith("transform")) {
+            if (!e || /transform$/.test(e.propertyName)) {
               el.removeEventListener("transitionend", cb);
               el[moveCbKey] = null;
               removeTransitionClass(el, moveClass);
@@ -12058,10 +11911,10 @@ Expected function or array of functions, received type ${typeof value}.`
                   instance
                 )
               );
-              positionMap.set(child, {
-                left: child.el.offsetLeft,
-                top: child.el.offsetTop
-              });
+              positionMap.set(
+                child,
+                child.el.getBoundingClientRect()
+              );
             }
           }
         }
@@ -12092,10 +11945,7 @@ Expected function or array of functions, received type ${typeof value}.`
     }
   }
   function recordPosition(c) {
-    newPositionMap.set(c, {
-      left: c.el.offsetLeft,
-      top: c.el.offsetTop
-    });
+    newPositionMap.set(c, c.el.getBoundingClientRect());
   }
   function applyTranslation(c) {
     const oldPos = positionMap.get(c);
@@ -12141,22 +11991,24 @@ Expected function or array of functions, received type ${typeof value}.`
     }
   }
   const assignKey = Symbol("_assign");
-  function castValue(value, trim, number) {
-    if (trim) value = value.trim();
-    if (number) value = looseToNumber(value);
-    return value;
-  }
   const vModelText = {
     created(el, { modifiers: { lazy, trim, number } }, vnode) {
       el[assignKey] = getModelAssigner(vnode);
       const castToNumber = number || vnode.props && vnode.props.type === "number";
       addEventListener(el, lazy ? "change" : "input", (e) => {
         if (e.target.composing) return;
-        el[assignKey](castValue(el.value, trim, castToNumber));
+        let domValue = el.value;
+        if (trim) {
+          domValue = domValue.trim();
+        }
+        if (castToNumber) {
+          domValue = looseToNumber(domValue);
+        }
+        el[assignKey](domValue);
       });
-      if (trim || castToNumber) {
+      if (trim) {
         addEventListener(el, "change", () => {
-          el.value = castValue(el.value, trim, castToNumber);
+          el.value = el.value.trim();
         });
       }
       if (!lazy) {
@@ -13786,7 +13638,7 @@ Use a v-bind binding combined with a v-on listener that emits update:x event ins
     return !currentOpenBracketCount && !currentOpenParensCount;
   };
   const isMemberExpression = isMemberExpressionBrowser ;
-  const fnExpRE = /^\s*(?:async\s*)?(?:\([^)]*?\)|[\w$_]+)\s*(?::[^=]+)?=>|^\s*(?:async\s+)?function(?:\s+[\w$]+)?\s*\(/;
+  const fnExpRE = /^\s*(async\s*)?(\([^)]*?\)|[\w$_]+)\s*(:[^=]+)?=>|^\s*(async\s+)?function(?:\s+[\w$]+)?\s*\(/;
   const isFnExpressionBrowser = (exp) => fnExpRE.test(getExpSource(exp));
   const isFnExpression = isFnExpressionBrowser ;
   function assert(condition, msg) {
@@ -13935,20 +13787,6 @@ Use a v-bind binding combined with a v-on listener that emits update:x event ins
     }
   }
   const forAliasRE = /([\s\S]*?)\s+(?:in|of)\s+(\S[\s\S]*)/;
-  function isAllWhitespace(str) {
-    for (let i = 0; i < str.length; i++) {
-      if (!isWhitespace(str.charCodeAt(i))) {
-        return false;
-      }
-    }
-    return true;
-  }
-  function isWhitespaceText(node) {
-    return node.type === 2 && isAllWhitespace(node.content) || node.type === 12 && isWhitespaceText(node.content);
-  }
-  function isCommentOrWhitespace(node) {
-    return node.type === 3 || isWhitespaceText(node);
-  }
 
   const defaultParserOptions = {
     parseMode: "base",
@@ -14487,6 +14325,14 @@ Use a v-bind binding combined with a v-on listener that emits update:x event ins
       }
     }
     return removedWhitespace ? nodes.filter(Boolean) : nodes;
+  }
+  function isAllWhitespace(str) {
+    for (let i = 0; i < str.length; i++) {
+      if (!isWhitespace(str.charCodeAt(i))) {
+        return false;
+      }
+    }
+    return true;
   }
   function hasNewlineChar(str) {
     for (let i = 0; i < str.length; i++) {
@@ -15834,7 +15680,7 @@ Use a v-bind binding combined with a v-on listener that emits update:x event ins
   }
 
   const transformIf = createStructuralDirectiveTransform(
-    /^(?:if|else|else-if)$/,
+    /^(if|else|else-if)$/,
     (node, dir, context) => {
       return processIf(node, dir, context, (ifNode, branch, isRoot) => {
         const siblings = context.parent.children;
@@ -15893,11 +15739,13 @@ Use a v-bind binding combined with a v-on listener that emits update:x event ins
       let i = siblings.indexOf(node);
       while (i-- >= -1) {
         const sibling = siblings[i];
-        if (sibling && isCommentOrWhitespace(sibling)) {
+        if (sibling && sibling.type === 3) {
           context.removeNode(sibling);
-          if (sibling.type === 3) {
-            comments.unshift(sibling);
-          }
+          comments.unshift(sibling);
+          continue;
+        }
+        if (sibling && sibling.type === 2 && !sibling.content.trim().length) {
+          context.removeNode(sibling);
           continue;
         }
         if (sibling && sibling.type === 9) {
@@ -16050,6 +15898,80 @@ Use a v-bind binding combined with a v-on listener that emits update:x event ins
     }
   }
 
+  const transformBind = (dir, _node, context) => {
+    const { modifiers, loc } = dir;
+    const arg = dir.arg;
+    let { exp } = dir;
+    if (exp && exp.type === 4 && !exp.content.trim()) {
+      {
+        exp = void 0;
+      }
+    }
+    if (!exp) {
+      if (arg.type !== 4 || !arg.isStatic) {
+        context.onError(
+          createCompilerError(
+            52,
+            arg.loc
+          )
+        );
+        return {
+          props: [
+            createObjectProperty(arg, createSimpleExpression("", true, loc))
+          ]
+        };
+      }
+      transformBindShorthand(dir);
+      exp = dir.exp;
+    }
+    if (arg.type !== 4) {
+      arg.children.unshift(`(`);
+      arg.children.push(`) || ""`);
+    } else if (!arg.isStatic) {
+      arg.content = arg.content ? `${arg.content} || ""` : `""`;
+    }
+    if (modifiers.some((mod) => mod.content === "camel")) {
+      if (arg.type === 4) {
+        if (arg.isStatic) {
+          arg.content = camelize(arg.content);
+        } else {
+          arg.content = `${context.helperString(CAMELIZE)}(${arg.content})`;
+        }
+      } else {
+        arg.children.unshift(`${context.helperString(CAMELIZE)}(`);
+        arg.children.push(`)`);
+      }
+    }
+    if (!context.inSSR) {
+      if (modifiers.some((mod) => mod.content === "prop")) {
+        injectPrefix(arg, ".");
+      }
+      if (modifiers.some((mod) => mod.content === "attr")) {
+        injectPrefix(arg, "^");
+      }
+    }
+    return {
+      props: [createObjectProperty(arg, exp)]
+    };
+  };
+  const transformBindShorthand = (dir, context) => {
+    const arg = dir.arg;
+    const propName = camelize(arg.content);
+    dir.exp = createSimpleExpression(propName, false, arg.loc);
+  };
+  const injectPrefix = (arg, prefix) => {
+    if (arg.type === 4) {
+      if (arg.isStatic) {
+        arg.content = prefix + arg.content;
+      } else {
+        arg.content = `\`${prefix}\${${arg.content}}\``;
+      }
+    } else {
+      arg.children.unshift(`'${prefix}' + (`);
+      arg.children.push(`)`);
+    }
+  };
+
   const transformFor = createStructuralDirectiveTransform(
     "for",
     (node, dir, context) => {
@@ -16061,7 +15983,10 @@ Use a v-bind binding combined with a v-on listener that emits update:x event ins
         const isTemplate = isTemplateNode(node);
         const memo = findDir(node, "memo");
         const keyProp = findProp(node, `key`, false, true);
-        keyProp && keyProp.type === 7;
+        const isDirKey = keyProp && keyProp.type === 7;
+        if (isDirKey && !keyProp.exp) {
+          transformBindShorthand(keyProp);
+        }
         let keyExp = keyProp && (keyProp.type === 6 ? keyProp.value ? createSimpleExpression(keyProp.value.content, true) : void 0 : keyProp.exp);
         const keyProperty = keyProp && keyExp ? createObjectProperty(`key`, keyExp) : null;
         const isStableFragment = forNode.source.type === 4 && forNode.source.constType > 0;
@@ -16342,7 +16267,7 @@ Use a v-bind binding combined with a v-on listener that emits update:x event ins
         );
       } else if (vElse = findDir(
         slotElement,
-        /^else(?:-if)?$/,
+        /^else(-if)?$/,
         true
         /* allowEmpty */
       )) {
@@ -16350,11 +16275,11 @@ Use a v-bind binding combined with a v-on listener that emits update:x event ins
         let prev;
         while (j--) {
           prev = children[j];
-          if (!isCommentOrWhitespace(prev)) {
+          if (prev.type !== 3 && isNonWhitespaceContent(prev)) {
             break;
           }
         }
-        if (prev && isTemplateNode(prev) && findDir(prev, /^(?:else-)?if$/)) {
+        if (prev && isTemplateNode(prev) && findDir(prev, /^(else-)?if$/)) {
           let conditional = dynamicSlots[dynamicSlots.length - 1];
           while (conditional.alternate.type === 19) {
             conditional = conditional.alternate;
@@ -16425,7 +16350,7 @@ Use a v-bind binding combined with a v-on listener that emits update:x event ins
       } else if (implicitDefaultChildren.length && // #3766
       // with whitespace: 'preserve', whitespaces between slots will end up in
       // implicitDefaultChildren. Ignore if all implicit children are whitespaces.
-      !implicitDefaultChildren.every(isWhitespaceText)) {
+      implicitDefaultChildren.some((node2) => isNonWhitespaceContent(node2))) {
         if (hasNamedDefaultSlot) {
           context.onError(
             createCompilerError(
@@ -16497,6 +16422,11 @@ Use a v-bind binding combined with a v-on listener that emits update:x event ins
       }
     }
     return false;
+  }
+  function isNonWhitespaceContent(node) {
+    if (node.type !== 2 && node.type !== 12)
+      return true;
+    return node.type === 2 ? !!node.content.trim() : isNonWhitespaceContent(node.content);
   }
 
   const directiveImportMap = /* @__PURE__ */ new WeakMap();
@@ -17166,58 +17096,6 @@ Use a v-bind binding combined with a v-on listener that emits update:x event ins
     return ret;
   };
 
-  const transformBind = (dir, _node, context) => {
-    const { modifiers, loc } = dir;
-    const arg = dir.arg;
-    let { exp } = dir;
-    if (exp && exp.type === 4 && !exp.content.trim()) {
-      {
-        exp = void 0;
-      }
-    }
-    if (arg.type !== 4) {
-      arg.children.unshift(`(`);
-      arg.children.push(`) || ""`);
-    } else if (!arg.isStatic) {
-      arg.content = arg.content ? `${arg.content} || ""` : `""`;
-    }
-    if (modifiers.some((mod) => mod.content === "camel")) {
-      if (arg.type === 4) {
-        if (arg.isStatic) {
-          arg.content = camelize(arg.content);
-        } else {
-          arg.content = `${context.helperString(CAMELIZE)}(${arg.content})`;
-        }
-      } else {
-        arg.children.unshift(`${context.helperString(CAMELIZE)}(`);
-        arg.children.push(`)`);
-      }
-    }
-    if (!context.inSSR) {
-      if (modifiers.some((mod) => mod.content === "prop")) {
-        injectPrefix(arg, ".");
-      }
-      if (modifiers.some((mod) => mod.content === "attr")) {
-        injectPrefix(arg, "^");
-      }
-    }
-    return {
-      props: [createObjectProperty(arg, exp)]
-    };
-  };
-  const injectPrefix = (arg, prefix) => {
-    if (arg.type === 4) {
-      if (arg.isStatic) {
-        arg.content = prefix + arg.content;
-      } else {
-        arg.content = `\`${prefix}\${${arg.content}}\``;
-      }
-    } else {
-      arg.children.unshift(`'${prefix}' + (`);
-      arg.children.push(`)`);
-    }
-  };
-
   const transformText = (node, context) => {
     if (node.type === 0 || node.type === 1 || node.type === 11 || node.type === 10) {
       return () => {
@@ -17399,36 +17277,9 @@ Use a v-bind binding combined with a v-on listener that emits update:x event ins
     }
   };
 
-  const transformVBindShorthand = (node, context) => {
-    if (node.type === 1) {
-      for (const prop of node.props) {
-        if (prop.type === 7 && prop.name === "bind" && (!prop.exp || // #13930 :foo in in-DOM templates will be parsed into :foo="" by browser
-        prop.exp.type === 4 && !prop.exp.content.trim()) && prop.arg) {
-          const arg = prop.arg;
-          if (arg.type !== 4 || !arg.isStatic) {
-            context.onError(
-              createCompilerError(
-                52,
-                arg.loc
-              )
-            );
-            prop.exp = createSimpleExpression("", true, arg.loc);
-          } else {
-            const propName = camelize(arg.content);
-            if (validFirstIdentCharRE.test(propName[0]) || // allow hyphen first char for https://github.com/vuejs/language-tools/pull/3424
-            propName[0] === "-") {
-              prop.exp = createSimpleExpression(propName, false, arg.loc);
-            }
-          }
-        }
-      }
-    }
-  };
-
   function getBaseTransformPreset(prefixIdentifiers) {
     return [
       [
-        transformVBindShorthand,
         transformOnce,
         transformIf,
         transformMemo,
@@ -17906,7 +17757,7 @@ Use a v-bind binding combined with a v-on listener that emits update:x event ins
   };
   function hasMultipleChildren(node) {
     const children = node.children = node.children.filter(
-      (c) => !isCommentOrWhitespace(c)
+      (c) => c.type !== 3 && !(c.type === 2 && !c.content.trim())
     );
     const child = children[0];
     return children.length !== 1 || child.type === 11 || child.type === 9 && child.branches.some(hasMultipleChildren);
@@ -18272,7 +18123,6 @@ ${codeFrame}` : message);
   exports.mergeModels = mergeModels;
   exports.mergeProps = mergeProps;
   exports.nextTick = nextTick;
-  exports.nodeOps = nodeOps;
   exports.normalizeClass = normalizeClass;
   exports.normalizeProps = normalizeProps;
   exports.normalizeStyle = normalizeStyle;
@@ -18291,7 +18141,6 @@ ${codeFrame}` : message);
   exports.onUpdated = onUpdated;
   exports.onWatcherCleanup = onWatcherCleanup;
   exports.openBlock = openBlock;
-  exports.patchProp = patchProp;
   exports.popScopeId = popScopeId;
   exports.provide = provide;
   exports.proxyRefs = proxyRefs;

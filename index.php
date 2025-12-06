@@ -79,8 +79,10 @@
 
 <script src="./js/vue-spinner.min.js"></script>
 
-<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
-<script src="https://unpkg.com/vue-router@4/dist/vue-router.global.js"></script>
+<!--script src="https://unpkg.com/vue@3/dist/vue.global.js"></script-->
+<!--script src="https://unpkg.com/vue-router@4/dist/vue-router.global.js"></script-->
+<script src="./js/vue.global.js"></script>
+<script src="./js/vue-router.global.js"></script>
 
 <script>
   var PulseLoader = VueSpinner.PulseLoader;
