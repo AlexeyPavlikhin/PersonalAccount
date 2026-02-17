@@ -46,7 +46,7 @@ export default {
 
                     axios.post("./queries/create_new_user.php", {user_login: this.user_login, user_username: this.user_username, user_email: this.user_email, user_user_group: this.user_user_group})
                     .then(function (response) {
-                        console.log(response.data);
+                        //console.log(response.data);
                         if (response.data == "1"){
 
                             axios.post("./queries/generate_password.php", {user_login: this2.user_login})

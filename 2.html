@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Демо: Аккордеон CSS без javascript и изображений</title>
+    <meta name="description" content="Пример работы меню аккордеон реализованного с помощью CSS3 без javascript и изображений" />  
+    <meta name="keywords" content="аккордеон, css3, меню аккордеон" />
+    <meta name="robots" content="all" />
+<style>
+/* общие стили демо-страницы */
+html,
+body {
+    margin: 0;
+    width: 100%;
+    height: 100%;
+}
+body {
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    padding: 40px 20px;
+    text-overflow: ellipsis;
+    font-weight: 300;
+    font-size: 1em;
+    font-family: "Nunito", sans-serif;
+}
+h1,h2 {
+    color: #939393;
+    text-align: center;
+}
+img {
+    display: block;
+    border: none;
+}
+a {
+    color: #96443c;
+    text-decoration: none;
+}
+.wrap {
+	margin: 40px auto;
+	width: 100%;
+    max-width: 960px;
+}
+/* Формируем блок аккордеона */
+.accordion {
+    width: 100%;
+    max-width: 300px;
+    margin: 0 auto;
+    border: 1px solid #d3d3d3;
+    border-radius: 3px;
+    overflow: hidden;
+}
+/* список аккордеона */
+.accordion>ul {
+    margin: 0;
+    padding: 0;
+    list-style:none;
+}
+.accordion>ul>li {
+    display:block;
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
+    height:36px;
+    max-width: 300px;
+/* эффект перехода */
+    transition: height 0.5s ease-in-out;
+    -moz-transition: height 0.5s ease-in-out;
+    -webkit-transition: height 0.5s ease-in-out;
+    -o-transition: height 0.5s ease-in-out;
+}
+.accordion>ul>li>h3 {
+    display:block;
+    margin: 0 auto;
+    padding:10px 20px;  
+/* оформляем пункты */
+    color: #6c6c6c;
+    text-decoration: none;
+    font: 14px  Helvetica, Arial, Sans-Serif;
+    text-shadow: 1px 1px #fff;
+    text-transform:uppercase;
+	background: #c9c9c9;
+    border-top: 1px solid #f4f4f4;
+    border-bottom: 1px solid #d3d3d3;
+/* градиент */
+    -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr = '#f0f0f0', endColorstr = '#c9c9c9')";
+    background-image: -moz-linear-gradient(top, #f0f0f0, #c9c9c9);
+    background-image: -ms-linear-gradient(top, #f0f0f0, #c9c9c9);
+    background-image: -o-linear-gradient(top, #f0f0f0, #c9c9c9);
+    background-image: -webkit-gradient(linear, center top, center bottom, from(#f0f0f0), to(#c9c9c9));
+    background-image: -webkit-linear-gradient(top, #f0f0f0, #c9c9c9);
+    background-image: linear-gradient(top, #f0f0f0, #c9c9c9);
+/* подвижный заголовок */
+	-o-transition: padding-left 250ms ease-out;
+	-webkit-transition: padding-left 250ms ease-out;
+    -moz-transition: padding-left 250ms ease-out;
+}
+.accordion>ul>li>div {
+    background-color:#fcfcfc;
+    margin: 0 auto;
+    padding:10px;
+    color: #555;
+    font-size: 14px;
+    height: 100%;
+}
+.accordion>ul>li:hover {
+    height: 280px;
+}
+/* пункты аккодеона при наведении */
+.accordion:hover>ul>li:hover>h3 {
+    /* оформляем пункты при наведении */
+    color: #3A505C;
+    background: #d3d3d3;
+	cursor:pointer;
+    /* градиент */
+    background-image: -moz-linear-gradient( top, #d3d3d3, #efefef);
+    background-image: -ms-linear-gradient( top, #d3d3d3, #efefef);
+    background-image: -webkit-gradient(linear, left top, left bottom, from(#d3d3d3), to(#efefef));
+	background-image: -o-linear-gradient(#dbdbdb, #e6e6e6); /* Opera */
+    filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr = '#d3d3d3', endColorstr='#efefef')"; /* IE 7 */
+    -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr= '#d3d3d3', endColorstr= '#efefef')";   /* IE 8 */
+/* подвижная ссылка */
+	padding-left: 30px;
+}
+.accordion p { margin: 0 0 10px }
+.accordion img{ width: 25%; height: auto}
+</style>
+    <!--[if lt IE 9]>
+      <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script> 
+      <script src="http://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+<body>
+    <h1>Аккордеон CSS без javascript и изображений</h1>
+    <p style="text-align: center;">Уверенная поддержка всеми современными браузерами, в том числе и тормозом прогресса IE!</p>
+    <h2>Просто наведите на любой пункт меню :)</h2>
+    <div class="wrap">
+        <div class="accordion">
+            <ul>
+                <li>
+                    <h3>»  Заголовок №1</h3>
+                    <div>
+                        <img src="http://lorempixel.com/250/200" style="margin: 5px 10px 5px 0pt; float: left;">
+                        <p>
+                        В этом блоке можно разместить любую краткую информацию, внятно и понятно, в нескольких словах, например о новостях, или о том, чего же вы хотите предложить людям-человекам
+                        </p>
+                        <p>
+                        Никто не мешает разместить здесь любую картинку или же ссылку. Да все, что душе угодно, лишь бы в радость и на пользу дела.
+                        </p>
+                        <p style="text-align: right;">
+                            <a href="/">dobrovoi</a>
+                        </p>
+                    </div>
+                </li>
+                <li>
+                    <h3>»  Заголовок №2</h3>
+                    <div>
+                        <p>
+                        Разместите в этом блоке все рубрики вашего сайта или блога, в любой необходимой вам форме....
+                        </p>
+                    </div>
+                </li>
+                <li>
+                    <h3>»  Заголовок №3</h3>
+                    <div>
+                        <p>
+                        Здесь можете разместить например, архив записей вашего сайта по месяцам....
+                        </p>
+                    </div>
+                </li>
+                <li>
+                    <h3>»  Заголовок №4</h3>
+                    <div>
+                        <p>
+                           Часто используемые метки в виде облака, замечательно будут смотреться в этом блоке... 
+                        </p>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <p style="text-align: center;">сделано с любовью: <a href="/">@dobrovoi</a></p>
+    <p style="text-align: center;"><a href="/krossbrauzernyj-akkordeon-s-pomoshhyu-css3">&laquo;&laquo; Изучить детали</a>
+    </p>
+</body>
+</html>

@@ -1,8 +1,8 @@
 <?php
-    define('USER', 'usr_msll');
-    define('PASSWORD', 'MSLL The best!');
+    define('USER', 'root');
+    define('PASSWORD', '');
     define('HOST', 'localhost');
-    define('DATABASE', 'msll_lk_db');
+    define('DATABASE', 'firstdb');
 
     define('EML_EMAIL_FROM', 'pavlikhin@yandex.ru');
     define('EML_NAME_FROM', 'Администратор сайта msll-ip.ru');
@@ -12,8 +12,10 @@
 
     try {
         $connection = new PDO("mysql:host=".HOST.";dbname=".DATABASE, USER, PASSWORD);
+         // set the PDO error mode to exception
+        $connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
     } catch (PDOException $e) {
         exit("Error: " . $e->getMessage());
     }
-    /*188.127.239.141 2a06:dd00:1:4::105 */
 ?>

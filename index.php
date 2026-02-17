@@ -18,6 +18,9 @@
 <html>
     <head> 
         <link href="./css/styles.css" rel="stylesheet">
+        
+        <!--link href="https://vjs.zencdn.net/8.23.4/video-js.css" rel="stylesheet" /-->
+
         <link href="./css/jost.css" rel="stylesheet">
         <script src="./js/axios.min.js"></script>
 
@@ -98,15 +101,18 @@
     const { createApp } = Vue;
     const { createRouter, createWebHistory, createWebHashHistory } = VueRouter;
 
-    import UC from './components/uc.js';
-    import SALES from './components/sales.js';
-    import EMPTY from './components/empty.js';
+    import UC from './components/pg_uc.js';
+    import SALES from './components/pg_sales.js';
+    import EMPTY from './components/pg_empty.js';
+    import COURSES from './components/pg_courses.js';
+    
 
     // Define your routes
     const routes = [
         { path: '/', component: EMPTY },
         { path: '/uc', component: UC },
-        { path: '/sales', component: SALES }
+        { path: '/sales', component: SALES },
+        { path: '/courses', component: COURSES }
 
     ];
 

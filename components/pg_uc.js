@@ -1,6 +1,6 @@
-import FormCreateNewUser from '../components/Form_Create_New_User.js';
-import FormEditUser from '../components/Form_Edit_User.js';
-import NavigationMenu from '../components/Navigation_Menu.js';    
+import FormCreateNewUser from './Form_Create_New_User.js';
+import FormEditUser from './Form_Edit_User.js';
+import NavigationMenu from './Navigation_Menu.js';    
 
 export default {
         props: ['message'],
