@@ -67,10 +67,11 @@ if(isset($_SESSION['current_user_id'])){
     $name  = EML_NAME_FROM;
 
     //Получатель
-    $to_email = "pavlikhin@gmail.com";
+    //$to_email = "pavlikhin@gmail.com";
+    $to_email = $user_email;
 
     $subject = "Сброс пароля для msll-ip.ru";
-    $body    = "<p>Уважаемый ".$user_name."!</p><p>Для вашей учётной записи произведён сброс пароля</p><p>Ваш новый пароль: ".$generated_password."</p><p>Вы можете самостоятельно изменить пароль в своём личном кабинете</p>"; //Можно html
+    $body    = "<p>Уважаемый ".$user_name."!</p><p>Для вашей учётной записи произведёна установка пароля</p><p>Ваш пароль: ".$generated_password."</p><p>Вы можете самостоятельно изменить пароль в своём личном кабинете</p>"; //Можно html
 
     $mail = new PHPMailer(true);
 
