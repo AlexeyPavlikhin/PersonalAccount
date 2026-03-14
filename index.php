@@ -99,7 +99,9 @@
     import NavigationMenu from './components/Navigation_Menu.js';    
     
     const { createApp } = Vue;
-    const { createRouter, createWebHistory, createWebHashHistory } = VueRouter;
+    //const { createRouter, createWebHistory, createWebHashHistory } = VueRouter;
+    const { createRouter, createWebHashHistory } = VueRouter;
+    //const { createRouter, createWebHistory } = VueRouter;
 
     import UC from './components/pg_uc.js';
     import SALES from './components/pg_sales.js';
@@ -112,13 +114,14 @@
         { path: '/', component: EMPTY },
         { path: '/uc', component: UC },
         { path: '/sales', component: SALES },
-        { path: '/courses', component: COURSES }
-
+        { path: '/courses', component: COURSES }/*,
+        { path: '/login', path: "/login.php" }*/
     ];
 
     // Create the router instance
     const router = createRouter({
         history: createWebHashHistory(),
+        //history: createWebHistory(),
         routes
     });
 
@@ -198,7 +201,28 @@
             }            
 
             
-        }
+        },
+        check_for_empty_session(){
+                axios.post("./queries/get_current_user_name.php")
+                .then(function (response) {
+                    console.log(response.data);
+                    if (response.data==""){
+                        //this.is_resp_success = true;
+                        //is_resp_success1 = true;
+                        alert("Пусто");
+                        window.location.href = '/login.php';
+                        return true;
+                    } else {
+                        alert(response.data);
+                        //window.location.href = '/login.php';
+                    }
+                })
+                .catch(function (error) {
+                    alert(error);
+                    //console.log(error);
+                    window.location.href = '/login.php';
+                });
+            },               
                 
         }
     });

@@ -70,8 +70,25 @@ if(isset($_SESSION['current_user_id'])){
     //$to_email = "pavlikhin@gmail.com";
     $to_email = $user_email;
 
-    $subject = "Сброс пароля для msll-ip.ru";
-    $body    = "<p>Уважаемый ".$user_name."!</p><p>Для вашей учётной записи произведёна установка пароля</p><p>Ваш пароль: ".$generated_password."</p><p>Вы можете самостоятельно изменить пароль в своём личном кабинете</p>"; //Можно html
+    $subject = "Установка пароля для учетной записи в образовательном центре Лаборатории права Майи Саблиной";
+    $body    = "<p>Добрый день, ".$user_name."!</p>
+                <p>Рады приветствовать вас в образовательном центре Лаборатории права Майи Саблиной.<br/>
+                Для вашей учётной записи устновлен пароль.<br/>
+                Сайт: <a href='https://msll-ip.ru/' target='_blank'>https://msll-ip.ru/</a><br/>
+                Логин: ".$user_login."<br/>
+                Пароль: ".$generated_password."<br/></p>
+                <p>Вы всегда можете изменить пароль в своём личном кабинете.</p>
+                <br/>
+                <br/>
+                <br/>
+                С заботой,<br/>
+                команда Лаборатории права Майи Саблиной<br/>
+                +7 (995) 787-95-77<br/>
+                info@msablina.ru<br/>
+                <a href='http://www.msablina.ru/' target='_blank'>www.msablina.ru</a><br/> 
+                "; //Можно html
+
+                
 
     $mail = new PHPMailer(true);
 

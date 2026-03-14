@@ -97,7 +97,7 @@ export default {
                     </tr>
                 </tbody>
             </table>
-
+            <br/><br/><br/>
             <div id="id_FormCreateNewUser" class="modal">
                 <Form-Create-New-User ref="ref_FormCreateNewUser"/>
             </div>  

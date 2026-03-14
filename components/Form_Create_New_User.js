@@ -255,7 +255,8 @@ export default {
                     }   
 
                     //проверяем формат
-                    let re = /^[a-zA-Z0-9]+$/;
+                    //let re = /^[a-zA-Z0-9]+$/;
+                    let re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
                     if (re.test(String(in_user_login).toLowerCase())){
                         this.is_user_login_formate_correct = true;
                     } else {

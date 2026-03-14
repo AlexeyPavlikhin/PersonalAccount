@@ -20,7 +20,7 @@ if(isset($_SESSION['current_user_id'])){
                                     AND upc.user_id=usr.id 
                                     AND upc.course_id = spr_c.id 
                                     AND spr_c.id = spr_cc.course_id 
-                                    ORDER BY spr_c.course_name, spr_cc.id
+                                    ORDER BY spr_c.course_name, spr_cc.sort_key
                                 ");
 
     $query->execute();

@@ -10,6 +10,11 @@
     define('EML_HOST', 'smtp.yandex.ru');
     define('EML_PORT', '465');
 
+    define('ALLOWED_HOST', 'http://msll-dev');
+    define('ALLOWED_APIKEY', 'D2swqPZF2Rfj4LrYJle7MoKvvRBRFcAhODGsXPZyzNMLKjdjXYutl5esrZGiNVRoj6dzG2rIHN1CmNKc0GVVqBHn1M348txviq2QzgBpQg7LxSO4vDfXmqbHcQzKfQMT');
+    
+
+
     try {
         $connection = new PDO("mysql:host=".HOST.";dbname=".DATABASE, USER, PASSWORD);
     } catch (PDOException $e) {

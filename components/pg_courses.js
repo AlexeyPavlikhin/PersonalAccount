@@ -55,7 +55,7 @@ export default {
             //console.log(response.data)
             if (response.data) {
                 //обрабатываем ответ
-                console.log(response.data);
+                //console.log(response.data);
                 //this.users_permited_courses = response.data;
                 //формируем массив объетов из результата выборки
                 let v_course_name = "";
@@ -70,6 +70,8 @@ export default {
                     this.users_permited_courses[this.users_permited_courses.length-1].course_contents = [];
                     this.users_permited_courses[this.users_permited_courses.length-1].course_display_mode = "display: none";
                     this.users_permited_courses[this.users_permited_courses.length-1].menu_header_class = "accordion__header";
+                    this.users_permited_courses[this.users_permited_courses.length-1].available_until = resp_row.available_until;
+                    
                   }
 
                   this.users_permited_courses[this.users_permited_courses.length-1].course_contents.push(new Object());
@@ -200,7 +202,8 @@ export default {
           
             <div class="accordion__item" v-for="course in users_permited_courses">
               <div :class="course.menu_header_class" @click="course.course_display_mode = on_menu_header_click(course.course_display_mode); course.menu_header_class = on_menu_header_click2(course.menu_header_class)">
-                {{course.course_name}}
+                <div>{{course.course_name}}</div>
+                <div class="black_text">Доступен до {{course.available_until}}</div>
               </div>
               <div class="accordion__body" :style="course.course_display_mode" >
                 <div class="accordion__content">
@@ -216,7 +219,7 @@ export default {
         </div>
 
         <div class='msll_body'>
-          <h2>{{v_course_contents_item_name}}</h2>
+          <!--h2>{{v_course_contents_item_name}}</h2-->
 
           <div class="msll_margin_lef_right_20 msll_margin_top_bottom_20" v-for="course_contents_item in v_course_contents_items" :style="get_display_mode(course_contents_item.course_item_type_name)">
 
@@ -224,8 +227,8 @@ export default {
               <div class="msll_text_align_left" v-html="course_contents_item.course_item_data"></div>
             </div>
 
-            <div v-if="course_contents_item.course_item_type_name ==='TEXT'">
-              <div class="msll_text_align_left" v-html="course_contents_item.course_item_data"></div>
+            <div v-if="course_contents_item.course_item_type_name ==='TEXT'" class="msll_atricle_container">
+              <div class="msll_text_align_left msll_atricle_content" v-html="course_contents_item.course_item_data"></div>
             </div>
 
             <div v-if="course_contents_item.course_item_type_name ==='VIDEO'">

@@ -5,14 +5,10 @@
     define('DATABASE', 'msll_lk_db');
 
     define('EML_EMAIL_FROM', 'pavlikhin@yandex.ru');
-    define('EML_NAME_FROM', 'Лаборатория права Майи Саблиной');
+    define('EML_NAME_FROM', 'Администратор сайта msll-ip.ru');
     define('EML_PASSWORD', 'xktxjpuuifzpeqoa');
     define('EML_HOST', 'smtp.yandex.ru');
     define('EML_PORT', '465');
-
-    /*define('ALLOWED_HOST', 'https://msablina.ru');*/
-    define('ALLOWED_HOST', 'https://msll-ip.ru');
-    define('ALLOWED_APIKEY', 'D2swqPZF2Rfj4LrYJle7MoKvvRBRFcAhODGsXPZyzNMLKjdjXYutl5esrZGiNVRoj6dzG2rIHN1CmNKc0GVVqBHn1M348txviq2QzgBpQg7LxSO4vDfXmqbHcQzKfQMT');
 
     try {
         $connection = new PDO("mysql:host=".HOST.";dbname=".DATABASE, USER, PASSWORD);

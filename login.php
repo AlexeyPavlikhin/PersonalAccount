@@ -11,20 +11,48 @@
           $query->execute();
           $result = $query->fetch(PDO::FETCH_ASSOC);
           if (!$result) {
-              echo '<p class="error"> Неверные имя пользователя!</p>';
+              write_log($usr_login, "Авторизация", "Ошибка: Неверный login");
+              echo '<p class="error"> Неверные login или пароль!</p>';
           } else {
               if (password_verify($usr_password, $result['password'])) {
                   $_SESSION['current_user_id'] = $result['id'];
                   $_SESSION['current_user_login'] = $result['login'];
                   $_SESSION['current_user_group'] = $result['user_group'];
                   $_SESSION['current_user_name'] = $result['username'];
+                  write_log($usr_login, "Авторизация", "Успех");
                   header('Location: ./');
               } else {
-                  echo '<p class="error"> Неверные пароль или имя пользователя!</p>';
+                  write_log($usr_login, "Авторизация", "Ошибка: Неверный пароль");
+                  echo '<p class="error"> Неверные login или пароль!</p>';
               }
           }
         }
     }
+
+    function write_log($in_user_login, $in_operation_type, $in_event_data) {
+        include('config.php');
+        try {
+            $sql_audit = 
+            "INSERT 
+                INTO audit 
+                (
+                    user_login, 
+                    operation_type, 
+                    event_data
+                ) VALUES (
+                    '".$in_user_login."', 
+                    '".$in_operation_type."', 
+                    '".$in_event_data."'
+                )
+            ";
+            $query = $connection->prepare($sql_audit);
+            $query->execute();
+        } catch(PDOException $e) {
+            //echo $e->getMessage()." ".$sql_audit;
+        }     
+            
+        return 0;
+    }    
 ?>
 
 <html>
@@ -55,7 +83,8 @@
         <div class="form_login">
           <div>
             <label>Логин</label>
-            <input class="msll_filter" type="text" name="usr_login" pattern="[a-zA-Z0-9]+" required />
+            <!--input class="msll_filter" type="text" name="usr_login" pattern="[a-zA-Z0-9]+" required /-->
+            <input class="msll_filter" type="text" name="usr_login" required />
           </div>
           <br/>
           <div>

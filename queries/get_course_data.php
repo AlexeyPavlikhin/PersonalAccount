@@ -6,7 +6,8 @@ if(isset($_SESSION['current_user_id'])){
     $query = $connection->prepare("
                                     SELECT 
                                         cd.id, 
-                                        cd.course_contents_item_id, 
+                                        cd.course_contents_item_id,
+                                        cd.sort_key, 
                                         spr_t.item_type_name as course_item_type_name,
                                         cd.course_item_data,
                                         cd.course_item_data2
@@ -15,7 +16,7 @@ if(isset($_SESSION['current_user_id'])){
                                     WHERE 
                                         cd.course_contents_item_id = '".$_GET['course_contents_item_id']."' 
                                     AND cd.course_item_type_id = spr_t.item_type_id
-                                    ORDER BY id;
+                                    ORDER BY sort_key;
                                 ");
     $query->execute();
     $response = json_encode($query->fetchAll(PDO::FETCH_DEFAULT));
