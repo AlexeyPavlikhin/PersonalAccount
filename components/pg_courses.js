@@ -117,6 +117,9 @@ export default {
   },
   methods:{
     on_menu_header_click(in_display_mode){
+      //если сессия закончилась, то переходим на стрницу login.php
+      this.$root.check_for_empty_session();
+
       if (in_display_mode == "display: none"){
         in_display_mode = "display: block";
       } else {
@@ -130,6 +133,9 @@ export default {
     },
 
     on_menu_header_click2(in_menu_header_class){
+      //если сессия закончилась, то переходим на стрницу login.php
+      this.$root.check_for_empty_session();
+
       if (in_menu_header_class == "accordion__header"){
         in_menu_header_class = "accordion__header_selected";
       } else {
@@ -143,6 +149,9 @@ export default {
     },    
 
     on_click(in_course_contents_item_id, in_course_contents_item_name){
+      //если сессия закончилась, то переходим на стрницу login.php
+      this.$root.check_for_empty_session();
+
       //alert(in_course_id);
       //alert(in_course_name);
       this.v_course_contents_item_name = in_course_contents_item_name;
@@ -184,23 +193,23 @@ export default {
 
     get_display_mode(in_item_type){
       if (in_item_type == "VIDEO"){
-        //this.v_display_style = "inline-block";
         return "display: inline-block";
       } else {
-        //this.v_display_style = "block";
         return "display: block";
+        //return "width: 50%";
       }
+    },
+    get_doc_url(in_url){
+      return "https://docs.google.com/viewer?url="+in_url+"&embedded=true";
     }
-
   },
 
   template:
     `
         <div class='sidenav'>
           <div id="accordion" class="accordion" style="max-width: 30rem; margin: 1rem auto;">
-
           
-            <div class="accordion__item" v-for="course in users_permited_courses">
+            <div class="accordion__item msll_margin_bottom_100" v-for="course in users_permited_courses">
               <div :class="course.menu_header_class" @click="course.course_display_mode = on_menu_header_click(course.course_display_mode); course.menu_header_class = on_menu_header_click2(course.menu_header_class)">
                 <div>{{course.course_name}}</div>
                 <div class="black_text">Доступен до {{course.available_until}}</div>
@@ -214,19 +223,24 @@ export default {
                 </div>
               </div>
             </div>
-
+          <br/><br/><br/><br/>
           </div>
         </div>
 
         <div class='msll_body'>
+        
+<!--div class="box">
+  <div class="center_position">One</div>
+  <div>Two</div>
+  <div>Three</div>
+  <!--div class="push">Four</div-- >
+  <div class="w100">Five</div>
+</div-->       
           <!--h2>{{v_course_contents_item_name}}</h2-->
-
+          <!--iframe src="https://docs.google.com/viewer?url=https://storage.yandexcloud.net/otdelnyye/Чек-лист%20по%20договорной%20работе.docx&embedded=true" width="100%" height="600px"></iframe-->
+          <!--a href="https://storage.yandexcloud.net/otdelnyye/Чек-лист%20по%20договорной%20работе.docx">Скачать</a-->
           <div class="msll_margin_lef_right_20 msll_margin_top_bottom_20" v-for="course_contents_item in v_course_contents_items" :style="get_display_mode(course_contents_item.course_item_type_name)">
-
-            <div class="msll_margin_lef_right_20" v-if="course_contents_item.course_item_type ==='TEXT3'">
-              <div class="msll_text_align_left" v-html="course_contents_item.course_item_data"></div>
-            </div>
-
+          
             <div v-if="course_contents_item.course_item_type_name ==='TEXT'" class="msll_atricle_container">
               <div class="msll_text_align_left msll_atricle_content" v-html="course_contents_item.course_item_data"></div>
             </div>
@@ -242,112 +256,38 @@ export default {
                 scrolling="">
               </iframe>    
             </div>
-       
 
             <div v-if="course_contents_item.course_item_type_name ==='PICTURE'">
               <div v-html="course_contents_item.course_item_data"></div>
               <img :src="course_contents_item.course_item_data2" alt="Image" class="msll_courses_images">
             </div>
 
-            <div id="anchor1" v-if="course_contents_item.course_item_type_name ==='DOCPDF'">
+            <div v-if="course_contents_item.course_item_type_name ==='DOCPDF'">
               <div v-html="course_contents_item.course_item_data"></div>
               <embed :src="course_contents_item.course_item_data2" type="application/pdf" class="msll_courses_doc_pdf">
+            </div>
+
+            <div v-if="course_contents_item.course_item_type_name ==='DOCDOCX'">
+              <div v-html="course_contents_item.course_item_data"></div>
+              <!--iframe :src="https://docs.google.com/viewer?url=course_contents_item.course_item_data2&embedded=true" width="100%" height="600px"></iframe-->
+              <iframe :src="get_doc_url(course_contents_item.course_item_data2)" width="100%" height="600px" class="msll_courses_doc_pdf"></iframe>
+              <a class="msll_button" :href="course_contents_item.course_item_data2">Скачать</a>
             </div>
 
             <div v-if="course_contents_item.course_item_type_name ==='HREF'">
               <a :href="course_contents_item.course_item_data" target="_blank" rel="noopener noreferrer">{{course_contents_item.course_item_data2}}</a>
             </div>
 
-            <div v-if="course_contents_item.course_item_type_name ==='HREF_INT'">
-              <!--a :href="course_contents_item.course_item_data">{{course_contents_item.course_item_data2}}</a-->
-              <router-link :to="{ path: '/courses', hash: '#anchor1' }">{{course_contents_item.course_item_data2}}</router-link>
-            </div>
-
-
-            <div v-if="course_contents_item.course_item_type_name ==='ANCHOR1'">
-              <a :name="course_contents_item.course_item_data"></a>
-            </div>
-
-
-
-
-            <div v-if="course_contents_item.course_item_type ==='VIDEO_save'">
-              <div>{{course_contents_item.course_item_data}}</div>
-              <iframe 
-                width="1400" 
-                height="787.5" 
-                :src="course_contents_item.course_item_data2"
-                allow="autoplay; fullscreen; accelerometer; gyroscope; picture-in-picture; encrypted-media" 
-                frameborder="0" 
-                scrolling="">
-              </iframe>    
-            </div>
-
-
-
-            <div>
-              <iframe v-if="course_contents_item.course_item_type ==='VIDEO1'" 
-                width="400" 
-                height="500" 
-                :src="course_contents_item.course_item_data2"
-                allow="autoplay; fullscreen; accelerometer; gyroscope; picture-in-picture; encrypted-media" 
-                frameborder="5" 
-                scrolling="1">
-              </iframe>    
-            </div>
-
-            <div v-if="course_contents_item.course_item_type ==='VIDEO1'">
-              <iframe 
-                width="400" 
-                height="500" 
-                :src="course_contents_item.course_item_data"
-                allow="autoplay; fullscreen; accelerometer; gyroscope; picture-in-picture; encrypted-media" 
-                frameborder="5" 
-                scrolling="1">
-              </iframe>    
-
-              <iframe 
-                width="400" 
-                height="500" 
-                :src="course_contents_item.course_item_data"
-                allow="autoplay; fullscreen; accelerometer; gyroscope; picture-in-picture; encrypted-media" 
-                frameborder="5" 
-                scrolling="">
-              </iframe>           
-
-              <iframe 
-                width="400" 
-                height="500" 
-                :src="course_contents_item.course_item_data"
-                allow="autoplay; fullscreen; accelerometer; gyroscope; picture-in-picture; encrypted-media" 
-                frameborder="5" 
-                scrolling="">
-              </iframe>                   
-            </div>     
-
-
+          
+          
+             
 
           </div>
           
-          <section id="section-one">...</section>
-
-
-
           <br/>
           <br/>
           <br/>  
 
-          <!--div>
-            <iframe 
-              width="1400" 
-              height="787.5" 
-              :src="link_to_selected_course"
-              allow="autoplay; fullscreen; accelerometer; gyroscope; picture-in-picture; encrypted-media" 
-              frameborder="0" 
-              scrolling="">
-            </iframe>    
-            <br/><br/><br/>   
-          </div-->
         </div>
 
         `

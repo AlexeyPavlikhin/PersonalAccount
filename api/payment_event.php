@@ -121,7 +121,12 @@ if (
                 if ($row_id_in_users_premited_courses == ""){
                     //создаём запись
                     //echo "создаём";
-                    $sql = "INSERT INTO users_premited_courses (course_id, user_id, available_until) VALUES ('".$course_id."','".$user_id."', DATE(ADDDATE(SYSDATE(), INTERVAL ".$course_period_in_days." DAY)))";
+                    $sql = "INSERT INTO users_premited_courses (course_id, user_id, available_until) VALUES ('".$course_id."','".$user_id."', DATE(ADDDATE(
+                    (SELECT MAX(tt.dt) FROM  
+                        (SELECT DATE(SYSDATE()) dt
+                        union ALL
+                        SELECT t.start_date FROM spr_courses_name t WHERE t.id = '".$course_id."') tt
+                    ), INTERVAL ".$course_period_in_days." DAY)))";
                     $query = $connection->prepare($sql);
                     $query->execute();
                     $query_result = $query->fetchAll();
@@ -129,13 +134,26 @@ if (
                 } else {
                     //продлеваем срок 
                     //echo "обновляем";
-                    $sql = "UPDATE users_premited_courses upc SET available_until = DATE(ADDDATE(SYSDATE(), INTERVAL ".$course_period_in_days." DAY)) WHERE upc.course_id = '".$course_id."' and upc.user_id = '".$user_id."'";
+                    $sql = "UPDATE users_premited_courses upc SET available_until = DATE(ADDDATE(
+                    (SELECT MAX(tt.dt) FROM  
+                        (SELECT DATE(SYSDATE()) dt
+                        union ALL
+                        SELECT t.start_date FROM spr_courses_name t WHERE t.id = '".$course_id."') tt
+                    ), INTERVAL ".$course_period_in_days." DAY)) WHERE upc.course_id = '".$course_id."' and upc.user_id = '".$user_id."'";
                     $query = $connection->prepare($sql);
                     $query->execute();
                     $query_result = $query->fetchAll();
                     write_log($_SERVER["HTTP_REFERER"], "Обновлены полномочия ", "login: ".$user_email."\nОбъект: продукт ".$user_product);
 
                 }
+
+                //создаём или обновляем запись о клиенте (переиспользуем процедуру первоначальной загрузки)
+                $sql = "CALL insert_new_string('".$v_obj["Name_2"]."','".$v_obj["Name"]."','','".$user_email."','".$v_obj["Phone"]."','".$v_obj["Name_3"]."','','','".$user_product."','Купил','','NOW', '".$user_id."');";
+                $query = $connection->prepare($sql);
+                $query->execute();
+                $query_result = $query->fetchAll();
+                write_log($_SERVER["HTTP_REFERER"], "Создана привязка к записи клиента", "login: ".$user_email."\nОбъект: продукт ".$user_product);
+                //echo json_encode($query_result);
                     //$pdo = new PDO("mysql:host=localhost;dbname=database""user""password");
 
                     // Вызов процедуры с параметрами

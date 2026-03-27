@@ -76,6 +76,8 @@ export default {
         },
 
         on_click(in_target){
+            //если сессия закончилась, то переходим на стрницу login.php
+            this.$root.check_for_empty_session();
             this.$root.$router.push('/'+in_target);
             //console.log("click");
         },

@@ -11,6 +11,9 @@ export default {
     },
     methods: {
         onClickMenuProfile(){
+            //если сессия закончилась, то переходим на стрницу login.php
+            this.$root.check_for_empty_session();            
+            
             //console.log(this.user_name)
 
             this.$refs.ref_FormEditProfile.init();

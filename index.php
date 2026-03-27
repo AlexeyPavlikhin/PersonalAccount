@@ -205,20 +205,16 @@
         check_for_empty_session(){
                 axios.post("./queries/get_current_user_name.php")
                 .then(function (response) {
-                    console.log(response.data);
-                    if (response.data==""){
-                        //this.is_resp_success = true;
-                        //is_resp_success1 = true;
-                        alert("Пусто");
+                    //console.log(response.data);
+                    if (response.data=="\r\n"){
+                        //alert("Пусто");
                         window.location.href = '/login.php';
-                        return true;
                     } else {
-                        alert(response.data);
-                        //window.location.href = '/login.php';
+                        //alert("Не пусто |"+response.data+"|");
                     }
                 })
                 .catch(function (error) {
-                    alert(error);
+                    //alert(error);
                     //console.log(error);
                     window.location.href = '/login.php';
                 });

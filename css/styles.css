@@ -839,6 +839,59 @@ div.no-copy{
   margin-bottom: 20px;
 }
 
+.msll_margin_bottom_100{
+  margin-bottom: 1000px;
+}
+
+
+.msll_body2{
+  margin-left: 420px;
+  border: #bd162b;
+  border-style: dashed;
+
+
+  display: flex;
+  flex-flow: wrap;
+  width: 100%;
+
+}
+  /*
+.msll_left{
+  position: relative;
+  border: #000;
+  left: 0;
+  border-style: dashed;
+  margin-left:auto;
+}
+
+.msll_dislpay_block{
+  position: relative;
+  margin-left:0;
+  border: #bd162b;
+  border-style: dashed;
+  margin-left:auto;
+}
+
+.box {
+  display: flex;
+  /*flex-wrap: wrap;* /
+  width: 100%;
+  justify-content: center;
+}
+.push {
+  margin-left: auto;
+}
+
+.center_position {
+  justify-content: center;
+}
+
+
+.w100 {
+  width: 100%;
+}
+*/
+
 /**/
 /*
     body {
