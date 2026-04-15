@@ -11,7 +11,7 @@
           $query->execute();
           $result = $query->fetch(PDO::FETCH_ASSOC);
           if (!$result) {
-              write_log($usr_login, "Авторизация", "Ошибка: Неверный login");
+              write_log($usr_login, "Авторизация. ".DeviceType(), "Ошибка: Неверный login");
               echo '<p class="error"> Неверные login или пароль!</p>';
           } else {
               if (password_verify($usr_password, $result['password'])) {
@@ -19,10 +19,10 @@
                   $_SESSION['current_user_login'] = $result['login'];
                   $_SESSION['current_user_group'] = $result['user_group'];
                   $_SESSION['current_user_name'] = $result['username'];
-                  write_log($usr_login, "Авторизация", "Успех");
+                  write_log($usr_login, "Авторизация. ".DeviceType(), "Успех");
                   header('Location: ./');
               } else {
-                  write_log($usr_login, "Авторизация", "Ошибка: Неверный пароль");
+                  write_log($usr_login, "Авторизация. ".DeviceType(), "Ошибка: Неверный пароль");
                   echo '<p class="error"> Неверные login или пароль!</p>';
               }
           }
@@ -52,7 +52,33 @@
         }     
             
         return 0;
-    }    
+    }
+
+    function DeviceType() {
+        $userAgent = $_SERVER['HTTP_USER_AGENT'] ?? '';
+        
+        // Регулярные выражения для мобильных устройств
+        $patterns = [
+            '/Android/i',
+            '/webOS/i',
+            '/iPhone/i',
+            '/iPad/i',
+            '/iPod/i',
+            '/BlackBerry/i',
+            '/Windows Phone/i',
+            '/Opera Mini/i',
+            '/IEMobile/i',
+            '/Mobile/i'
+        ];
+        
+        foreach ($patterns as $pattern) {
+            if (preg_match($pattern, $userAgent)) {
+                return "Мобильное устройство";
+            }
+        }
+        
+        return "Компьютер";
+}    
 ?>
 
 <html>

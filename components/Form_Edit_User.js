@@ -16,7 +16,18 @@ export default {
                     is_user_email_formate_correct: false,
                     is_user_email_ready: false,
                     is_user_user_group_ready: false,
-                    is_generate_password: false
+                    is_generate_password: false, 
+                    user_permitions: [
+                        { menu_item_name: 'Управление продажами', subitems: [{subitem_name: 'Выгрузка данных'}] },
+                        { menu_item_name: 'Управление пользователями', subitems: [] },
+                        { menu_item_name: 'Управление статусом услуг', subitems: [] },
+                        { menu_item_name: 'Учебные курсы', subitems: [  {subitem_name: 'Незащищаемое. Множественность защиты. Соправообладание'},
+                                                                        {subitem_name: 'Договорные и иные основания возникновения прав на РИД'},
+                                                                        {subitem_name: 'Разбираем конкретные составы по НДК (ст. 14.2, 14.5, 14.6)'},
+                                                                        {subitem_name: 'Защита от актов недобросовестной конкуренции и ответственность за их совершение'}
+                                                                     ] },
+                        { menu_item_name: 'Статус услуг', subitems: [] }
+                    ],
         }
     },
     methods: {
@@ -419,6 +430,23 @@ export default {
                     </div>
                 </div>
             </div>
+            <div class="msll_text_align_left">
+                <h3>Полномочия</h3>
+                <div v-for="item_of_permition in user_permitions" > 
+                    <div class="container_inline">
+                        <div class="item_of_list_N1">{{item_of_permition.menu_item_name}}</div>
+                        <input class="msll_smoll_button" type="button" value = "x" @click="onClickCancel()">
+                    </div>
+ 
+                    <div class="container_inline" v-for="subitem in item_of_permition.subitems">
+                        <div class="item_of_list_N2">{{subitem.subitem_name}}</div>
+                        <input class="msll_smoll_button" type="button" value = "x" @click="onClickCancel()">
+                    </div>
+
+  
+                </div>
+            </div>
+
 
             <input class="msll_middle_button" type="button" value = "Обновить" @click="onClickUpdateUser()" id="buttonUpdateUser" disabled>
             <input class="msll_middle_button" type="button" value = "Отменить" @click="onClickCancel()">

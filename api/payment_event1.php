@@ -8,15 +8,21 @@ require_once '../libs/PHPMailer-master/src/Exception.php';
 
 use PHPMailer\PHPMailer\PHPMailer;
 
-//echo "ok";
+echo "ok";
 
 $request_body = file_get_contents('php://input');
+//$request_body ='{"Name": "u0410u043bu0435u043au0441u0435u0439", "Name_2": "u041fu0430u0432u043bu0438u0445u0438u043d", "Name_3": "AlexeyPavlihin", "Email": "pavlikhin@gmail.com", "Phone": "+7 (903) 101-89-37", "Textarea": "u041du0435u0442 u0432u043eu043fu0440u043eu0441u043eu0432", "Checkbox": "yes", "payment": {"sys": "tinkoff", "systranid": "7695032769", "orderid": "1992217563", "products": [{"name": "u0414u043eu0441u0442u0443u043f u043a u0442u0435u0441u0442u0443 u043du0430 1 u0447u0435u043b.", "quantity": "1", "amount": "5", "price": "5"}], "amount": "5"}, "formid": "form644050497", "formname": "Cart", "API-key": "D2swqPZF2Rfj4LrYJle7MoKvvRBRFcAhODGsXPZyzNMLKjdjXYutl5esrZGiNVRoj6dzG2rIHN1CmNKc0GVVqBHn1M348txviq2QzgBpQg7LxSO4vDfXmqbHcQzKfQMT"}';
 parse_str($request_body, $v_obj);
-$tmp_str = "";
+//$tmp_str = "request_body:";
+//$tmp_str .= $request_body;
+//$tmp_str .= "_POST:";
+//$tmp_str .= $_POST;
 
 $tmp_str .= "API-key=".$v_obj["API-key"]."\n";
+$tmp_str .= "FirstName=".$v_obj["FirstName"]."\n";
 $tmp_str .= "Name=".$v_obj["Name"]."\n";
 $tmp_str .= "Name_2=".$v_obj["Name_2"]."\n";
+$tmp_str .= "MiddleName=".$v_obj["MiddleName"]."\n";
 $tmp_str .= "Name_3=".$v_obj["Name_3"]."\n";
 $tmp_str .= "Email=".$v_obj["Email"]."\n";
 $tmp_str .= "Phone=".$v_obj["Phone"]."\n";
@@ -36,23 +42,18 @@ echo "ok";
 
 //делаем запись в аудит
 $audit_event_type = "Получено уведомление от сайта ".$_SERVER["HTTP_REFERER"];
-write_log($_SERVER["HTTP_REFERER"], $audit_event_type, $tmp_str.json_encode($_SERVER));
-//write_log($_SERVER["HTTP_REFERER"], $audit_event_type, $tmp_str);
+write_log($_SERVER["HTTP_REFERER"], $audit_event_type, $tmp_str);
 
 //начинаем обрабатывать полученную информацию
 //проверяем имя сайта, от которого пришел запрос
-/*
 if (
-        (
-            str_starts_with($_SERVER["HTTP_REFERER"], ALLOWED_HOST_1) ||
-            str_starts_with($_SERVER["HTTP_REFERER"], ALLOWED_HOST_2) ||
-            str_starts_with($_SERVER["HTTP_REFERER"], ALLOWED_HOST_3)
-        ) &&
+        (str_starts_with($_SERVER["HTTP_REFERER"], ALLOWED_HOST))  &&
         ($v_obj["API-key"] == ALLOWED_APIKEY) 
+   
+   
+        
    )
 {
-*/   
-if ($v_obj["API-key"] == ALLOWED_APIKEY){
     if ($user_product != ""){
         //начинаем делать поисковые запросы к БД
         try {

@@ -1053,3 +1053,15 @@ div.no-copy{
 .msll_atricle_content{
   width: 50%;
 }
+
+.item_of_list_N1{
+  font-size: 20px;
+  margin-left: 20px;
+  margin-right: 5px;
+}
+
+.item_of_list_N2{
+  font-size: 16px;
+  margin-left: 40px;
+  margin-right: 5px;
+}
