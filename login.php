@@ -11,19 +11,28 @@
           $query->execute();
           $result = $query->fetch(PDO::FETCH_ASSOC);
           if (!$result) {
-              write_log($usr_login, "Авторизация. ".DeviceType(), "Ошибка: Неверный login");
-              echo '<p class="error"> Неверные login или пароль!</p>';
+              write_log($usr_login, "Авторизация. ".DeviceType(), "Ошибка: Неверный login <".$_SERVER['HTTP_USER_AGENT'].">");
+              if (DeviceType() == "mobile"){
+                echo '<p class="error_mobile"> Неверные login или пароль!</p>';
+              } else {
+                echo '<p class="error"> Неверные login или пароль!</p>';
+              }
+              
           } else {
               if (password_verify($usr_password, $result['password'])) {
                   $_SESSION['current_user_id'] = $result['id'];
                   $_SESSION['current_user_login'] = $result['login'];
                   $_SESSION['current_user_group'] = $result['user_group'];
                   $_SESSION['current_user_name'] = $result['username'];
-                  write_log($usr_login, "Авторизация. ".DeviceType(), "Успех");
+                  write_log($usr_login, "Авторизация. ".DeviceType(), "Успех <".$_SERVER['HTTP_USER_AGENT'].">");
                   header('Location: ./');
               } else {
-                  write_log($usr_login, "Авторизация. ".DeviceType(), "Ошибка: Неверный пароль");
-                  echo '<p class="error"> Неверные login или пароль!</p>';
+                  write_log($usr_login, "Авторизация. ".DeviceType(), "Ошибка: Неверный пароль <".$_SERVER['HTTP_USER_AGENT'].">");
+                  if (DeviceType() == "mobile"){
+                    echo '<p class="error_mobile"> Неверные login или пароль!</p>';
+                  } else {
+                    echo '<p class="error"> Неверные login или пароль!</p>';
+                  }
               }
           }
         }
@@ -73,12 +82,13 @@
         
         foreach ($patterns as $pattern) {
             if (preg_match($pattern, $userAgent)) {
-                return "Мобильное устройство";
+                return "mobile";
             }
         }
         
-        return "Компьютер";
-}    
+        return "desktop";
+    }    
+    
 ?>
 
 <html>
@@ -99,25 +109,29 @@
         -->
 
 
-      <link href="./css/styles.css" rel="stylesheet">
+      <link href="./css/styles.css?v=1.0.1" rel="stylesheet">
       <link href="./css/jost.css" rel="stylesheet">
 
       <!--<link rel="stylesheet" href="styles2.css">-->
+      <!-- <-?php echo DeviceType();?> -->
+
     </head> 
     <body>
       <form method="post" action="" name="signin-form">
-        <div class="form_login">
+        <div class="form_login_<?php echo DeviceType();?>">
+            <!--< ?php echo DeviceType();?> -->
+          <img class="login_logo_<?php echo DeviceType();?>" src="./pictures/logo.png" alt="Лаборатория права Майи Саблиной">  
           <div>
-            <label>Логин</label>
+            <label class="form_login_label_<?php echo DeviceType();?>">Логин</label>
             <!--input class="msll_filter" type="text" name="usr_login" pattern="[a-zA-Z0-9]+" required /-->
-            <input class="msll_filter" type="text" name="usr_login" required />
+            <input class="msll_filter_<?php echo DeviceType();?>"  type="text" name="usr_login" required />
           </div>
           <br/>
           <div>
-            <label>Пароль</label>
-            <input class="msll_filter" type="password" name="usr_password" required />
+            <label class="form_login_label_<?php echo DeviceType();?>">Пароль</label>
+            <input class="msll_filter_<?php echo DeviceType();?>" type="password" name="usr_password" required />
           </div>
-          <button type="submit" class="msll_button" name="btn_login" value="login">Авторизоваться</button>
+          <button type="submit" class="msll_button_<?php echo DeviceType();?>" name="btn_login" value="login">Авторизоваться</button>
         </div>
       </form>
     </body>
