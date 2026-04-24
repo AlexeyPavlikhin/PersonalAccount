@@ -17,7 +17,7 @@
 ?>
 <html>
     <head> 
-        <link href="./css/styles.css?v=1.0.1" rel="stylesheet">
+        <link href="./css/styles.css?v=1.0.2" rel="stylesheet">
         
         <!--link href="https://vjs.zencdn.net/8.23.4/video-js.css" rel="stylesheet" /-->
 

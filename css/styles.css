@@ -804,12 +804,23 @@ label.label-align-left {
 }
 
 .form_login_mobile {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    box-sizing: border-box;
     width: 100%;
-    height: 100%;
+    max-width: 100%;
+    min-height: 100vh;
+    min-height: 100dvh;
+    min-height: -webkit-fill-available;
+    margin: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
     background-image: url("../pictures/1975.png");
     background-repeat: no-repeat;
-   background-size: cover;
-
+    background-size: cover;
+    background-position: center;
 }
 .msll_center {
   text-align: center;

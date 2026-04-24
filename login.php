@@ -109,7 +109,7 @@
         -->
 
 
-      <link href="./css/styles.css?v=1.0.1" rel="stylesheet">
+      <link href="./css/styles.css?v=1.0.2" rel="stylesheet">
       <link href="./css/jost.css" rel="stylesheet">
 
       <!--<link rel="stylesheet" href="styles2.css">-->
