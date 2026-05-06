@@ -13,6 +13,11 @@ body{
     font-family: 'Jost';
 }
 
+:root {
+  --msll-ios-header-bleed: calc(env(safe-area-inset-top, 0px) + 72px);
+  --msll-ios-footer-bleed: calc(env(safe-area-inset-bottom, 0px) + 120px);
+}
+
 div.container_inline_center2 {
 	display: flex;
 	flex-direction: row;
@@ -283,6 +288,19 @@ table.msll_table th:first-child, table.msll_table td:first-child {
     min-height: 50px;
     padding: 0px 0px;
     text-align: right;
+    overflow: visible;
+}
+
+.my_header::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: calc(-1 * var(--msll-ios-header-bleed));
+    height: var(--msll-ios-header-bleed);
+    background: #dddae0;
+    pointer-events: none;
+    z-index: -1;
 }
 .my_header2{
     display: flex;
@@ -300,6 +318,202 @@ table.msll_table th:first-child, table.msll_table td:first-child {
     padding: 0px 0px;
     text-align: right;
     right: 2%;
+}
+
+.mobile_header_controls {
+  margin-left: auto;
+  margin-right: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  position: relative;
+  z-index: 2;
+  flex-shrink: 0;
+}
+
+.mobile_header_button {
+  width: 42px;
+  height: 42px;
+  border: 2px solid #8594ae;
+  border-radius: 10px;
+  background-color: #bd162b;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  cursor: pointer;
+  box-shadow: rgba(0, 0, 0, 0.2) 0 2px 8px;
+}
+
+.mobile_header_button:active {
+  border-style: inset;
+}
+
+.mobile_header_button_profile {
+  background-image: url('../pictures/profile_button.png');
+}
+
+.mobile_header_button_nav {
+  background-image: url('../pictures/navigation_menu_button.png');
+}
+
+.mobile_header_button_courses {
+  background-image: url('../pictures/courses_menu_button.png');
+}
+
+.mobile_header_dropdowns {
+  position: fixed;
+  top: 50px;
+  left: 0;
+  right: 0;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.mobile_dropdown_backdrop {
+  position: fixed;
+  top: 50px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 2;
+  background: rgba(0, 0, 0, 0.25);
+}
+
+.mobile_dropdown_backdrop--courses-modal {
+  background: rgba(0, 0, 0, 0.45);
+}
+
+/* Блокировка прокрутки основной страницы при мобильных модальных слоях (меню профиля, навигации, курсов) */
+html.mobile-scroll-lock,
+body.mobile-scroll-lock {
+  overflow: hidden;
+}
+
+.mobile_dropdown_panel {
+  width: 100%;
+  background: #dddae0;
+  box-shadow: rgba(0, 0, 0, 0.2) 0 4px 12px;
+}
+
+.mobile_dropdown_panel_profile {
+  background: transparent;
+  box-shadow: none;
+  width: fit-content;
+  min-width: fit-content;
+  max-width: calc(100vw - 16px);
+  margin-left: auto;
+  margin-right: 8px;
+}
+
+.mobile_dropdown_panel_profile .menu-bar {
+  font-size: 36px;
+}
+
+.mobile_dropdown_panel_profile .menu-bar,
+.mobile_dropdown_panel_profile .menu-bar ul,
+.mobile_dropdown_panel_profile .menu-bar li {
+  width: fit-content;
+}
+
+.mobile_dropdown_panel_profile .menu-bar > ul > li {
+  display: block;
+  padding: 5px 20px;
+  margin: 0 0 10px 0;
+  color: black;
+  background: #dddae0;
+  border-color: rgba(189, 22, 43, 1);
+  border-style: groove;
+}
+
+.mobile_dropdown_panel_profile .menu-bar > ul > li,
+.mobile_dropdown_panel_profile .menu-bar > ul > li * {
+  color: #000;
+}
+
+.mobile_dropdown_panel_profile .menu-bar > ul > li > ul > li,
+.mobile_dropdown_panel_profile .menu-bar > ul > li > ul > li a {
+  color: #000;
+  background: #dddae0;
+}
+
+.mobile_dropdown_panel_profile .menu-bar > ul > li > ul > li:hover,
+.mobile_dropdown_panel_profile .menu-bar > ul > li > ul > li:hover a,
+.mobile_dropdown_panel_profile .menu-bar > ul > li > ul > li a:hover {
+  background: rgba(189, 22, 43, 1);
+}
+
+.mobile_dropdown_panel_profile .menu-bar > ul > li:hover,
+.mobile_dropdown_panel_profile .menu-bar > ul > li:hover *,
+.mobile_dropdown_panel_profile .menu-bar > ul > li a:hover {
+  color: #000;
+}
+
+.mobile_dropdown_panel_profile .menu-bar > ul > li::before {
+  display: none;
+}
+
+.mobile_dropdown_panel_nav {
+  animation: mobile-menu-slide-down 1s cubic-bezier(0.2, 0.9, 0.2, 1);
+}
+
+@keyframes mobile-menu-slide-down {
+  from {
+    transform: translateY(-18px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.mobile_dropdown_panel .margin-left-200 {
+  margin-left: 0;
+}
+
+.mobile_dropdown_panel .container_inline_center2 {
+  justify-content: center;
+  overflow-x: auto;
+  padding: 8px 6px;
+}
+
+@media (max-width: 991px) {
+  .my_header {
+    height: 150px;
+    min-height: 150px;
+  }
+
+  .mobile_header_controls {
+    height: 100%;
+    margin-right: 20px;
+    gap: 20px;
+  }
+
+  .mobile_header_button {
+    width: auto;
+    height: 80%;
+    aspect-ratio: 1 / 1;
+    border-width: 4px;
+    border-radius: 50%;
+  }
+
+  .mobile_header_dropdowns {
+    top: 150px;
+  }
+
+  .mobile_dropdown_backdrop {
+    top: 150px;
+  }
+
+  .my_header2 {
+    position: static;
+    right: auto;
+    height: 0;
+    min-height: 0;
+    overflow: hidden;
+  }
 }
 
 .my_unheader2{
@@ -432,11 +646,8 @@ table.msll_table th:first-child, table.msll_table td:first-child {
 
 /*-------------------------*/
 
-div.logo{
+.logo_image{
   height: 100%;
-  width: 190px;
-  background-image: url('../pictures/logo.png');
-  background-size: cover;
 }
 
 
@@ -448,7 +659,19 @@ div.logo{
     padding: 0px 0px;
     width: 100%;
     bottom: 0;
-    
+    overflow: visible;
+}
+
+.msll_footer::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: calc(-1 * var(--msll-ios-footer-bleed));
+    height: var(--msll-ios-footer-bleed);
+    background: #8594ae;
+    pointer-events: none;
+    z-index: -1;
 }
 
 .msll_footer_polygon_red {
@@ -571,6 +794,44 @@ to { opacity: 0; /* Прозрачный текст */ }
   padding: 10px;
   padding-top: 20px;
 }
+
+/* Мобильная версия страницы курсов: меню поверх контента и всегда в области просмотра при открытии */
+/* Важно: базовый .sidenav задаёт height:100% — для fixed это высота окна и «ломает» рост по контенту.
+   Переопределяем только для открытого мобильного меню: высота растёт с аккордеоном до предела экрана, дальше прокрутка. */
+.sidenav.sidenav--mobile-visible {
+  position: fixed;
+  left: 0;
+  right: 0;
+  width: 100% !important;
+  margin-top: 0;
+  padding: 10px;
+  padding-top: 10px;
+  box-sizing: border-box;
+  overflow-x: hidden;
+  overflow-y: auto;
+  z-index: 4;
+  height: auto !important;
+  min-height: 0;
+  max-height: calc(100vh - 50px);
+  max-height: calc(100dvh - 50px);
+  top: 50px;
+  font-size: 300%;
+}
+
+.sidenav.sidenav--mobile-visible .accordion {
+  height: auto;
+  max-height: none;
+}
+
+@media (max-width: 991px) {
+  .sidenav.sidenav--mobile-visible {
+    top: 150px;
+    max-height: calc(100vh - 150px);
+    max-height: calc(100dvh - 150px);
+    height: 100%;
+    max-height: 100%;
+  }
+}
 /* Тело сайта, при наличии бокового меню */
 .msll_body{
   margin-left: 420px;
@@ -582,6 +843,82 @@ to { opacity: 0; /* Прозрачный текст */ }
 }
 
 /* The Modal (background) */
+/* Форма профиля на мобильной уровне выше выпадающих панелей (z-index 3) */
+#id_FormEditProfile.modal {
+  z-index: 10;
+}
+
+/* Форма редактирования профиля: мобильный режим (совпадает с высотой .my_header и max-width: 991px) */
+@media (max-width: 991px) {
+  #id_FormEditProfile.modal {
+    padding-top: 150px;
+    padding-left: 0;
+    padding-right: 0;
+    box-sizing: border-box;
+  }
+
+  #id_FormEditProfile .modal-content-40.form-edit-profile {
+    width: 95%;
+    max-width: 95%;
+    margin: 0 auto;
+    border-left: none;
+    border-right: none;
+    border-radius: 0;
+    box-sizing: border-box;
+  }
+
+  #id_FormEditProfile .modal-header {
+    height: auto;
+    min-height: 80px;
+    box-sizing: border-box;
+  }
+
+  #id_FormEditProfile .modal-header h2,
+  #id_FormEditProfile .modal-body label,
+  #id_FormEditProfile .modal-body .label-align-left,
+  #id_FormEditProfile .modal-body input.msll_filter,
+  #id_FormEditProfile .modal-body input.msll_middle_button,
+  #id_FormEditProfile .modal-body .error {
+    font-size: 36px;
+    line-height: 1.2;
+  }
+
+  #id_FormEditProfile .modal-header .close {
+    font-size: 72px;
+    line-height: 1;
+  }
+
+  #id_FormEditProfile .modal-body input.msll_filter::placeholder {
+    font-size: 36px;
+  }
+
+  #id_FormEditProfile .modal-body .msll_filter {
+    padding: 12px 10px;
+    min-height: 52px;
+    box-sizing: border-box;
+  }
+
+  #id_FormEditProfile .modal-body input.msll_middle_button {
+    width: auto;
+    min-width: min(90vw, 360px);
+    height: auto;
+    min-height: 56px;
+    padding: 8px 16px;
+    box-sizing: border-box;
+  }
+
+  #id_FormEditProfile .modal-body input.checkbox-height25 {
+    width: 36px;
+    height: 36px;
+    margin-right: 12px;
+    flex-shrink: 0;
+  }
+
+  #id_FormEditProfile .modal-body div.container_inline2 {
+    align-items: center;
+  }
+}
+
 .modal {
   display: none; /* Hidden by default */
   position: fixed; /* Stay in place */
@@ -1084,6 +1421,21 @@ div.no-copy{
 }
 .msll_atricle_content{
   width: 50%;
+}
+
+@media (max-width: 991px) {
+  .msll_atricle_content {
+    width: 100%;
+  }
+
+  .msll_course_content_mobile_font {
+    font-size: 2.25rem;
+    line-height: 1.35;
+  }
+
+  .msll_course_content_mobile_font * {
+    font-size: inherit;
+  }
 }
 
 .item_of_list_N1{

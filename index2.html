@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Техническое обслуживание — Лаборатория права Майи Саблиной</title>
+    <link href="./css/styles.css?v=1.0.7" rel="stylesheet">
+    <link href="./css/jost.css" rel="stylesheet">
+    <link rel="icon" type="image/x-icon" href="./favicon.ico">
+    <style>
+        /* Логотип: в общих стилях .logo_image { height: 100% } без высоты родителя —
+           на статической странице PNG раздувается; ограничиваем по высоте шапки */
+        .maintenance-header.my_header {
+            overflow: hidden;
+            align-items: center;
+        }
+
+        .maintenance-header .maintenance-logo-wrap {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            align-items: center;
+            height: 100%;
+            max-height: 50px;
+            flex-shrink: 1;
+            min-width: 0;
+        }
+
+        .maintenance-header .logo_image {
+            height: auto;
+            max-height: 50px;
+            width: auto;
+            max-width: min(300px, 55vw);
+            object-fit: contain;
+            display: block;
+        }
+
+        @media (max-width: 991px) {
+            .maintenance-header .maintenance-logo-wrap {
+                max-height: 150px;
+            }
+
+            .maintenance-header .logo_image {
+                max-height: 120px;
+                max-width: min(280px, 75vw);
+            }
+        }
+
+        .maintenance-page {
+            min-height: calc(100vh - 50px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 32px 16px 48px;
+            box-sizing: border-box;
+        }
+
+        .maintenance-card {
+            max-width: 520px;
+            width: 100%;
+            background: rgba(221, 218, 224, 0.96);
+            border-radius: 8px;
+            border: 5px outset #8594ae;
+            box-shadow:
+                rgba(0, 0, 0, 0.12) 0 6px 28px,
+                rgba(0, 0, 0, 0.08) 0 2px 12px;
+            padding: 40px 36px 36px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .maintenance-card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, #bd162b 0%, #8594ae 50%, #bd162b 100%);
+        }
+
+        .maintenance-icon {
+            width: 72px;
+            height: 72px;
+            margin: 0 auto 24px;
+            color: #bd162b;
+        }
+
+        .maintenance-icon svg {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        .maintenance-title {
+            font-family: 'Jost', sans-serif;
+            font-size: 1.65rem;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin: 0 0 16px;
+            line-height: 1.3;
+        }
+
+        .maintenance-lead {
+            font-family: 'Jost', sans-serif;
+            font-size: 1.1rem;
+            color: #333;
+            margin: 0 0 20px;
+            line-height: 1.55;
+        }
+
+        .maintenance-apology {
+            font-family: 'Jost', sans-serif;
+            font-size: 1rem;
+            color: #444;
+            margin: 0;
+            line-height: 1.6;
+            font-style: italic;
+        }
+
+        .maintenance-accent-bar {
+            margin-top: 28px;
+            padding-top: 24px;
+            border-top: 2px groove #8594ae;
+        }
+
+        @media (max-width: 480px) {
+            .maintenance-card {
+                padding: 32px 22px 28px;
+            }
+            .maintenance-title {
+                font-size: 1.35rem;
+            }
+        }
+
+        @media (max-width: 991px) {
+            .maintenance-page {
+                min-height: calc(100vh - 150px);
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="my_header maintenance-header" style="position: relative;">
+        <div class="maintenance-logo-wrap">
+            <img class="logo_image" src="./pictures/logo.png" alt="Лаборатория права Майи Саблиной">
+        </div>
+        <div class="my_header_polygon" aria-hidden="true"></div>
+    </header>
+
+    <main class="maintenance-page">
+        <article class="maintenance-card">
+            <div class="maintenance-icon" aria-hidden="true">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"/>
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                </svg>
+            </div>
+            <h1 class="maintenance-title">Сайт находится на техническом обслуживании</h1>
+            <p class="maintenance-lead">
+                Мы проводим необходимые работы, чтобы сервис работал стабильнее и удобнее для вас.
+                Пожалуйста, загляните чуть позже.
+            </p>
+            <div class="maintenance-accent-bar">
+                <p class="maintenance-apology">
+                    Приносим искренние извинения за доставленные неудобства и благодарим за понимание.
+                </p>
+            </div>
+        </article>
+    </main>
+</body>
+</html>

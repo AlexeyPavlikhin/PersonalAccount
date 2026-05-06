@@ -45,6 +45,9 @@ export default {
                         //this.user_name=response.data;
                         //console.log(response.data);
                         this.users_permitions = response.data;
+                        if (typeof this.$root.setMobileNavButtonVisible === 'function') {
+                            this.$root.setMobileNavButtonVisible(this.users_permitions.length > 1);
+                        }
                         this.$root.set_route_to_first_menu_item();
                         //this.$root.set_route_to_first_menu_item();
                         //console.log(this.users_permitions.length);
@@ -61,11 +64,17 @@ export default {
                         
                     } else {
                         // пустой ответ
+                        if (typeof this.$root.setMobileNavButtonVisible === 'function') {
+                            this.$root.setMobileNavButtonVisible(false);
+                        }
                         console.log('Ответ от сервера пустой (data undefined/null)');
                     }
                 });
             } catch (error) {
                 // Обработка ошибки
+                if (typeof this.$root.setMobileNavButtonVisible === 'function') {
+                    this.$root.setMobileNavButtonVisible(false);
+                }
                 console.error('Ошибка при запросе:', error);
                 if (error.response) {
                     console.error('Статус ошибки:', error.response.status);
@@ -79,6 +88,9 @@ export default {
             //если сессия закончилась, то переходим на стрницу login.php
             this.$root.check_for_empty_session();
             this.$root.$router.push('/'+in_target);
+            if (this.$root.isMobileMode && typeof this.$root.closeMobileMenus === 'function') {
+                this.$root.closeMobileMenus();
+            }
             //console.log("click");
         },
 

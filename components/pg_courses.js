@@ -43,7 +43,18 @@ export default {
   },
   mounted() {
     this.$root.check_for_permition_route(this.current_route_name);
-    this.$root.$refs.ref_NavigationMenu.setActivMenuItem(this.current_route_name);
+    if (typeof this.$root.setMobileCoursesButtonVisible === 'function') {
+      this.$root.setMobileCoursesButtonVisible(true);
+    }
+    if (typeof this.$root.setMobileCoursesSidenavVisible === 'function') {
+      this.$root.setMobileCoursesSidenavVisible(this.is_mobile_mode());
+    }
+    const navigationMenuRef = typeof this.$root.getNavigationMenuRef === 'function'
+      ? this.$root.getNavigationMenuRef()
+      : this.$root.$refs.ref_NavigationMenu;
+    if (navigationMenuRef && typeof navigationMenuRef.setActivMenuItem === 'function') {
+      navigationMenuRef.setActivMenuItem(this.current_route_name);
+    }
 
     //определяем доступные для пользователя курсы
     try {
@@ -115,7 +126,51 @@ export default {
 //https://runtime.video.cloud.yandex.net/player/video/vplvwqsydipghjxptlxq?autoplay=0&mute=0
 
   },
+  beforeUnmount() {
+    if (typeof this.$root.setMobileCoursesButtonVisible === 'function') {
+      this.$root.setMobileCoursesButtonVisible(false);
+    }
+    if (typeof this.$root.setMobileCoursesSidenavVisible === 'function') {
+      this.$root.setMobileCoursesSidenavVisible(false);
+    }
+  },
   methods:{
+    is_mobile_mode(){
+      return Boolean(this.$root && this.$root.isMobileMode);
+    },
+    get_sidenav_style(){
+      if (!this.is_mobile_mode()) {
+        return "";
+      }
+      const isSidenavVisible = this.$root && this.$root.isMobileCoursesSidenavVisible;
+      if (!isSidenavVisible) {
+        return "display: none;";
+      }
+      /* Размеры и position: fixed для открытого меню задаются классом .sidenav--mobile-visible в CSS (всегда в зоне видимости при прокрутке). */
+      return "";
+    },
+    get_body_style(){
+      if (!this.is_mobile_mode()) {
+        return "";
+      }
+      return "margin-left: 0; padding: 10px 0 0 0; font-size: 300%;";
+    },
+    get_accordion_style(){
+      if (!this.is_mobile_mode()) {
+        return "max-width: 30rem; margin: 1rem auto;";
+      }
+      return "max-width: 100%; margin: 0 auto;";
+    },
+    get_video_frame_style(){
+      if (!this.is_mobile_mode()) {
+        return "width: 400px; height: 500px; max-width: 100%;";
+      }
+      /*return "width: 100%; aspect-ratio: 1 / 1; height: auto;";*/
+      return "width: 750px; height: 750px;";
+    },
+    get_doc_iframe_height(){
+      return this.is_mobile_mode() ? "420px" : "600px";
+    },
     on_menu_header_click(in_display_mode){
       //если сессия закончилась, то переходим на стрницу login.php
       this.$root.check_for_empty_session();
@@ -188,10 +243,16 @@ export default {
         for (const menu_item of permited_cours.course_contents){
           menu_item.course_contents_item_menu_class = "accordion_content_item";
         }
-      }      
+      }
+      if (this.is_mobile_mode() && typeof this.$root.setMobileCoursesSidenavVisible === 'function') {
+        this.$root.setMobileCoursesSidenavVisible(false);
+      }
     },
 
     get_display_mode(in_item_type){
+      if (this.is_mobile_mode()) {
+        return "display: block";
+      }
       if (in_item_type == "VIDEO"){
         return "display: inline-block";
       } else {
@@ -200,16 +261,19 @@ export default {
       }
     },
     get_doc_url(in_url){
-      return "https://docs.google.com/viewer?url="+in_url+"&embedded=true";
+      return this.get_doc_viewer_page_url(in_url) + "&embedded=true";
+    },
+    get_doc_viewer_page_url(in_url){
+      return "https://docs.google.com/viewer?url=" + encodeURIComponent(in_url);
     }
   },
 
   template:
     `
-        <div class='sidenav'>
-          <div id="accordion" class="accordion" style="max-width: 30rem; margin: 1rem auto;">
+        <div class='sidenav' :class="{ 'sidenav--mobile-visible': is_mobile_mode() && $root.isMobileCoursesSidenavVisible }" :style="get_sidenav_style()">
+          <div id="accordion" class="accordion" :style="get_accordion_style()">
           
-            <div class="accordion__item msll_margin_bottom_100" v-for="course in users_permited_courses">
+            <div :class="is_mobile_mode() ? 'accordion__item' : 'accordion__item msll_margin_bottom_100'" v-for="course in users_permited_courses">
               <div :class="course.menu_header_class" @click="course.course_display_mode = on_menu_header_click(course.course_display_mode); course.menu_header_class = on_menu_header_click2(course.menu_header_class)">
                 <div>{{course.course_name}}</div>
                 <div class="black_text">Доступен до {{course.available_until}}</div>
@@ -223,33 +287,22 @@ export default {
                 </div>
               </div>
             </div>
-          <br/><br/><br/><br/>
+          <br v-if="!is_mobile_mode()"/><br v-if="!is_mobile_mode()"/><br v-if="!is_mobile_mode()"/><br v-if="!is_mobile_mode()"/>
           </div>
         </div>
 
-        <div class='msll_body'>
+        <div class='msll_body' :style="get_body_style()">
         
-<!--div class="box">
-  <div class="center_position">One</div>
-  <div>Two</div>
-  <div>Three</div>
-  <!--div class="push">Four</div-- >
-  <div class="w100">Five</div>
-</div-->       
-          <!--h2>{{v_course_contents_item_name}}</h2-->
-          <!--iframe src="https://docs.google.com/viewer?url=https://storage.yandexcloud.net/otdelnyye/Чек-лист%20по%20договорной%20работе.docx&embedded=true" width="100%" height="600px"></iframe-->
-          <!--a href="https://storage.yandexcloud.net/otdelnyye/Чек-лист%20по%20договорной%20работе.docx">Скачать</a-->
           <div class="msll_margin_lef_right_20 msll_margin_top_bottom_20" v-for="course_contents_item in v_course_contents_items" :style="get_display_mode(course_contents_item.course_item_type_name)">
           
-            <div v-if="course_contents_item.course_item_type_name ==='TEXT'" class="msll_atricle_container">
+            <div v-if="course_contents_item.course_item_type_name ==='TEXT'" class="msll_atricle_container msll_course_content_mobile_font">
               <div class="msll_text_align_left msll_atricle_content" v-html="course_contents_item.course_item_data"></div>
             </div>
 
-            <div v-if="course_contents_item.course_item_type_name ==='VIDEO'">
+            <div v-if="course_contents_item.course_item_type_name ==='VIDEO'" class="msll_course_content_mobile_font">
               <div v-html="course_contents_item.course_item_data"></div>
               <iframe 
-                width="400" 
-                height="500" 
+                :style="get_video_frame_style()"
                 :src="course_contents_item.course_item_data2"
                 allow="autoplay; fullscreen; accelerometer; gyroscope; picture-in-picture; encrypted-media" 
                 frameborder="0" 
@@ -257,30 +310,36 @@ export default {
               </iframe>    
             </div>
 
-            <div v-if="course_contents_item.course_item_type_name ==='PICTURE'">
+            <div v-if="course_contents_item.course_item_type_name ==='PICTURE'" class="msll_course_content_mobile_font">
               <div v-html="course_contents_item.course_item_data"></div>
               <img :src="course_contents_item.course_item_data2" alt="Image" class="msll_courses_images">
             </div>
 
-            <div v-if="course_contents_item.course_item_type_name ==='DOCPDF'">
+            <div v-if="course_contents_item.course_item_type_name ==='DOCPDF'" class="msll_course_content_mobile_font">
               <div v-html="course_contents_item.course_item_data"></div>
-              <embed :src="course_contents_item.course_item_data2" type="application/pdf" class="msll_courses_doc_pdf">
+              <a
+                class="msll_button"
+                :href="course_contents_item.course_item_data2"
+                target="_blank"
+                rel="noopener noreferrer">
+                Открыть PDF
+              </a>
             </div>
 
-            <div v-if="course_contents_item.course_item_type_name ==='DOCDOCX'">
+            <div v-if="course_contents_item.course_item_type_name ==='DOCDOCX'" class="msll_course_content_mobile_font">
               <div v-html="course_contents_item.course_item_data"></div>
-              <!--iframe :src="https://docs.google.com/viewer?url=course_contents_item.course_item_data2&embedded=true" width="100%" height="600px"></iframe-->
-              <iframe :src="get_doc_url(course_contents_item.course_item_data2)" width="100%" height="600px" class="msll_courses_doc_pdf"></iframe>
-              <a class="msll_button" :href="course_contents_item.course_item_data2">Скачать</a>
+              <a
+                class="msll_button"
+                :href="get_doc_viewer_page_url(course_contents_item.course_item_data2)"
+                target="_blank"
+                rel="noopener noreferrer">
+                Открыть DOC
+              </a>
             </div>
 
-            <div v-if="course_contents_item.course_item_type_name ==='HREF'">
+            <div v-if="course_contents_item.course_item_type_name ==='HREF'" class="msll_course_content_mobile_font">
               <a :href="course_contents_item.course_item_data" target="_blank" rel="noopener noreferrer">{{course_contents_item.course_item_data2}}</a>
             </div>
-
-          
-          
-             
 
           </div>
           

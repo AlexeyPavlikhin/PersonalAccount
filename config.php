@@ -14,6 +14,7 @@
     define('ALLOWED_HOST_2', 'http://msll-dev');
     define('ALLOWED_HOST_3', 'http://msll-dev');
     define('ALLOWED_APIKEY', 'D2swqPZF2Rfj4LrYJle7MoKvvRBRFcAhODGsXPZyzNMLKjdjXYutl5esrZGiNVRoj6dzG2rIHN1CmNKc0GVVqBHn1M348txviq2QzgBpQg7LxSO4vDfXmqbHcQzKfQMT');
+    $ASSET_VER = '2026.04.30';
     
     try {
         $connection = new PDO("mysql:host=".HOST.";dbname=".DATABASE, USER, PASSWORD);

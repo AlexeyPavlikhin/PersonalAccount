@@ -1,11 +1,8 @@
 <link href="./css/styles.css" rel="stylesheet">
 <link href="./css/jost.css" rel="stylesheet">
 <title>Личный кабинет: Управление заказами</title>
-<link rel="icon" type="image/png" sizes="32x32" href="./pictures/Iogo-1.png" media="(prefers-color-scheme: light)">
-<link rel="icon" type="image/png" sizes="32x32" href="-./pictures/Iogo-2.png" media="(prefers-color-scheme: dark)">
-<link rel="icon" type="image/svg+xml" sizes="any" href="./pictures/Iogo-4.svg">
-<link rel="apple-touch-icon" type="image/png" href="./pictures/Iogo-3.png">
-<link rel="icon" type="image/png" sizes="192x192" href="./pictures/Iogo-3.png">
+<link rel="icon" type="image/x-icon" href="./favicon.ico">
+<link rel="shortcut icon" href="./favicon.ico">
 
 <?php
     //error_reporting(0);

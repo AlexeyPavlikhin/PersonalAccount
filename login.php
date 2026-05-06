@@ -94,11 +94,8 @@
 <html>
     <head> 
       <title>Личный кабинет: Авторизация</title>
-      <link rel="icon" type="image/png" sizes="32x32" href="./pictures/Iogo-1.png" media="(prefers-color-scheme: light)">
-      <link rel="icon" type="image/png" sizes="32x32" href="-./pictures/Iogo-2.png" media="(prefers-color-scheme: dark)">
-      <link rel="icon" type="image/svg+xml" sizes="any" href="./pictures/Iogo-4.svg">
-      <link rel="apple-touch-icon" type="image/png" href="./pictures/Iogo-3.png">
-      <link rel="icon" type="image/png" sizes="192x192" href="./pictures/Iogo-3.png">
+      <link rel="icon" type="image/x-icon" href="./favicon.ico?v=<?=$ASSET_VER?>">
+      <link rel="shortcut icon" href="./favicon.ico?v=<?=$ASSET_VER?>">
 
       <!--
       <link rel="icon" type="image/png" sizes="32x32" href="https://static.tildacdn.com/tild3162-3235-4463-a131-323537306264/Iogo-1.png" media="(prefers-color-scheme: light)">
@@ -109,8 +106,8 @@
         -->
 
 
-      <link href="./css/styles.css?v=1.0.2" rel="stylesheet">
-      <link href="./css/jost.css" rel="stylesheet">
+      <link href="./css/styles.css?v=<?=$ASSET_VER?>" rel="stylesheet">
+      <link href="./css/jost.css?v=<?=$ASSET_VER?>" rel="stylesheet">
 
       <!--<link rel="stylesheet" href="styles2.css">-->
       <!-- <-?php echo DeviceType();?> -->
@@ -120,7 +117,7 @@
       <form method="post" action="" name="signin-form">
         <div class="form_login_<?php echo DeviceType();?>">
             <!--< ?php echo DeviceType();?> -->
-          <img class="login_logo_<?php echo DeviceType();?>" src="./pictures/logo.png" alt="Лаборатория права Майи Саблиной">  
+          <img class="login_logo_<?php echo DeviceType();?>" src="./pictures/logo.png?v=<?=$ASSET_VER?>" alt="Лаборатория права Майи Саблиной">  
           <div>
             <label class="form_login_label_<?php echo DeviceType();?>">Логин</label>
             <!--input class="msll_filter" type="text" name="usr_login" pattern="[a-zA-Z0-9]+" required /-->

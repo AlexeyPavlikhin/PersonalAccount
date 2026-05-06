@@ -389,7 +389,7 @@ export default {
     template: 
     `
     <!-- Modal content -->
-    <div class="modal-content-40">
+    <div class="modal-content-40 form-edit-profile">
         <div class="modal-header">
             <span class="close" @click="onClickCloseForm()">&times;</span>
             <h2>Редактирование данных пользователя</h2>

@@ -39,17 +39,27 @@ export default {
         },
         async mounted() {
             this.$root.check_for_permition_route(this.current_route_name);
-            this.$root.$refs.ref_NavigationMenu.setActivMenuItem(this.current_route_name);
+            const navigationMenuRef = typeof this.$root.getNavigationMenuRef === 'function'
+                ? this.$root.getNavigationMenuRef()
+                : this.$root.$refs.ref_NavigationMenu;
+            if (navigationMenuRef && typeof navigationMenuRef.setActivMenuItem === 'function') {
+                navigationMenuRef.setActivMenuItem(this.current_route_name);
+            }
             this.onSelectFirstFilter();
             try {
                     
                     //запускаем спиннер    
-                    document.getElementById("id_spinner_panel").style.display = "block"; 
+                    const spinnerPanel = document.getElementById("id_spinner_panel");
+                    if (spinnerPanel) {
+                        spinnerPanel.style.display = "block";
+                    }
 
                     const response = await axios.get('./queries/get_list_of_cliets_by_conditions.php?conditions='+encodeURIComponent(JSON.stringify(this.conditions)));
                     
                     //останавливаем спиннер    
-                    document.getElementById("id_spinner_panel").style.display = "none";
+                    if (spinnerPanel) {
+                        spinnerPanel.style.display = "none";
+                    }
 
                     if (response.data) {
                         //console.log(response.data);
@@ -126,7 +136,10 @@ export default {
 
                 try {
                     //запускаем спиннер    
-                    document.getElementById("id_spinner_panel").style.display = "block"; 
+                    const spinnerPanel = document.getElementById("id_spinner_panel");
+                    if (spinnerPanel) {
+                        spinnerPanel.style.display = "block";
+                    }
 
                     //console.log(encodeURIComponent(JSON.stringify(this.conditions)));
                     //console.log(JSON.stringify(this.conditions));
@@ -135,7 +148,9 @@ export default {
                     //const response = await axios.get('./queries/get_list_of_cliets_by_conditions.php', conditions, {headers: { 'Content-Type': 'application/x-www-form-urlencoded' } });
                     
                     //останавливаем спиннер    
-                    document.getElementById("id_spinner_panel").style.display = "none";
+                    if (spinnerPanel) {
+                        spinnerPanel.style.display = "none";
+                    }
 
                     // Обработка успешного ответа
                     if (response.data) {

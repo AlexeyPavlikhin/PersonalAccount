@@ -23,7 +23,12 @@ export default {
         },
         async mounted() {
             this.$root.check_for_permition_route(this.current_route_name);
-            this.$root.$refs.ref_NavigationMenu.setActivMenuItem(this.current_route_name);
+            const navigationMenuRef = typeof this.$root.getNavigationMenuRef === 'function'
+                ? this.$root.getNavigationMenuRef()
+                : this.$root.$refs.ref_NavigationMenu;
+            if (navigationMenuRef && typeof navigationMenuRef.setActivMenuItem === 'function') {
+                navigationMenuRef.setActivMenuItem(this.current_route_name);
+            }
             this.get_users();
 
         },

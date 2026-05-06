@@ -12,18 +12,26 @@ export default {
     methods: {
         onClickMenuProfile(){
             //если сессия закончилась, то переходим на стрницу login.php
-            this.$root.check_for_empty_session();            
-            
-            //console.log(this.user_name)
+            this.$root.check_for_empty_session();
 
-            this.$refs.ref_FormEditProfile.init();
+            const openProfileModal = () => {
+                this.$refs.ref_FormEditProfile.init();
+                document.body.style.overflow = 'hidden';
+                const el = document.getElementById('id_FormEditProfile');
+                if (el) {
+                    el.style.display = 'block';
+                }
+            };
 
-            //отключить прокрутку страницы
-            document.body.style.overflow = 'hidden';
+            // На мобильной версии модалка была внутри v-show меню — закрытие меню скрывало форму.
+            // Сначала закрываем выпадающее меню, затем открываем модалку на следующем тике Vue.
+            if (this.$root.isMobileMode && typeof this.$root.closeMobileMenus === 'function') {
+                this.$root.closeMobileMenus();
+                this.$nextTick(openProfileModal);
+                return;
+            }
 
-            //сделать элемент модальным     
-            document.getElementById("id_FormEditProfile").style.display = "block";                
-
+            openProfileModal();
         },
         async refresh(){
             try {
@@ -52,7 +60,12 @@ export default {
             /*
           
             */
-        }            
+        },
+        onClickExit() {
+            if (this.$root.isMobileMode && typeof this.$root.closeMobileMenus === 'function') {
+                this.$root.closeMobileMenus();
+            }
+        }
     },
     mounted() {
         this.refresh();
@@ -67,16 +80,18 @@ export default {
                 {{ user_name }}
                 <ul>
                     <li @click="onClickMenuProfile()">Профиль</li>
-                    <li><a href='login.php'>Выход</a></li>
+                    <li @click="onClickExit"><a href='login.php'>Выход</a></li>
                 </ul>
             </li>
         </ul>
     </div>  
 
-    <div id="id_FormEditProfile" class="modal">
-        <div class="my_unheader2">
-            <Form-Edit-Profile ref="ref_FormEditProfile"/>
+    <Teleport to="body" :disabled="!$root.isMobileMode">
+        <div id="id_FormEditProfile" class="modal">
+            <div class="my_unheader2">
+                <Form-Edit-Profile ref="ref_FormEditProfile"/>
+            </div>
         </div>
-    </div>          
+    </Teleport>
     `
     }

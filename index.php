@@ -17,38 +17,76 @@
 ?>
 <html>
     <head> 
-        <link href="./css/styles.css?v=1.0.2" rel="stylesheet">
+        <link href="./css/styles.css?v=<?=$ASSET_VER?>" rel="stylesheet">
         
         <!--link href="https://vjs.zencdn.net/8.23.4/video-js.css" rel="stylesheet" /-->
 
-        <link href="./css/jost.css" rel="stylesheet">
-        <script src="./js/axios.min.js"></script>
+        <link href="./css/jost.css?v=<?=$ASSET_VER?>" rel="stylesheet">
+        <script src="./js/axios.min.js?v=<?=$ASSET_VER?>"></script>
 
         <title>Личный кабинет: Главная страница</title>
 
-        <link rel="icon" type="image/png" sizes="32x32" href="./pictures/Iogo-1.png" media="(prefers-color-scheme: light)">
-        <link rel="icon" type="image/png" sizes="32x32" href="-./pictures/Iogo-2.png" media="(prefers-color-scheme: dark)">
-        <link rel="icon" type="image/svg+xml" sizes="any" href="./pictures/Iogo-4.svg">
-        <link rel="apple-touch-icon" type="image/png" href="./pictures/Iogo-3.png">
-        <link rel="icon" type="image/png" sizes="192x192" href="./pictures/Iogo-3.png">
+        <link rel="icon" type="image/x-icon" href="./favicon.ico?v=<?=$ASSET_VER?>">
+        <link rel="shortcut icon" href="./favicon.ico?v=<?=$ASSET_VER?>">
 
     </head> 
     <body>
         <div id='app'>
             <header class='my_header'>
-                <div class='logo'> </div>
-                <div class='my_header_polygon'></div>
+                <div><img class="logo_image" src="./pictures/logo.png?v=<?=$ASSET_VER?>" alt="Лаборатория права Майи Саблиной"></div>
+                <div v-if="!isMobileMode" class='my_header_polygon'></div>
+                <div v-if="isMobileMode" class="mobile_header_controls">
+                    <button
+                        type="button"
+                        class="mobile_header_button mobile_header_button_courses"
+                        v-if="isMobileCoursesButtonVisible"
+                        @click="toggleMobileCoursesSidenav"
+                        :aria-expanded="isMobileCoursesSidenavVisible"
+                        aria-label="Открыть меню курсов"
+                    ></button>
+                    <button
+                        type="button"
+                        class="mobile_header_button mobile_header_button_nav"
+                        v-if="isMobileNavButtonVisible"
+                        @click="toggleNavMenu"
+                        :aria-expanded="isNavMenuOpen"
+                        aria-label="Открыть навигационное меню"
+                    ></button>
+                    <button
+                        type="button"
+                        class="mobile_header_button mobile_header_button_profile"
+                        @click="toggleProfileMenu"
+                        :aria-expanded="isProfileMenuOpen"
+                        aria-label="Открыть меню профиля"
+                    ></button>
+                </div>
             </header>
 
-            <header class='my_header2' id='header_menu'>
+            <header v-if="!isMobileMode" class='my_header2' id='header_menu'>
                 <div id="id_MenuProfileAndExit">
                     <Menu-Profile-And-Exit ref="ref_MenuProfileAndExit"/>
                 </div> 
-            </header>        
+            </header>
+
+            <div
+                v-if="isMobileMode && (isProfileMenuOpen || isNavMenuOpen || isMobileCoursesSidenavVisible)"
+                class="mobile_dropdown_backdrop"
+                :class="{ 'mobile_dropdown_backdrop--courses-modal': isMobileCoursesSidenavVisible }"
+                @click="closeMobileMenus"
+            ></div>
+
+            <div v-if="isMobileMode" class="mobile_header_dropdowns">
+                <section v-show="isProfileMenuOpen" class="mobile_dropdown_panel mobile_dropdown_panel_profile">
+                    <Menu-Profile-And-Exit ref="ref_MenuProfileAndExitMobile"/>
+                </section>
+                <section v-show="isNavMenuOpen" class="mobile_dropdown_panel mobile_dropdown_panel_nav">
+                    <Navigation-Menu ref="ref_NavigationMenuMobile"></Navigation-Menu>
+                </section>
+            </div>
 
             <main id='main'>
                 <!--input class="msll_small_button" type="button" value = "Изменить" @click="test_func"-->                
-                <Navigation-Menu ref="ref_NavigationMenu"></Navigation-Menu>
+                <Navigation-Menu v-if="!isMobileMode" ref="ref_NavigationMenu"></Navigation-Menu>
 
                 <router-view v-slot="{ Component }">
                     <component :is="Component" ref="mainContent" />
@@ -80,12 +118,12 @@
   }
 </script-->
 
-<script src="./js/vue-spinner.min.js"></script>
+<script src="./js/vue-spinner.min.js?v=<?=$ASSET_VER?>"></script>
 
 <!--script src="https://unpkg.com/vue@3/dist/vue.global.js"></script-->
 <!--script src="https://unpkg.com/vue-router@4/dist/vue-router.global.js"></script-->
-<script src="./js/vue.global.js"></script>
-<script src="./js/vue-router.global.js"></script>
+<script src="./js/vue.global.js?v=<?=$ASSET_VER?>"></script>
+<script src="./js/vue-router.global.js?v=<?=$ASSET_VER?>"></script>
 
 <script>
   var PulseLoader = VueSpinner.PulseLoader;
@@ -94,19 +132,19 @@
 
 <script type="module">
 
-    import FormModalMessage from './components/Form_Modal_Message.js';
-    import MenuProfileAndExit from './components/Menu_Profile_And_Exit.js';
-    import NavigationMenu from './components/Navigation_Menu.js';    
+    import FormModalMessage from './components/Form_Modal_Message.js?v=<?=$ASSET_VER?>';
+    import MenuProfileAndExit from './components/Menu_Profile_And_Exit.js?v=<?=$ASSET_VER?>';
+    import NavigationMenu from './components/Navigation_Menu.js?v=<?=$ASSET_VER?>';    
     
     const { createApp } = Vue;
     //const { createRouter, createWebHistory, createWebHashHistory } = VueRouter;
     const { createRouter, createWebHashHistory } = VueRouter;
     //const { createRouter, createWebHistory } = VueRouter;
 
-    import UC from './components/pg_uc.js';
-    import SALES from './components/pg_sales.js';
-    import EMPTY from './components/pg_empty.js';
-    import COURSES from './components/pg_courses.js';
+    import UC from './components/pg_uc.js?v=<?=$ASSET_VER?>';
+    import SALES from './components/pg_sales.js?v=<?=$ASSET_VER?>';
+    import EMPTY from './components/pg_empty.js?v=<?=$ASSET_VER?>';
+    import COURSES from './components/pg_courses.js?v=<?=$ASSET_VER?>';
     
 
     // Define your routes
@@ -125,6 +163,15 @@
         routes
     });
 
+    const detectMobileMode = () => {
+        const ua = navigator.userAgent || navigator.vendor || window.opera || '';
+        const isMobileByUA = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini|mobile/i.test(ua.toLowerCase());
+        const isMobileByViewport = window.matchMedia
+            ? window.matchMedia('(max-width: 991px)').matches
+            : window.innerWidth <= 991;
+        return isMobileByUA || isMobileByViewport;
+    };
+
     const app = createApp({
         components: {
             PulseLoader,
@@ -135,18 +182,114 @@
         data() {
             return {
                 p_color: "#bd162b",
-                p_size: "20px"
+                p_size: "20px",
+                isMobileMode: detectMobileMode(),
+                isMobileNavButtonVisible: false,
+                isMobileCoursesButtonVisible: false,
+                isMobileCoursesSidenavVisible: false,
+                isProfileMenuOpen: false,
+                isNavMenuOpen: false
             }
         },
         mounted() {
             //this.$router.push('/');
             //this.$root.$refs.ref_NavigationMenu.init();
             //console.log(this.$route.path);
-            
+            this.detectMobileModeByUA();
+            window.addEventListener('resize', this.onViewportChange);
+            window.addEventListener('orientationchange', this.onViewportChange);
+        },
+        beforeUnmount() {
+            window.removeEventListener('resize', this.onViewportChange);
+            window.removeEventListener('orientationchange', this.onViewportChange);
+            document.documentElement.classList.remove('mobile-scroll-lock');
+            document.body.classList.remove('mobile-scroll-lock');
+        },
+        computed: {
+            mobileBackdropActive() {
+                return this.isMobileMode
+                    && (this.isProfileMenuOpen || this.isNavMenuOpen || this.isMobileCoursesSidenavVisible);
+            },
+        },
+        watch: {
+            mobileBackdropActive: {
+                immediate: true,
+                handler(val) {
+                    document.documentElement.classList.toggle('mobile-scroll-lock', Boolean(val));
+                    document.body.classList.toggle('mobile-scroll-lock', Boolean(val));
+                },
+            },
         },
         methods: {
+            detectMobileModeByUA() {
+                this.isMobileMode = detectMobileMode();
+            },
+            onViewportChange() {
+                const wasMobileMode = this.isMobileMode;
+                this.detectMobileModeByUA();
+                if (wasMobileMode !== this.isMobileMode || !this.isMobileMode) {
+                    this.closeMobileMenus();
+                }
+            },
+            closeMobileMenus() {
+                this.isProfileMenuOpen = false;
+                this.isNavMenuOpen = false;
+                this.isMobileCoursesSidenavVisible = false;
+            },
+            toggleProfileMenu() {
+                this.isProfileMenuOpen = !this.isProfileMenuOpen;
+                if (this.isProfileMenuOpen) {
+                    this.isNavMenuOpen = false;
+                    this.isMobileCoursesSidenavVisible = false;
+                }
+            },
+            toggleNavMenu() {
+                if (!this.isMobileNavButtonVisible) {
+                    return;
+                }
+                this.isNavMenuOpen = !this.isNavMenuOpen;
+                if (this.isNavMenuOpen) {
+                    this.isProfileMenuOpen = false;
+                    this.isMobileCoursesSidenavVisible = false;
+                }
+            },
+            setMobileNavButtonVisible(isVisible) {
+                this.isMobileNavButtonVisible = Boolean(isVisible);
+                if (!this.isMobileNavButtonVisible) {
+                    this.isNavMenuOpen = false;
+                }
+            },
+            setMobileCoursesButtonVisible(isVisible) {
+                this.isMobileCoursesButtonVisible = Boolean(isVisible);
+                if (!this.isMobileCoursesButtonVisible) {
+                    this.isMobileCoursesSidenavVisible = false;
+                }
+            },
+            setMobileCoursesSidenavVisible(isVisible) {
+                this.isMobileCoursesSidenavVisible = Boolean(isVisible);
+            },
+            toggleMobileCoursesSidenav() {
+                if (!this.isMobileCoursesButtonVisible) {
+                    return;
+                }
+                this.isMobileCoursesSidenavVisible = !this.isMobileCoursesSidenavVisible;
+                if (this.isMobileCoursesSidenavVisible) {
+                    this.isProfileMenuOpen = false;
+                    this.isNavMenuOpen = false;
+                }
+            },
+            getNavigationMenuRef() {
+                if (this.isMobileMode) {
+                    return this.$refs.ref_NavigationMenuMobile;
+                }
+                return this.$refs.ref_NavigationMenu;
+            },
             set_route_to_first_menu_item(){
-                this.$router.push(this.$refs.ref_NavigationMenu.get_start_item_of_menu());
+                const navigationMenuRef = this.getNavigationMenuRef();
+                if (!navigationMenuRef || typeof navigationMenuRef.get_start_item_of_menu !== 'function') {
+                    return;
+                }
+                this.$router.push(navigationMenuRef.get_start_item_of_menu());
                 //console.log(this.$refs.ref_NavigationMenu.get_start_item_of_menu);
                 //console.log(this.$refs.ref_NavigationMenu.get_start_item_of_menu()[1].page_name);
 /*                
