@@ -242,7 +242,7 @@ if ($v_obj["API-key"] == ALLOWED_APIKEY){
                 }
                 $subject = "Доступ к образовательным материалам Лаборатории права Майи Саблиной";
                 $body    = "<p>".$user_name.", добрый день!</p>
-                            <p>".$user_product." открыт!</p>
+                            <p>Доступ к образовательным материалам &laquo;<b>".$user_product."</b>&raquo; открыт!</p>
                             <p>Ознакомиться с материалами вы можете через личный кабинет <a href='https://msll-ip.ru/' target='_blank'>https://msll-ip.ru/</a>.</p>
                             <p>Приятного просмотра!</p>
                             <br/>

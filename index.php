@@ -3,6 +3,8 @@
     ob_start();
     session_start();
     include('config.php');
+    require_once __DIR__ . '/inc/device_type.php';
+    $dt = DeviceType();
 
     if(!isset($_SESSION['current_user_id'])){
         header('Location: login.php');
@@ -129,6 +131,9 @@
   var PulseLoader = VueSpinner.PulseLoader;
 </script>
 
+<script>
+  window.MSLL_DEVICE_TYPE = <?= json_encode($dt, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>;
+</script>
 
 <script type="module">
 
@@ -163,14 +168,8 @@
         routes
     });
 
-    const detectMobileMode = () => {
-        const ua = navigator.userAgent || navigator.vendor || window.opera || '';
-        const isMobileByUA = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini|mobile/i.test(ua.toLowerCase());
-        const isMobileByViewport = window.matchMedia
-            ? window.matchMedia('(max-width: 991px)').matches
-            : window.innerWidth <= 991;
-        return isMobileByUA || isMobileByViewport;
-    };
+    /** Совпадает с PHP DeviceType(): только «mobile» / «desktop», без ширины окна */
+    const detectMobileMode = () => window.MSLL_DEVICE_TYPE === 'mobile';
 
     const app = createApp({
         components: {
@@ -195,13 +194,8 @@
             //this.$router.push('/');
             //this.$root.$refs.ref_NavigationMenu.init();
             //console.log(this.$route.path);
-            this.detectMobileModeByUA();
-            window.addEventListener('resize', this.onViewportChange);
-            window.addEventListener('orientationchange', this.onViewportChange);
         },
         beforeUnmount() {
-            window.removeEventListener('resize', this.onViewportChange);
-            window.removeEventListener('orientationchange', this.onViewportChange);
             document.documentElement.classList.remove('mobile-scroll-lock');
             document.body.classList.remove('mobile-scroll-lock');
         },
@@ -221,16 +215,6 @@
             },
         },
         methods: {
-            detectMobileModeByUA() {
-                this.isMobileMode = detectMobileMode();
-            },
-            onViewportChange() {
-                const wasMobileMode = this.isMobileMode;
-                this.detectMobileModeByUA();
-                if (wasMobileMode !== this.isMobileMode || !this.isMobileMode) {
-                    this.closeMobileMenus();
-                }
-            },
             closeMobileMenus() {
                 this.isProfileMenuOpen = false;
                 this.isNavMenuOpen = false;

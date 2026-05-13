@@ -842,6 +842,96 @@ to { opacity: 0; /* Прозрачный текст */ }
   padding: 10px;
 }
 
+.msll_filter_date_compact{
+  width: 180px;
+  margin-left: auto;
+  margin-right: 8px;
+}
+
+.tree-child-block{
+  margin-left: 0;
+  margin-bottom: 10px;
+  width: 100%;
+}
+
+.msll_permissions_table{
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 12px;
+  background: #ffffff;
+  border: 2px solid #8594ae;
+  box-shadow: rgba(0, 0, 0, 0.06) 0px 2px 8px;
+}
+
+.msll_permissions_table thead th{
+  background: #8594ae;
+  color: #ffffff;
+  font-family: 'Jost';
+  font-weight: 600;
+  letter-spacing: 0.2px;
+  border-color: #7a89a2;
+}
+
+.msll_permissions_table th,
+.msll_permissions_table td{
+  border: 1px solid #d2d9e5;
+  padding: 8px 10px;
+  text-align: left;
+  vertical-align: middle;
+}
+
+.msll_permissions_table tbody tr:nth-child(even){
+  background: #f6f8fc;
+}
+
+.msll_permissions_table tbody tr:hover{
+  background: #e9eef7;
+}
+
+.msll_permissions_date_cell{
+  width: 1%;
+  white-space: nowrap;
+}
+
+.msll_permissions_action_cell{
+  width: 1%;
+  white-space: nowrap;
+  text-align: right;
+}
+
+.msll_heading_with_tooltip{
+  position: relative;
+  display: inline-block;
+  cursor: help;
+}
+
+.msll_heading_tooltip{
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity 0.15s ease-in-out;
+  position: absolute;
+  left: 0;
+  top: 100%;
+  margin-top: 6px;
+  z-index: 20;
+  width: max-content;
+  max-width: 380px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  background: #2f3b52;
+  color: #ffffff;
+  font-size: 0.9rem;
+  font-weight: 400;
+  line-height: 1.25;
+  text-align: left;
+  box-shadow: rgba(0, 0, 0, 0.25) 0px 4px 12px;
+}
+
+.msll_heading_with_tooltip:hover .msll_heading_tooltip{
+  visibility: visible;
+  opacity: 1;
+}
+
 /* The Modal (background) */
 /* Форма профиля на мобильной уровне выше выпадающих панелей (z-index 3) */
 #id_FormEditProfile.modal {
@@ -1023,6 +1113,14 @@ to { opacity: 0; /* Прозрачный текст */ }
   background-image: url("../pictures/1975.png");
   background-repeat: no-repeat;
   background-size: cover;
+}
+
+#id_FormUpdateUser .modal-content-40 {
+  margin-bottom: 160px;
+}
+
+#id_FormCreateNewUser .modal-content-40 {
+  margin-bottom: 160px;
 }
 
 
@@ -1529,4 +1627,80 @@ p.error_mobile {
     color: #000;
     
     font-size: 50px;
+}
+
+p.success {
+    color: #1b5e20;
+    font-weight: bold;
+}
+
+p.success_mobile {
+    color: #1b5e20;
+    font-weight: bold;
+    font-size: clamp(4rem, 11vw, 6rem);
+    line-height: 1.35;
+    padding-left: 4%;
+    padding-right: 4%;
+    text-align: center;
+}
+
+.login_forgot_row_desktop,
+.login_forgot_row_mobile {
+    margin: 0.5rem 0 0.75rem;
+    text-align: right;
+}
+
+.login_forgot_row_mobile {
+    text-align: center;
+}
+
+a.login_forgot_link {
+    color: #8594ae;
+    font-size: 1rem;
+    text-decoration: underline;
+}
+
+a.login_forgot_link:hover {
+    color: #bd162b;
+}
+
+.login_aux_links_desktop,
+.login_aux_links_mobile {
+    margin: 1rem 0 0;
+    text-align: center;
+    font-size: 1rem;
+}
+
+.login_aux_links_desktop a,
+.login_aux_links_mobile a {
+    color: #8594ae;
+    text-decoration: underline;
+}
+
+.login_aux_links_desktop a:hover,
+.login_aux_links_mobile a:hover {
+    color: #bd162b;
+}
+
+.login_forgot_row_mobile a.login_forgot_link {
+    font-size: clamp(4rem, 11vw, 6rem);
+    display: inline-block;
+    padding: 1.7rem 1.5rem;
+    min-height: 104px;
+    line-height: 1.3;
+    box-sizing: border-box;
+}
+
+.login_aux_links_mobile {
+    font-size: clamp(4rem, 11vw, 6rem);
+    line-height: 1.35;
+}
+
+.login_aux_links_mobile a {
+    font-size: clamp(4rem, 11vw, 6rem);
+    display: inline-block;
+    padding: 1.5rem 1rem;
+    min-height: 104px;
+    line-height: 1.3;
+    box-sizing: border-box;
 }

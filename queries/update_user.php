@@ -20,7 +20,7 @@ if(isset($_SESSION['current_user_id'])){
     $query->execute();
     $tmp_username = "";
     $tmp_email = "";
-    $tmp_password = "";
+    $tmp_user_group = "";
 
     while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
          $tmp_username = $row["username"];
@@ -41,38 +41,49 @@ if(isset($_SESSION['current_user_id'])){
         echo $e->getMessage()." ".$sql;
     }
     
-    // записываем в аудит
+    // записываем в аудит только при реальных изменениях профиля
     $audit_event_type = "Изменение данных пользователя админстратором";
     $audit_event_data = "Login: ".$data['user_login']."\n";
+    $has_profile_change = false;
     if ($tmp_username != $data['user_username']){
+        $has_profile_change = true;
         $audit_event_data = $audit_event_data."Старое имя пользователя: ".$tmp_username."\n";
         $audit_event_data = $audit_event_data."Новое имя пользователя: ".$data['user_username']."\n";
     }
 
     if ($tmp_email != $data['user_email']){
+        $has_profile_change = true;
         $audit_event_data = $audit_event_data."Старый e-mail пользователя: ".$tmp_email."\n";
         $audit_event_data = $audit_event_data."Новый e-mail пользователя: ".$data['user_email']."\n";
     }
 
-    try {
-        $sql_audit = 
-        "INSERT 
-            INTO audit 
-            (
-                user_login, 
-                operation_type, 
-                event_data
-            ) VALUES (
-                '".$_SESSION['current_user_login']."', 
-                '".$audit_event_type."', 
-                '".str_replace('"', '\\"', str_replace("'", "\\'", $audit_event_data))."'
-            )
-        ";
-        $query = $connection->prepare($sql_audit);
-        $query->execute();
-    } catch(PDOException $e) {
-        echo $e->getMessage()." ".$sql_audit;
-    }           
+    if ($tmp_user_group != $data['user_user_group']){
+        $has_profile_change = true;
+        $audit_event_data = $audit_event_data."Старая группа пользователя: ".$tmp_user_group."\n";
+        $audit_event_data = $audit_event_data."Новая группа пользователя: ".$data['user_user_group']."\n";
+    }
+
+    if ($has_profile_change) {
+        try {
+            $sql_audit = 
+            "INSERT 
+                INTO audit 
+                (
+                    user_login, 
+                    operation_type, 
+                    event_data
+                ) VALUES (
+                    '".$_SESSION['current_user_login']."', 
+                    '".$audit_event_type."', 
+                    '".str_replace('"', '\\"', str_replace("'", "\\'", $audit_event_data))."'
+                )
+            ";
+            $query = $connection->prepare($sql_audit);
+            $query->execute();
+        } catch(PDOException $e) {
+            echo $e->getMessage()." ".$sql_audit;
+        }
+    }
 
 }
 ?>

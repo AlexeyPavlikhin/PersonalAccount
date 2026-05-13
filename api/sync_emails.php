@@ -22,8 +22,10 @@ write_log("sync_emails", "Вызов api", "Зафиксирован вызов 
 
 //проверяем имя сайта, от которого пришел запрос
 if (
-        (str_starts_with($_SERVER["REMOTE_ADDR"], "127.0.0.1"))  &&
-        ($v_obj["API-key"] == ALLOWED_APIKEY) 
+        (str_starts_with($_SERVER["REMOTE_ADDR"], "127.0.0.1") || 
+         str_starts_with($_SERVER["REMOTE_ADDR"], "::1") || 
+         str_starts_with($_SERVER["REMOTE_ADDR"], "91.219.151.209"))  
+        && ($v_obj["API-key"] == ALLOWED_APIKEY) 
    )
 {
 

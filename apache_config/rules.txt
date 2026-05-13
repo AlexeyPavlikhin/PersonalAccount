@@ -1,0 +1,15 @@
+Создай конфигурацию для sites-available. 
+Файлы конфигурации сохрани тут @apache_config 
+Требуемое поведение:
+1) Если приходит запрос по https://msll-ip.ru, то использовать /var/www/msll-ip.ru
+2) Если приходит запрос по http://msll-ip.ru, то редиректить на https://msll-ip.ru 
+3) Если приходит запрос по http://localhost, то использовать /var/www/msll-ip.ru без замены на https
+4) Если приходит запрос по http://127.0.0.1, то использовать /var/www/msll-ip.ru без замены на https
+4) Если приходит запрос по http://msll-lk.ru, то использовать /var/www/msll-lk.ru
+5) Если приходит запрос по https://msll-lk.ru, то редиректить на http://msll-lk.ru
+6) Если приходят все другие запросы, то редиректить на https://msll-ip.ru 
+
+Секреты хрнятся тут: 
+    SSLCertificateFile /etc/letsencrypt/live/msll-ip.ru/fullchain.pem
+    SSLCertificateKeyFile /etc/letsencrypt/live/msll-ip.ru/privkey.pem
+    Include /etc/letsencrypt/options-ssl-apache.conf

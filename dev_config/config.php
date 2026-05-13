@@ -10,10 +10,17 @@
     define('EML_HOST', 'smtp.yandex.ru');
     define('EML_PORT', '465');
 
+    define('APP_PUBLIC_BASE_URL', 'http://msll-dev');
+
     try {
-        $connection = new PDO("mysql:host=".HOST.";dbname=".DATABASE, USER, PASSWORD);
-         // set the PDO error mode to exception
-        $connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $connection = new PDO(
+            'mysql:host=' . HOST . ';dbname=' . DATABASE . ';charset=utf8mb4',
+            USER,
+            PASSWORD,
+            [
+                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+            ]
+        );
 
     } catch (PDOException $e) {
         exit("Error: " . $e->getMessage());
