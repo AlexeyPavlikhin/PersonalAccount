@@ -97,6 +97,20 @@
             . '<a href="' . htmlspecialchars($reset_url, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . '">' . htmlspecialchars($reset_url, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . '</a></p>'
             . '<p>Логин: ' . htmlspecialchars($login, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . '</p>'
             . '<p>Если вы не запрашивали восстановление, проигнорируйте это письмо.</p>'
+            . '<table
+                role="presentation"
+                cellpadding="0"
+                cellspacing="0"
+                border="0"
+                width="38px"
+                style="border-collapse: collapse;"
+                >
+                <tr>
+                    <td width="33.33%" height="5" bgcolor="#bd162b" style="background-color: #dddae0; font-size: 0; line-height: 0;">&nbsp;</td>
+                    <td width="33.33%" height="5" bgcolor="#8a95a5" style="background-color: #8594ae; font-size: 0; line-height: 0;">&nbsp;</td>
+                    <td width="33.34%" height="5" bgcolor="#bd162b" style="background-color: #b2001a; font-size: 0; line-height: 0;">&nbsp;</td>
+                </tr>
+                </table>'
             . '<p>С заботой,<br/>команда Лаборатории права Майи Саблиной<br/>'
             . '+7 (995) 787-95-77<br/>info@msablina.ru<br/>'
             . '<a href="http://www.msablina.ru/" target="_blank">www.msablina.ru</a></p>';

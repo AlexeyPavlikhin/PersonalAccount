@@ -1,0 +1,408 @@
+ПОЛЯ ШАБЛОНОВ ДОКУМЕНТОВ
+=========================
+
+Документ описывает все поля, которые может использовать раздел «Генерация документов».
+Имена полей (field_code) совпадают с ключами в form_data и с плейсхолдерами в DOCX: ${field_code}.
+По умолчанию в DOCX подставляются все ключи form_data после enrich как ${field_code}
+(плейсхолдеры без совпадения в файле просто не заменяются).
+document_templates.field_map_json — только особые правила поверх базы:
+переименование, несколько плейсхолдеров из одного поля (массив имён), source_field, default_value.
+Пустой {} — без дополнительных правил.
+
+Жизненный цикл значения:
+  1. Пользователь заполняет форму (поля из document_template_fields).
+  2. По кнопке «Дозаполнить данные» — resolve_company_by_inn.php, resolve_bank_by_bik.php,
+     resolve_document_cache.php (кэш по ключу шаблона); часть производных полей приходит с API (превью).
+  3. По кнопке «Сформировать документ» — валидация (document_template_mapper.php),
+     обогащение (msll_document_enrich_form_values в inc/document_derived_fields.php),
+     маппинг в merge_fields, подстановка в DOCX на сервере (inc/docx_form_filler.php),
+     скачивание готового .docx в браузере;
+     в document_field_cache сохраняются только новые значения (повторная генерация с теми же
+     данными запись не дублирует).
+
+Источники данных (data_source в document_template_fields):
+  manual          — ввод пользователя;
+  dadata_party    — DaData «Организация по ИНН» (findById/party);
+  dadata_bank     — DaData «Банк по БИК» (findById/bank);
+  document_cache  — локальный кэш document_field_cache (поля из document_templates.cache_fields_json);
+                    подстановка только в пустые поля (п. 26); при нескольких вариантах — жёлтый select,
+                    по умолчанию выбрано последнее по дате (п. 28), валидация — в поле ручного ввода (п. 27).
+  computed        — вычисляется на сервере при генерации (в UI не показывается).
+
+Шаблоны в БД:
+  legal_services_agreement_demo   — демо-договор (migration_documents.sql);
+  legal_services_agreement_linki  — договор ООО «Линки» (load_document_template_linki.sql);
+  all_fields_debug                — таблица всех полей для отладки (load_document_template_fields_debug.sql).
+
+----------------------------------------------------------------------
+1. ПОЛЯ ФОРМЫ (ввод или дозаполнение, отображаются в UI)
+----------------------------------------------------------------------
+
+contract_date
+  Описание:     Дата составления договора.
+  В DOCX:        напрямую редко; источник для частей даты и contract_date_display (раздел 2).
+  Источник:     manual.
+  По умолчанию: текущая дата (ГГГГ-ММ-ДД), подставляется в pg_documents.js при открытии шаблона.
+  Обязательное: да (в типовых шаблонах).
+  Валидация:    формат ГГГГ-ММ-ДД (клиент и сервер).
+
+inn
+  Описание:     ИНН контрагента (организации или ИП).
+  В DOCX:        inn; также участвует в inn_kpp (enrich).
+  Источник:     manual (ключ для дозаполнения).
+  Обязательное: да.
+  Валидация:    10 или 12 цифр.
+
+bik
+  Описание:     БИК банка контрагента.
+  В DOCX:        bik.
+  Источник:     manual.
+  Дозаполнение: resolve_bank_by_bik.php → data.bic.
+  Обязательное: да.
+  Валидация:    9 цифр.
+
+company_name_short_opf
+  Описание:     Наименование с кратким ОПФ (например, ООО «Ромашка»).
+  В DOCX:        company_name_short_opf.
+  Источник:     dadata_party (name.short_with_opf и сборка из opf + name).
+  Обязательное: нет.
+  Примечание:   при enrich дублируется из company_name, если пусто (п. 20 требований).
+
+company_name_full_opf
+  Описание:     Наименование с полным ОПФ.
+  В DOCX:        company_name_full_opf.
+  Источник:     dadata_party (name.full_with_opf).
+  Обязательное: нет.
+
+company_name
+  Описание:     Основное полное наименование (как правило, с полным ОПФ).
+  В DOCX:        company_name.
+  Источник:     dadata_party; при enrich синхронизируется с company_name_full_opf.
+  Обязательное: да.
+
+opf_short
+  Описание:     Краткое наименование ОПФ (ООО, ПАО, ИП и т.п.).
+  В DOCX:        opf_short.
+  Источник:     dadata_party → opf.short; для ИП при пустом opf — «ИП».
+  Обязательное: нет.
+
+opf_full
+  Описание:     Полное наименование ОПФ.
+  В DOCX:        opf_full.
+  Источник:     dadata_party → opf.full; для ИП — «Индивидуальный предприниматель».
+  Обязательное: нет.
+
+signer_name
+  Описание:     ФИО подписанта в именительном падеже (преамбула, реквизиты).
+  В DOCX:        signer_name.
+  Источник:     dadata_party (management.name), правки пользователя.
+  При enrich:   может быть уточнено стандартизацией ФИО (DaData clean/name).
+  Обязательное: да.
+
+signer_position
+  Описание:     Должность подписанта в именительном падеже.
+  В DOCX:        signer_position.
+  Источник:     dadata_party (management.post), правки пользователя.
+  Обязательное: да.
+
+signer_basis
+  Описание:     Основание полномочий (например, «Устава»).
+  В DOCX:        signer_basis.
+  Источник:     manual.
+  По умолчанию: «Устава» (в демо-шаблоне).
+  Обязательное: да.
+
+address
+  Описание:     Юридический адрес контрагента.
+  В DOCX:        address.
+  Источник:     dadata_party → address.unrestricted_value / value.
+  Обязательное: да.
+
+ogrn
+  Описание:     ОГРН / ОГРНИП.
+  В DOCX:        ogrn.
+  Источник:     dadata_party.
+  Обязательное: да.
+
+kpp
+  Описание:     КПП (для юрлиц; у ИП может быть пустым).
+  В DOCX:        kpp; участвует в inn_kpp.
+  Источник:     dadata_party.
+  Обязательное: да (в типовых шаблонах).
+
+checking_account
+  Описание:     Расчётный счёт контрагента.
+  В DOCX:        checking_account.
+  Источник:     document_cache (приоритет), иначе manual.
+  После генерации: сохраняется в document_field_cache (если поле в cache_fields_json шаблона).
+  Обязательное: да.
+  Валидация:    контрольное число по БИК (алгоритм ЦБ РФ).
+
+bank_name
+  Описание:     Наименование банка для платёжных реквизитов.
+  В DOCX:        bank_name.
+  Источник:     dadata_bank.
+  Обязательное: да.
+
+corr_account
+  Описание:     Корреспондентский счёт банка.
+  В DOCX:        corr_account.
+  Источник:     dadata_bank.
+  Обязательное: да.
+  Валидация:    контрольное число по БИК.
+
+email
+  Описание:     Контактный e-mail организации.
+  В DOCX:        email.
+  Источник:     dadata_party, затем stored_account, правки пользователя.
+  Обязательное: нет.
+
+phone
+  Описание:     Контактный телефон организации.
+  В DOCX:        phone.
+  Источник:     dadata_party, затем stored_account, правки пользователя.
+  Обязательное: нет.
+
+----------------------------------------------------------------------
+2. ВЫЧИСЛЯЕМЫЕ ПОЛЯ (только сервер, в UI не отображаются)
+----------------------------------------------------------------------
+Вычисляются в msll_document_enrich_form_values() перед генерацией DOCX.
+При дозаполнении часть значений также приходит с resolve_company_by_inn.php, но при генерации
+пересчитывается заново по актуальным данным формы.
+
+--- Дата договора (источник: contract_date) ---
+
+contract_day
+  Описание:     Число месяца (день), без ведущего нуля (1–31).
+  В DOCX:        contract_day.
+  Алгоритм:     msll_document_split_date_parts() → format('j').
+
+contract_month_num
+  Описание:     Номер месяца двумя цифрами (01–12).
+  В DOCX:        contract_month_num.
+
+contract_month_words
+  Описание:     Название месяца прописью в родительном падеже (января, февраля, …).
+  В DOCX:        contract_month_words.
+  Алгоритм:     msll_document_russian_month_name(month, genitive=true).
+
+contract_year_yyyy
+  Описание:     Год четырьмя цифрами (например, 2026).
+  В DOCX:        contract_year_yyyy.
+
+contract_year_yy
+  Описание:     Год двумя последними цифрами (например, 26).
+  В DOCX:        contract_year_yy.
+
+contract_date_display
+  Описание:     Дата в формате ДД.ММ.ГГГГ (колонтитулы, шапка договора «Линки»).
+  В DOCX:        contract_date_display.
+  Алгоритм:     format('d.m.Y') из разобранной contract_date.
+
+Форматы ввода contract_date на сервере: Y-m-d, d.m.Y, d/m/Y; иначе strtotime; при ошибке — сегодня.
+
+--- ФИО и подпись подписанта (источник: signer_name) ---
+
+signer_name_genitive
+  Описание:     ФИО в родительном падеже (кого?) — для «в лице …».
+  В DOCX:        signer_name_genitive.
+  Алгоритм:
+    1) DaData clean/name → result_genitive (если задан DADATA_SECRET_KEY);
+    2) иначе msll_document_decline_fio_genitive_fallback() (inc/document_text_transform.php).
+
+signer_initials
+  Описание:     Инициалы имени и отчества (например, «С.И.»).
+  В DOCX:        signer_initials.
+
+signer_short
+  Описание:     Краткая подпись: «Фамилия И.О.» (например, «Шевченко С.И.»).
+  В DOCX:        signer_short.
+
+signer_signature
+  Описание:     Подпись в блоке реквизитов (дублирует signer_short; в DOCX перед плейсхолдером часто «/»).
+  В DOCX:        signer_signature.
+  Алгоритм:     копия signer_short после enrich.
+
+signer_position_genitive
+  Описание:     Должность в родительном падеже, нижний регистр.
+  В DOCX:        signer_position_genitive.
+  Источник:     всегда пересчитывается из актуального signer_position.
+  Алгоритм:     msll_document_decline_position_genitive() (словарь типовых должностей).
+
+--- Реквизиты и форма обращения ---
+
+inn_kpp
+  Описание:     ИНН и КПП одной строкой: «1234567890/123456789» или только ИНН, если КПП пуст.
+  В DOCX:        inn_kpp.
+  Алгоритм:     цифры inn + «/» + цифры kpp при наличии обоих.
+
+party_named_form
+  Описание:     Слово в преамбуле: «именуемый» / «именуемая» / «именуемое».
+  В DOCX:        party_named_form.
+  Алгоритм:     msll_document_party_named_form(gender, is_individual).
+  Зависит от:   signer_gender, counterparty_type / counterparty_is_individual.
+
+----------------------------------------------------------------------
+3. СЛУЖЕБНЫЕ ПОЛЯ (form_data, обычно не выводятся в тексте договора)
+----------------------------------------------------------------------
+
+counterparty_type
+  Описание:     Тип контрагента из DaData (LEGAL, INDIVIDUAL, INDIVIDUAL_ENTREPRENEUR и др.).
+  В DOCX:        только в шаблоне all_fields_debug.
+  Источник:     dadata_party → data.type.
+
+counterparty_is_individual
+  Описание:     Признак физического лица: «1» / «0».
+  Источник:     DaData или пересчёт в enrich.
+
+signer_gender
+  Описание:     Пол подписанта: MALE, FEMALE, UNKNOWN.
+  Источник:     DaData clean/name, эвристика по отчеству, fallback MALE.
+
+----------------------------------------------------------------------
+4. ПОЛЕ ИЗ API БАНКА (не в типовой форме, но доступно в form_data)
+----------------------------------------------------------------------
+
+swift
+  Описание:     SWIFT-код банка.
+  Источник:     dadata_bank → data.swift (попадает в form_data при дозаполнении по БИК).
+  В DOCX:        ${swift}, если плейсхолдер есть в шаблоне (map не обязателен).
+
+----------------------------------------------------------------------
+5. СВОДНАЯ ТАБЛИЦА: ПОЛЕ → DOCX → ИСТОЧНИК
+----------------------------------------------------------------------
+
+Поле формы / enrich          | Плейсхолдер DOCX           | Источник
+-----------------------------|----------------------------|------------------
+contract_date                | contract_date              | manual (UI)
+contract_date_display        | contract_date_display      | computed ← contract_date
+contract_day                 | contract_day               | computed ← contract_date
+contract_month_num           | contract_month_num         | computed ← contract_date
+contract_month_words         | contract_month_words       | computed ← contract_date
+contract_year_yyyy           | contract_year_yyyy         | computed ← contract_date
+contract_year_yy             | contract_year_yy           | computed ← contract_date
+company_name_short_opf       | company_name_short_opf     | dadata_party
+company_name_full_opf        | company_name_full_opf      | dadata_party
+company_name                 | company_name               | dadata_party + enrich
+opf_short                    | opf_short                    | dadata_party
+opf_full                     | opf_full                     | dadata_party
+inn                          | inn                        | manual
+bik                          | bik                        | manual → bank API
+signer_name                  | signer_name                | dadata_party + enrich
+signer_name_genitive         | signer_name_genitive       | computed ← signer_name
+signer_position              | signer_position              | dadata_party
+signer_position_genitive     | signer_position_genitive   | computed ← signer_position
+signer_basis                 | signer_basis                 | manual
+signer_initials              | signer_initials            | computed ← signer_name
+signer_short                 | signer_short                 | computed ← signer_name
+signer_signature             | signer_signature           | computed ← signer_short
+party_named_form             | party_named_form           | computed
+address                      | address                    | dadata_party
+ogrn                         | ogrn                       | dadata_party
+kpp                          | kpp                        | dadata_party
+inn_kpp                      | inn_kpp                    | computed ← inn, kpp
+checking_account             | checking_account           | stored_account / manual
+bank_name                    | bank_name                  | dadata_bank
+corr_account                 | corr_account               | dadata_bank
+swift                        | swift                      | dadata_bank
+email                        | email                      | dadata_party / stored_account
+phone                        | phone                      | dadata_party / stored_account
+counterparty_type            | (отладка)                  | dadata_party
+counterparty_is_individual   | (отладка)                  | dadata_party / computed
+signer_gender                | (отладка)                  | clean/name / computed
+
+----------------------------------------------------------------------
+6. РЕЕСТР И НУМЕРАЦИЯ (п. 77–81, UI п. 10–12)
+----------------------------------------------------------------------
+
+contract_number
+  Описание:     Номер договора в формате XX-MM/YY (сквозной XX, MM и YY из contract_date).
+  В DOCX:        contract_number (в т.ч. дважды в колонтитуле шаблона «Линки»).
+  Источник:     computed_number — выделяется на сервере при «Сформировать DOCX» (registry_role=contract).
+  Превью:       queries/get_document_number_preview.php (без инкремента счётчика).
+
+contract_subject_short
+  Описание:     Краткое описание предмета договора для реестра и текста.
+  В DOCX:        contract_subject_short.
+  Источник:     manual.
+  Реестр:       document_issued_contracts.subject_short при генерации договора.
+
+counterparty_display
+  Описание:     Снимок контрагента: company_name_short_opf, наименование ИП или ФИО (ФЛ).
+  В DOCX:        counterparty_display (справочник полей).
+  Источник:     computed в enrich (msll_document_resolve_counterparty_display_name).
+
+spec_number, spec_date
+  Описание:     Номер и дата спецификации (номер — в рамках договора, +1 к MAX).
+  Реестр:       document_issued_specifications; planned_act_date = spec_date + 14 дней.
+
+invoice_number, invoice_date
+  Описание:     Сквозной номер и дата счёта.
+  Реестр:       document_issued_specifications (в строке спецификации).
+
+planned_act_date
+  Описание:     Плановая дата оформления акта (авто: spec_date + 14 календарных дней).
+  В DOCX:        planned_act_date.
+  UI реестра:    сортировка по умолчанию — ближайшие даты сверху.
+
+document_templates.registry_role
+  Значения:     contract | specification | invoice | act | none
+  none          — без записи в реестр (all_fields_debug).
+
+Таблицы БД:
+  document_issued_contracts, document_issued_specifications, document_number_counters.
+
+API реестра:
+  queries/get_issued_documents_registry.php, queries/save_issued_document_registry.php.
+
+----------------------------------------------------------------------
+7. ТАБЛИЧНЫЕ БЛОКИ В DOCX (п. 82)
+----------------------------------------------------------------------
+
+document_templates.table_blocks_json — JSON, ключ блока = field_code формы (field_type=table).
+
+Пример:
+  {"services":{"marker_row":"${#services}","columns":["service_name","service_price"]}}
+
+form_data.services — массив объектов-строк; в шаблоне маркерная строка ${#services},
+в ячейках — ${service_name}, ${service_price} и т.д.
+
+Реализация: inc/docx_table_filler.php (клонирование w:tr после скалярной подстановки).
+
+Шаблон «Линки»: field_code services, блок services.
+Справочник полей: demo_services, блок demo_services.
+
+----------------------------------------------------------------------
+8. НАСТРОЙКА НОВОГО ШАБЛОНА
+----------------------------------------------------------------------
+
+1. DOCX с плейсхолдерами ${field_code} (латиница, snake_case).
+2. Запись в document_templates: template_url, field_map_json ({} если имена плейсхолдеров =
+   field_code; иначе JSON только для особого маппинга).
+3. Записи в document_template_fields: какие поля показывать в форме, data_source, обязательность.
+4. Производные поля (enrich) в document_template_fields не добавлять — они попадут в DOCX
+   автоматически, если в шаблоне есть ${field_code}.
+5. Для склонения ФИО через DaData в config.php задать DADATA_SECRET_KEY (API clean/name).
+6. Сборка файла шаблона: python tools/build_*_docx.py (см. requirements/docs_temlpates/).
+
+Тестовый шаблон «Справочник полей»:
+  template_code: all_fields_debug
+  DOCX:          requirements/docs_temlpates/all_fields_debug.docx
+  SQL:           database/load_document_template_fields_debug.sql
+  Сборка DOCX:   python tools/build_all_fields_debug_docx.py
+
+Файлы реализации:
+  inc/document_derived_fields.php   — обогащение form_data
+  inc/document_text_transform.php   — даты, склонения, инициалы
+  inc/dadata_client.php             — DaData party, bank, clean/name
+  inc/document_template_mapper.php  — валидация и маппинг в merge_fields
+  inc/docx_form_filler.php          — подстановка в DOCX
+  inc/docx_table_filler.php         — табличные блоки
+  inc/document_numbering.php        — автонумерация
+  inc/document_registry.php         — реестр оформленных документов
+  queries/generate_document.php     — точка сборки документа
+  queries/get_issued_documents_registry.php
+  queries/save_issued_document_registry.php
+  queries/get_document_number_preview.php
+  components/pg_documents.js        — форма, реестр, дозаполнение
+  database/migration_issued_documents.sql

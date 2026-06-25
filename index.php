@@ -25,6 +25,9 @@
 
         <link href="./css/jost.css?v=<?=$ASSET_VER?>" rel="stylesheet">
         <script src="./js/axios.min.js?v=<?=$ASSET_VER?>"></script>
+        <!-- Предпросмотр DOCX в разделе «Генерация документов» (как в Word) -->
+        <script src="./js/jszip.min.js?v=<?=$ASSET_VER?>"></script>
+        <script src="./js/docx-preview.min.js?v=<?=$ASSET_VER?>"></script>
 
         <title>Личный кабинет: Главная страница</title>
 
@@ -126,7 +129,6 @@
 <!--script src="https://unpkg.com/vue-router@4/dist/vue-router.global.js"></script-->
 <script src="./js/vue.global.js?v=<?=$ASSET_VER?>"></script>
 <script src="./js/vue-router.global.js?v=<?=$ASSET_VER?>"></script>
-
 <script>
   var PulseLoader = VueSpinner.PulseLoader;
 </script>
@@ -150,6 +152,8 @@
     import SALES from './components/pg_sales.js?v=<?=$ASSET_VER?>';
     import EMPTY from './components/pg_empty.js?v=<?=$ASSET_VER?>';
     import COURSES from './components/pg_courses.js?v=<?=$ASSET_VER?>';
+    import DOCUMENTS from './components/pg_documents.js?v=<?=$ASSET_VER?>';
+    import REPORTS from './components/pg_reports.js?v=<?=$ASSET_VER?>';
     
 
     // Define your routes
@@ -157,7 +161,9 @@
         { path: '/', component: EMPTY },
         { path: '/uc', component: UC },
         { path: '/sales', component: SALES },
-        { path: '/courses', component: COURSES }/*,
+        { path: '/courses', component: COURSES },
+        { path: '/documents', component: DOCUMENTS },
+        { path: '/reports', component: REPORTS }/*,
         { path: '/login', path: "/login.php" }*/
     ];
 

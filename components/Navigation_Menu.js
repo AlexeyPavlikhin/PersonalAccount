@@ -6,7 +6,9 @@ export default {
                 {item_of_menu_class: "item_of_menu", menu_button_class: "menu_button", page_name: "sales",    div_text_class: "menu_button_text", div_text: "Управление продажами"},
                 {item_of_menu_class: "item_of_menu", menu_button_class: "menu_button", page_name: "uc",       div_text_class: "menu_button_text", div_text: "Управление пользователями" },
                 {item_of_menu_class: "item_of_menu", menu_button_class: "menu_button", page_name: "mss.php",  div_text_class: "menu_button_text", div_text: "Управление статусом услуг" },
-                {item_of_menu_class: "item_of_menu", menu_button_class: "menu_button", page_name: "courses",  div_text_class: "menu_button_text", div_text: "Учебные курсы" }
+                {item_of_menu_class: "item_of_menu", menu_button_class: "menu_button", page_name: "courses",  div_text_class: "menu_button_text", div_text: "Учебные курсы" },
+                {item_of_menu_class: "item_of_menu", menu_button_class: "menu_button", page_name: "documents", div_text_class: "menu_button_text", div_text: "Генерация документов" },
+                {item_of_menu_class: "item_of_menu", menu_button_class: "menu_button", page_name: "reports",  div_text_class: "menu_button_text", div_text: "Отчетность" }
             ],
             users_permitions: []
         }

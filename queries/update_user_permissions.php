@@ -23,6 +23,7 @@ if (!is_array($data) || !isset($data['user_login'])) {
 $user_login = trim($data['user_login']);
 $assigned_permissions = isset($data['assigned_permissions']) && is_array($data['assigned_permissions']) ? $data['assigned_permissions'] : array();
 $assigned_courses = isset($data['assigned_courses']) && is_array($data['assigned_courses']) ? $data['assigned_courses'] : array();
+$assigned_reports = isset($data['assigned_reports']) && is_array($data['assigned_reports']) ? $data['assigned_reports'] : array();
 
 if ($user_login === '') {
     echo json_encode(array('status' => 'error', 'message' => 'user_login_required'));
@@ -62,6 +63,7 @@ try {
 
     $allowed_permission_map = array();
     $course_permission_id = 0;
+    $reports_permission_id = 0;
     foreach ($allowed_permissions as $permission_row) {
         $perm_id = intval($permission_row['permition_id']);
         if ($perm_id <= 0) {
@@ -73,6 +75,9 @@ try {
         );
         if ($permission_row['permition_name'] === 'courses') {
             $course_permission_id = $perm_id;
+        }
+        if ($permission_row['permition_name'] === 'reports') {
+            $reports_permission_id = $perm_id;
         }
     }
 
@@ -114,6 +119,8 @@ try {
         }
     }
 
+    $has_reports_permission = $reports_permission_id > 0 && isset($normalized_permissions[$reports_permission_id]);
+
     // Аудит: снимок полномочий в БД до DELETE/INSERT (сроки — через тот же $normalize_deadline, что и при сохранении)
     $stmt_prev_perm = $connection->prepare("
         SELECT up.permition_id, up.deadline, sprp.permition_name, sprp.menu_item_name
@@ -138,6 +145,9 @@ try {
         }
         $prev_perm_label[$pid] = $plabel !== '' ? $plabel : ('permition_id='.$pid);
     }
+
+    // Был ли доступ к разделу «Отчетность» до сохранения (для автовыдачи отчётов при первом назначении раздела)
+    $had_reports_permission = ($reports_permission_id > 0 && isset($prev_perm_deadline[$reports_permission_id]));
 
     // Дальше — перезапись users_permitions по данным из запроса
     $delete_permissions = $connection->prepare("DELETE FROM users_permitions WHERE user_id = :user_id");
@@ -337,6 +347,75 @@ try {
         }
     }
 
+    // Аудит отчётов: снимок до перезаписи users_permitted_reports
+    $prev_reports_state = array();
+    try {
+        $stmt_prev_reports = $connection->prepare("
+            SELECT upr.report_id, sr.report_name
+            FROM users_permitted_reports upr
+            INNER JOIN spr_reports sr ON sr.report_id = upr.report_id
+            WHERE upr.user_id = :user_id
+        ");
+        $stmt_prev_reports->bindParam(':user_id', $user_id, PDO::PARAM_INT);
+        $stmt_prev_reports->execute();
+        while ($rrow = $stmt_prev_reports->fetch(PDO::FETCH_ASSOC)) {
+            $rid = intval($rrow['report_id']);
+            if ($rid <= 0) {
+                continue;
+            }
+            $prev_reports_state[$rid] = array(
+                'report_name' => trim(isset($rrow['report_name']) ? $rrow['report_name'] : '')
+            );
+        }
+    } catch (PDOException $reports_prev_exception) {
+        $prev_reports_state = array();
+    }
+
+    $reports_to_save_ids = array();
+    if ($has_reports_permission && count($assigned_reports) > 0) {
+        foreach ($assigned_reports as $report_item) {
+            $report_id = isset($report_item['report_id']) ? intval($report_item['report_id']) : 0;
+            if ($report_id > 0) {
+                $reports_to_save_ids[$report_id] = true;
+            }
+        }
+    }
+
+    // При первой выдаче раздела «Отчетность» или если отчёты ещё ни разу не назначались —
+    // доступ ко всем активным отчётам, если администратор не выбрал их явно.
+    if ($has_reports_permission && count($reports_to_save_ids) === 0 && (!$had_reports_permission || count($prev_reports_state) === 0)) {
+        try {
+            $stmt_all_active_reports = $connection->query("SELECT report_id FROM spr_reports WHERE is_active = 1");
+            while ($rrow = $stmt_all_active_reports->fetch(PDO::FETCH_ASSOC)) {
+                $rid = intval($rrow['report_id']);
+                if ($rid > 0) {
+                    $reports_to_save_ids[$rid] = true;
+                }
+            }
+        } catch (PDOException $reports_all_exception) {
+        }
+    }
+
+    try {
+        $delete_reports = $connection->prepare("DELETE FROM users_permitted_reports WHERE user_id = :user_id");
+        $delete_reports->bindParam(':user_id', $user_id, PDO::PARAM_INT);
+        $delete_reports->execute();
+
+        if ($has_reports_permission && count($reports_to_save_ids) > 0) {
+            $insert_report = $connection->prepare("
+                INSERT INTO users_permitted_reports (user_id, report_id)
+                VALUES (:user_id, :report_id)
+            ");
+            foreach (array_keys($reports_to_save_ids) as $report_id) {
+                $insert_report->bindParam(':user_id', $user_id, PDO::PARAM_INT);
+                $insert_report->bindParam(':report_id', $report_id, PDO::PARAM_INT);
+                $insert_report->execute();
+            }
+        }
+    } catch (PDOException $reports_save_exception) {
+        // Таблица users_permitted_reports может отсутствовать до применения миграции.
+    }
+
     $connection->commit();
 
     // --- Журнал audit: сравнение «до» и «после» по фактическим данным в БД после commit ---
@@ -404,6 +483,26 @@ try {
         );
     }
 
+    // Текущее состояние доступов к отчётам после сохранения
+    $new_reports_state = array();
+    $stmt_new_reports = $connection->prepare("
+        SELECT upr.report_id, sr.report_name
+        FROM users_permitted_reports upr
+        INNER JOIN spr_reports sr ON sr.report_id = upr.report_id
+        WHERE upr.user_id = :user_id
+    ");
+    $stmt_new_reports->bindParam(':user_id', $user_id, PDO::PARAM_INT);
+    $stmt_new_reports->execute();
+    while ($nrow = $stmt_new_reports->fetch(PDO::FETCH_ASSOC)) {
+        $rid = intval($nrow['report_id']);
+        if ($rid <= 0) {
+            continue;
+        }
+        $new_reports_state[$rid] = array(
+            'report_name' => trim(isset($nrow['report_name']) ? $nrow['report_name'] : '')
+        );
+    }
+
     // Разница по полномочиям: добавление / снятие / смена срока
     $perm_audit_lines = array();
     $perm_ids_union = array_unique(array_merge(array_keys($prev_perm_deadline), array_keys($new_perm_deadline)));
@@ -445,8 +544,30 @@ try {
         }
     }
 
+    // Разница по отчётам: выдача / отзыв доступа
+    $report_audit_lines = array();
+    $report_ids_union = array_unique(array_merge(array_keys($prev_reports_state), array_keys($new_reports_state)));
+    sort($report_ids_union);
+    foreach ($report_ids_union as $report_id) {
+        $in_prev_r = isset($prev_reports_state[$report_id]);
+        $in_new_r = isset($new_reports_state[$report_id]);
+        $rname = '';
+        if ($in_prev_r && $prev_reports_state[$report_id]['report_name'] !== '') {
+            $rname = $prev_reports_state[$report_id]['report_name'];
+        } elseif ($in_new_r && $new_reports_state[$report_id]['report_name'] !== '') {
+            $rname = $new_reports_state[$report_id]['report_name'];
+        } else {
+            $rname = 'report_id='.$report_id;
+        }
+        if (!$in_prev_r && $in_new_r) {
+            $report_audit_lines[] = 'Добавлен доступ к отчёту «'.$rname.'»';
+        } elseif ($in_prev_r && !$in_new_r) {
+            $report_audit_lines[] = 'Снят доступ к отчёту «'.$rname.'»';
+        }
+    }
+
     // Запись только при реальных отличиях; user_login в audit — администратор из сессии (кто выполнил действие)
-    if ((count($perm_audit_lines) > 0 || count($course_audit_lines) > 0) && isset($_SESSION['current_user_login'])) {
+    if ((count($perm_audit_lines) > 0 || count($course_audit_lines) > 0 || count($report_audit_lines) > 0) && isset($_SESSION['current_user_login'])) {
         $target_username = isset($user['username']) ? trim($user['username']) : '';
         $audit_event_type = "Изменение полномочий пользователя администратором";
         $audit_event_data = "Login изменяемого пользователя: ".$user_login."\n";
@@ -456,6 +577,9 @@ try {
         }
         if (count($course_audit_lines) > 0) {
             $audit_event_data .= "\nДоступ к учебным курсам:\n".implode("\n", $course_audit_lines)."\n";
+        }
+        if (count($report_audit_lines) > 0) {
+            $audit_event_data .= "\nДоступ к отчётам:\n".implode("\n", $report_audit_lines)."\n";
         }
         try {
             // operation_type и структура event_data согласованы с queries/update_user.php
@@ -519,6 +643,20 @@ try {
                             <br/>
                             <br/>
                             <br/>
+                            <table
+                            role='presentation'
+                            cellpadding='0'
+                            cellspacing='0'
+                            border='0'
+                            width='38px'
+                            style='border-collapse: collapse;'
+                            >
+                            <tr>
+                                <td width='33.33%' height='5' bgcolor='#bd162b' style='background-color: #dddae0; font-size: 0; line-height: 0;'>&nbsp;</td>
+                                <td width='33.33%' height='5' bgcolor='#8a95a5' style='background-color: #8594ae; font-size: 0; line-height: 0;'>&nbsp;</td>
+                                <td width='33.34%' height='5' bgcolor='#bd162b' style='background-color: #b2001a; font-size: 0; line-height: 0;'>&nbsp;</td>
+                            </tr>
+                            </table>
                             С заботой,<br/>
                             команда Лаборатории права Майи Саблиной<br/>
                             +7 (995) 787-95-77<br/>

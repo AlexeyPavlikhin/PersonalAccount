@@ -81,6 +81,20 @@ if(isset($_SESSION['current_user_id'])){
                 <br/>
                 <br/>
                 <br/>
+                <table
+                role='presentation'
+                cellpadding='0'
+                cellspacing='0'
+                border='0'
+                width='38px'
+                style='border-collapse: collapse;'
+                >
+                <tr>
+                    <td width='33.33%' height='5' bgcolor='#bd162b' style='background-color: #dddae0; font-size: 0; line-height: 0;'>&nbsp;</td>
+                    <td width='33.33%' height='5' bgcolor='#8a95a5' style='background-color: #8594ae; font-size: 0; line-height: 0;'>&nbsp;</td>
+                    <td width='33.34%' height='5' bgcolor='#bd162b' style='background-color: #b2001a; font-size: 0; line-height: 0;'>&nbsp;</td>
+                </tr>
+                </table>
                 С заботой,<br/>
                 команда Лаборатории права Майи Саблиной<br/>
                 +7 (995) 787-95-77<br/>

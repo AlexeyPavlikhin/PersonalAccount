@@ -1,6 +1,7 @@
 <?php
 header('Access-Control-Allow-Origin: *');
 include('../config.php');
+require_once __DIR__ . '/../inc/client_consent.php';
 
 require_once '../libs/PHPMailer-master/src/PHPMailer.php';
 require_once '../libs/PHPMailer-master/src/SMTP.php';
@@ -17,12 +18,22 @@ $tmp_str = "";
 $tmp_str .= "API-key=".$v_obj["API-key"]."\n";
 $tmp_str .= "Name=".$v_obj["Name"]."\n";
 $tmp_str .= "Name_2=".$v_obj["Name_2"]."\n";
+$tmp_str .= "MiddleName=".client_consent_pick_string($v_obj, "MiddleName")."\n";
 $tmp_str .= "Name_3=".$v_obj["Name_3"]."\n";
 $tmp_str .= "Email=".$v_obj["Email"]."\n";
 $tmp_str .= "Phone=".$v_obj["Phone"]."\n";
 $tmp_str .= "PRODUCT_NAME=".$v_obj["payment"]["products"][0]["name"]."\n";
+$tmp_str .= "AgreePersData=".$v_obj["AgreePersData"]."\n";
+$tmp_str .= "AgreeMailings=".$v_obj["AgreeMailings"]."\n";
+$tmp_str .= "InfoSource=".$v_obj["InfoSource"]."\n";
+$tmp_str .= "ClientIpAddress=".$v_obj["ClientIpAddress"]."\n";
 
-$user_name = $v_obj["Name_2"]." ".$v_obj["Name"];
+// Маппинг полей ФИО для client_consents (MiddleName может отсутствовать в запросе)
+$client_last_name = client_consent_pick_string($v_obj, "Name_2");
+$client_first_name = client_consent_pick_string($v_obj, "Name");
+$client_patronymic = client_consent_pick_string($v_obj, "MiddleName");
+
+$user_name = trim($client_last_name . " " . $client_first_name . ($client_patronymic !== "" ? " " . $client_patronymic : ""));
 //$user_login = $v_obj["Name_3"];
 $user_login = $v_obj["Email"];
 $user_email = $v_obj["Email"];
@@ -53,6 +64,33 @@ if (
 {
 */   
 if ($v_obj["API-key"] == ALLOWED_APIKEY){
+    // Сохраняем согласия клиента независимо от наличия продукта в запросе
+    try {
+        $consent_id = client_consent_save_from_payment_event(
+            $connection,
+            $v_obj,
+            $client_first_name,
+            $client_last_name,
+            $client_patronymic,
+            $user_login,
+            $user_email,
+            isset($_SERVER["HTTP_REFERER"]) ? $_SERVER["HTTP_REFERER"] : ''
+        );
+        if ($consent_id) {
+            write_log(
+                isset($_SERVER["HTTP_REFERER"]) ? $_SERVER["HTTP_REFERER"] : '',
+                "Сохранено согласие клиента",
+                "id: ".$consent_id."\nemail: ".$user_email
+            );
+        }
+    } catch (PDOException $e) {
+        write_log(
+            isset($_SERVER["HTTP_REFERER"]) ? $_SERVER["HTTP_REFERER"] : '',
+            "Ошибка сохранения согласия клиента",
+            $e->getMessage()
+        );
+    }
+
     if ($user_product != ""){
         //начинаем делать поисковые запросы к БД
         try {
@@ -222,6 +260,20 @@ if ($v_obj["API-key"] == ALLOWED_APIKEY){
                                 <br/>
                                 <br/>
                                 <br/>
+                                <table
+                                role='presentation'
+                                cellpadding='0'
+                                cellspacing='0'
+                                border='0'
+                                width='38px'
+                                style='border-collapse: collapse;'
+                                >
+                                <tr>
+                                    <td width='33.33%' height='5' bgcolor='#bd162b' style='background-color: #dddae0; font-size: 0; line-height: 0;'>&nbsp;</td>
+                                    <td width='33.33%' height='5' bgcolor='#8a95a5' style='background-color: #8594ae; font-size: 0; line-height: 0;'>&nbsp;</td>
+                                    <td width='33.34%' height='5' bgcolor='#bd162b' style='background-color: #b2001a; font-size: 0; line-height: 0;'>&nbsp;</td>
+                                </tr>
+                                </table>
                                 С заботой,<br/>
                                 команда Лаборатории права Майи Саблиной<br/>
                                 +7 (995) 787-95-77<br/>
@@ -248,6 +300,20 @@ if ($v_obj["API-key"] == ALLOWED_APIKEY){
                             <br/>
                             <br/>
                             <br/>
+                            <table
+                            role='presentation'
+                            cellpadding='0'
+                            cellspacing='0'
+                            border='0'
+                            width='38px'
+                            style='border-collapse: collapse;'
+                            >
+                            <tr>
+                                <td width='33.33%' height='5' bgcolor='#bd162b' style='background-color: #dddae0; font-size: 0; line-height: 0;'>&nbsp;</td>
+                                <td width='33.33%' height='5' bgcolor='#8a95a5' style='background-color: #8594ae; font-size: 0; line-height: 0;'>&nbsp;</td>
+                                <td width='33.34%' height='5' bgcolor='#bd162b' style='background-color: #b2001a; font-size: 0; line-height: 0;'>&nbsp;</td>
+                            </tr>
+                            </table>
                             С заботой,<br/>
                             команда Лаборатории права Майи Саблиной<br/>
                             +7 (995) 787-95-77<br/>

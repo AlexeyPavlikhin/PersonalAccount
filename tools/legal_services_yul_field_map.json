@@ -1,0 +1,67 @@
+{
+  "contract_number_prefix": [
+    "contract_number_prefix__w01",
+    "contract_number_prefix__w02",
+    "contract_number_prefix__w03",
+    "contract_number_prefix__w04"
+  ],
+  "contract_number_suffix": [
+    "contract_number_suffix__w01",
+    "contract_number_suffix__w02",
+    "contract_number_suffix__w03",
+    "contract_number_suffix__w04"
+  ],
+  "contract_date_display": [
+    "contract_date_display__w01",
+    "contract_date_display__w02",
+    "contract_date_display__w03"
+  ],
+  "contract_day": [
+    "contract_day__w01",
+    "contract_day__w02"
+  ],
+  "contract_month_words": [
+    "contract_month_words__w01",
+    "contract_month_words__w02"
+  ],
+  "contract_year_yyyy": [
+    "contract_year_yyyy__w01",
+    "contract_year_yyyy__w02"
+  ],
+  "company_name": [
+    "company_name__w01",
+    "company_name__w02",
+    "company_name__w03"
+  ],
+  "signer_position_genitive": [
+    "signer_position_genitive__w01",
+    "signer_position_genitive__w02"
+  ],
+  "signer_name_genitive": [
+    "signer_name_genitive__w01",
+    "signer_name_genitive__w02"
+  ],
+  "signer_basis": "signer_basis__w01",
+  "address": "address__w01",
+  "ogrn": "ogrn__w01",
+  "inn_kpp": "inn_kpp__w01",
+  "checking_account": "checking_account__w01",
+  "bank_name": "bank_name__w01",
+  "corr_account": "corr_account__w01",
+  "bik": "bik__w01",
+  "email": "email__w01",
+  "phone": "phone__w01",
+  "signer_signature": [
+    "signer_signature__w01",
+    "signer_signature__w02"
+  ],
+  "spec_item_1_desc": "spec_item_1_desc__w01",
+  "spec_item_1_price": "spec_item_1_price__w01",
+  "spec_item_2_desc": "spec_item_2_desc__w01",
+  "spec_item_2_price": "spec_item_2_price__w01",
+  "spec_item_3_desc": "spec_item_3_desc__w01",
+  "spec_item_3_price": "spec_item_3_price__w01",
+  "spec_item_4_desc": "spec_item_4_desc__w01",
+  "spec_item_4_price": "spec_item_4_price__w01",
+  "spec_total_price": "spec_total_price__w01"
+}

@@ -21,6 +21,7 @@ function msll_audit_write(PDO $connection, string $user_login, string $operation
             'data' => $event_data,
         ]);
     } catch (PDOException $e) {
+        // сбой аудита не должен прерывать основную операцию (генерация PDF и т.д.)
         error_log('msll_audit_write: ' . $e->getMessage());
     } finally {
         try {
@@ -30,6 +31,7 @@ function msll_audit_write(PDO $connection, string $user_login, string $operation
     }
 }
 
+/** @deprecated Используйте msll_audit_write(); оставлено для совместимости со старыми queries. */
 function msll_audit_write2($in_user_login, $in_operation_type, $in_event_data) {
     include('config.php');
     try {

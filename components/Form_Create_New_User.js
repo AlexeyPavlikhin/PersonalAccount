@@ -1,6 +1,7 @@
 export default {
     COURSE_PERMISSION_CODE: "courses",
     COURSE_PERMISSION_GROUP: "Доступ к учебным курсам",
+    REPORT_PERMISSION_CODE: "reports",
     data() {
         return {
                     user_login: "",
@@ -22,8 +23,11 @@ export default {
                     assigned_permissions: [],
                     all_courses: [],
                     assigned_courses: [],
+                    all_reports: [],
+                    assigned_reports: [],
                     new_permission_id: "",
                     new_course_id: "",
+                    new_report_id: "",
                     is_permissions_loading: false,
                     permissions_error_message: ""
         }
@@ -98,6 +102,76 @@ export default {
                         };
                     }
                     return Object.values(map_by_id).sort((a, b) => a.course_id - b.course_id);
+                },
+
+                normalizeReports(in_reports){
+                    const map_by_id = {};
+                    for (const item of in_reports || []) {
+                        const report_id = parseInt(item.report_id);
+                        if (!report_id) {
+                            continue;
+                        }
+                        map_by_id[report_id] = {
+                            report_id: report_id,
+                            report_code: item.report_code || '',
+                            report_name: item.report_name || ''
+                        };
+                    }
+                    return Object.values(map_by_id).sort((a, b) => a.report_id - b.report_id);
+                },
+
+                getAvailableReports(){
+                    const assigned_ids = new Set(this.normalizeReports(this.assigned_reports).map(item => item.report_id));
+                    return this.normalizeReports(this.all_reports).filter(item => !assigned_ids.has(item.report_id));
+                },
+
+                getReportOptionLabel(in_report){
+                    return in_report.report_name || in_report.report_code || '';
+                },
+
+                findReportByInput(in_input){
+                    const input_value = (in_input || '').trim().toLowerCase();
+                    if (input_value.length === 0){
+                        return null;
+                    }
+                    const available_reports = this.getAvailableReports();
+                    let source_item = available_reports.find(
+                        (item) => String(item.report_id) === input_value
+                    );
+                    if (source_item){
+                        return source_item;
+                    }
+                    return available_reports.find((item) => {
+                        const option_label = this.getReportOptionLabel(item).toLowerCase();
+                        return option_label.includes(input_value);
+                    }) || null;
+                },
+
+                hasReportPermission(){
+                    return (this.assigned_permissions || []).some(
+                        (item) => item.permition_name === this.$options.REPORT_PERMISSION_CODE
+                    );
+                },
+
+                clearReportTreeAccess(){
+                    this.assigned_reports = [];
+                },
+
+                ensureReportsCatalogLoaded(){
+                    if ((this.all_reports || []).length > 0 || !this.user_user_group) {
+                        return Promise.resolve();
+                    }
+                    return axios.get('./queries/get_permissions_catalog_for_group.php', {
+                        params: { user_group: this.user_user_group }
+                    })
+                    .then((response) => {
+                        if (response.data && !response.data.error) {
+                            this.all_reports = this.normalizeReports(response.data.all_reports || []);
+                        }
+                    })
+                    .catch((error) => {
+                        console.error(error);
+                    });
                 },
 
                 getAvailablePermissions(){
@@ -258,8 +332,11 @@ export default {
                         this.assigned_permissions = [];
                         this.all_courses = [];
                         this.assigned_courses = [];
+                        this.all_reports = [];
+                        this.assigned_reports = [];
                         this.new_permission_id = "";
                         this.new_course_id = "";
+                        this.new_report_id = "";
                         this.permissions_error_message = "";
                         this.is_permissions_loading = false;
                         this.checkForReady();
@@ -283,6 +360,7 @@ export default {
 
                         this.all_permissions = this.normalizePermissions(response.data.all_permissions || []);
                         this.all_courses = this.normalizeCourses(response.data.all_courses || []);
+                        this.all_reports = this.normalizeReports(response.data.all_reports || []);
                     })
                     .catch((error) => {
                         this.permissions_error_message = "Не удалось загрузить полномочия";
@@ -298,7 +376,8 @@ export default {
                     return axios.post("./queries/update_user_permissions.php", {
                         user_login: this.user_login,
                         assigned_permissions: this.normalizePermissions(this.assigned_permissions),
-                        assigned_courses: this.normalizeCourses(this.assigned_courses)
+                        assigned_courses: this.normalizeCourses(this.assigned_courses),
+                        assigned_reports: this.normalizeReports(this.assigned_reports)
                     })
                     .then((response) => {
                         if (!response.data || response.data.status !== "ok"){
@@ -631,8 +710,10 @@ export default {
                     // при смене группы сбрасываем назначения и перезагружаем каталог
                     this.assigned_permissions = [];
                     this.assigned_courses = [];
+                    this.assigned_reports = [];
                     this.new_permission_id = "";
                     this.new_course_id = "";
+                    this.new_report_id = "";
                     this.permissions_error_message = "";
                     this.loadPermissionsCatalogForGroup();
                     this.checkForReady();                 
@@ -642,6 +723,9 @@ export default {
                     this.assigned_permissions = this.normalizePermissions(this.assigned_permissions).filter(item => item.permition_id != in_permition_id);
                     if (!this.hasCoursePermission()){
                         this.clearCourseTreeAccess();
+                    }
+                    if (!this.hasReportPermission()){
+                        this.clearReportTreeAccess();
                     }
                     this.checkForReady();
                 },
@@ -668,6 +752,9 @@ export default {
 
                     this.new_permission_id = "";
                     this.assigned_permissions = this.normalizePermissions(this.assigned_permissions);
+                    if (source_item.permition_name === this.$options.REPORT_PERMISSION_CODE) {
+                        this.ensureReportsCatalogLoaded();
+                    }
                     this.checkForReady();
                 },
 
@@ -706,6 +793,34 @@ export default {
                         in_course.available_until = this.getDefaultCourseDate();
                     }
                     this.assigned_courses = this.normalizeCourses(this.assigned_courses);
+                    this.checkForReady();
+                },
+
+                onClickDeleteReport(in_report_id){
+                    this.assigned_reports = this.normalizeReports(this.assigned_reports).filter(item => item.report_id != in_report_id);
+                    this.checkForReady();
+                },
+
+                onClickAddReport(){
+                    if (!this.hasReportPermission()){
+                        return;
+                    }
+                    const source_item = this.findReportByInput(this.new_report_id);
+                    if (!source_item){
+                        return;
+                    }
+
+                    const assigned_ids = new Set(this.normalizeReports(this.assigned_reports).map(item => item.report_id));
+                    if (!assigned_ids.has(source_item.report_id)){
+                        this.assigned_reports.push({
+                            report_id: source_item.report_id,
+                            report_code: source_item.report_code,
+                            report_name: source_item.report_name
+                        });
+                    }
+
+                    this.new_report_id = "";
+                    this.assigned_reports = this.normalizeReports(this.assigned_reports);
                     this.checkForReady();
                 },
 
@@ -844,6 +959,42 @@ export default {
                         </div>
                     </div>
 
+                    <div v-if="hasReportPermission()" class="tree-child-block reports_permissions_block">
+                        <h3 class="msll_heading_with_tooltip">
+                            Доступные отчёты
+                            <span class="msll_heading_tooltip">Только если есть доступ к разделу «Отчетность»</span>
+                        </h3>
+                        <div v-if="all_reports.length === 0" class="permissions_hint_text">
+                            Справочник отчётов пуст. Проверьте, что применена миграция database/migration_marketing_consents.sql.
+                        </div>
+                        <table v-if="all_reports.length > 0" class="msll_permissions_table">
+                            <thead>
+                                <tr>
+                                    <th>Отчёты</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="report_item in assigned_reports">
+                                    <td>{{report_item.report_name}}</td>
+                                    <td class="msll_permissions_action_cell">
+                                        <input class="msll_smoll_button" type="button" value = "x" @click="onClickDeleteReport(report_item.report_id)">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2">
+                                        <div class="container_inline">
+                                            <input class="msll_filter" type="text" v-model="new_report_id" list="report_options" placeholder="Начните вводить отчёт...">
+                                            <datalist id="report_options">
+                                                <option v-for="report_item in getAvailableReports()" :value="getReportOptionLabel(report_item)"></option>
+                                            </datalist>
+                                            <input class="msll_small_button" type="button" value = "Добавить" @click="onClickAddReport()">
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
             <div class="form-element">

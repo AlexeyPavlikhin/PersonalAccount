@@ -92,13 +92,52 @@ try {
     $query_assigned_courses->execute();
     $assigned_courses = $query_assigned_courses->fetchAll(PDO::FETCH_ASSOC);
 
+    $all_reports = array();
+    $assigned_reports = array();
+    try {
+        $query_catalog_reports = $connection->prepare("
+            SELECT
+                sr.report_id,
+                sr.report_code,
+                sr.report_name,
+                sr.report_description,
+                sr.sort
+            FROM spr_reports sr
+            WHERE sr.is_active = 1
+            ORDER BY sr.sort, sr.report_name
+        ");
+        $query_catalog_reports->execute();
+        $all_reports = $query_catalog_reports->fetchAll(PDO::FETCH_ASSOC);
+
+        $query_assigned_reports = $connection->prepare("
+            SELECT
+                upr.id,
+                upr.report_id,
+                sr.report_code,
+                sr.report_name
+            FROM users_permitted_reports upr
+            INNER JOIN spr_reports sr ON sr.report_id = upr.report_id
+            WHERE upr.user_id = :user_id
+            ORDER BY sr.sort, sr.report_name
+        ");
+        $query_assigned_reports->bindParam(':user_id', $user_id, PDO::PARAM_INT);
+        $query_assigned_reports->execute();
+        $assigned_reports = $query_assigned_reports->fetchAll(PDO::FETCH_ASSOC);
+    } catch (PDOException $reports_exception) {
+        // Справочник отчётов может отсутствовать до применения миграции — не блокируем остальные полномочия.
+        $all_reports = array();
+        $assigned_reports = array();
+    }
+
     $response = array(
         'user_id' => $user_id,
         'user_login' => $user['login'],
         'all_permissions' => $all_permissions,
         'assigned_permissions' => $assigned_permissions,
         'all_courses' => $all_courses,
-        'assigned_courses' => $assigned_courses
+        'assigned_courses' => $assigned_courses,
+        'all_reports' => $all_reports,
+        'assigned_reports' => $assigned_reports
     );
 
     echo json_encode($response);

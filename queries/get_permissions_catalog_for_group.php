@@ -40,12 +40,33 @@ try {
     $query_catalog_courses->execute();
     $all_courses = $query_catalog_courses->fetchAll(PDO::FETCH_ASSOC);
 
+    $all_reports = array();
+    try {
+        $query_catalog_reports = $connection->prepare("
+            SELECT
+                sr.report_id,
+                sr.report_code,
+                sr.report_name,
+                sr.report_description,
+                sr.sort
+            FROM spr_reports sr
+            WHERE sr.is_active = 1
+            ORDER BY sr.sort, sr.report_name
+        ");
+        $query_catalog_reports->execute();
+        $all_reports = $query_catalog_reports->fetchAll(PDO::FETCH_ASSOC);
+    } catch (PDOException $reports_exception) {
+        $all_reports = array();
+    }
+
     $response = array(
         'user_group' => $user_group,
         'all_permissions' => $all_permissions,
         'assigned_permissions' => array(),
         'all_courses' => $all_courses,
-        'assigned_courses' => array()
+        'assigned_courses' => array(),
+        'all_reports' => $all_reports,
+        'assigned_reports' => array()
     );
 
     echo json_encode($response);

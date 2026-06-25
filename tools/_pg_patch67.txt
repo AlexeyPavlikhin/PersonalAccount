@@ -1,0 +1,498 @@
+*** Begin Patch
+*** Update File: C:\MyProjects\msll-dev\components\pg_documents.js
+@@
+ export default {
+     data() {
+         return {
+             current_route_name: "documents",
+             templates: [],
+@@
+             filter_query: "",
+             filter_category: "",
+             form_data: {},
++            field_errors: {},
+             is_loading_templates: false,
+             is_loading_template_config: false,
+-            is_resolving_company: false,
+-            is_resolving_bank: false,
++            is_autofilling_data: false,
+             is_generating_document: false,
+             status_message: "",
+             status_type: "",
+             generated_download_url: "",
+             generated_file_name: ""
+@@
+     methods: {
+         showMessage(in_message, in_type = "info") {
+-            this.status_message = in_message || "";
++            const raw_message = in_message || "";
++            this.status_message = String(raw_message).replace(/<br\s*\/?>/gi, " ");
+             this.status_type = in_type || "info";
+             if (this.$root && this.$root.$refs && this.$root.$refs.ref_FormModalMessage && in_type === "error") {
+-                this.$root.$refs.ref_FormModalMessage.init(this, in_message);
++                this.$root.$refs.ref_FormModalMessage.init(this, String(raw_message));
+                 document.getElementById("id_FormModalMessage").style.display = "block";
+             }
+         },
+@@
+         normalizeFieldValue(in_value) {
+             if (in_value === undefined || in_value === null) {
+                 return "";
+             }
+@@
+             return String(in_value);
+         },
++
++        digitsOnly(in_value) {
++            return this.normalizeFieldValue(in_value).replace(/\D+/g, "");
++        },
++
++        isValidInn(in_value) {
++            return /^\d{10,12}$/.test(this.digitsOnly(in_value));
++        },
++
++        isValidBik(in_value) {
++            return /^\d{9}$/.test(this.digitsOnly(in_value));
++        },
++
++        isValidOptionalEmail(in_value) {
++            const value = this.normalizeFieldValue(in_value).trim();
++            if (value.length === 0) {
++                return true;
++            }
++            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
++        },
++
++        validateAccountChecksum(seed, account) {
++            if (!/^\d{3}$/.test(seed) || !/^\d{20}$/.test(account)) {
++                return false;
++            }
++
++            const controlString = seed + account;
++            const coefficients = [7, 1, 3];
++            let sum = 0;
++            for (let index = 0; index < controlString.length; index += 1) {
++                sum += parseInt(controlString[index], 10) * coefficients[index % 3];
++            }
++            return sum % 10 === 0;
++        },
++
++        isValidCheckingAccount(in_account, in_bik) {
++            const account = this.digitsOnly(in_account);
++            const bik = this.digitsOnly(in_bik);
++            if (!/^\d{20}$/.test(account) || !/^\d{9}$/.test(bik)) {
++                return false;
++            }
++            return this.validateAccountChecksum(bik.slice(-3), account);
++        },
++
++        isValidCorrAccount(in_account, in_bik) {
++            const account = this.digitsOnly(in_account);
++            const bik = this.digitsOnly(in_bik);
++            if (!/^\d{20}$/.test(account) || !/^\d{9}$/.test(bik)) {
++                return false;
++            }
++            return this.validateAccountChecksum("0" + bik.slice(4, 6), account);
++        },
++
++        setFieldErrors(in_errors) {
++            this.field_errors = { ...(in_errors || {}) };
++        },
++
++        clearFieldErrors() {
++            this.field_errors = {};
++        },
++
++        clearFieldError(in_field_code) {
++            if (!Object.prototype.hasOwnProperty.call(this.field_errors, in_field_code)) {
++                return;
++            }
++
++            const next_errors = { ...this.field_errors };
++            delete next_errors[in_field_code];
++            this.field_errors = next_errors;
++        },
++
++        isFieldInvalid(in_field_code) {
++            return Boolean(this.field_errors && this.field_errors[in_field_code]);
++        },
++
++        getFieldError(in_field_code) {
++            return this.field_errors && this.field_errors[in_field_code]
++                ? this.field_errors[in_field_code]
++                : "";
++        },
++
++        getFieldMeta(in_field_code) {
++            return (this.template_fields || []).find((field_item) => field_item.field_code === in_field_code) || null;
++        },
++
++        getFieldLabel(in_field_code) {
++            const field_meta = this.getFieldMeta(in_field_code);
++            if (field_meta && field_meta.field_label) {
++                return field_meta.field_label;
++            }
++            return in_field_code;
++        },
+ 
+         getFieldInputType(in_field) {
+             const field_type = (in_field && in_field.field_type ? in_field.field_type : "text").toLowerCase();
+             if (["email", "tel", "number", "date"].includes(field_type)) {
+                 return field_type;
+@@
+         getFieldValue(in_field_code) {
+             return this.normalizeFieldValue(this.form_data[in_field_code]);
+         },
+ 
+         setFieldValue(in_field_code, in_value) {
+             this.form_data[in_field_code] = this.normalizeFieldValue(in_value);
++            this.clearFieldError(in_field_code);
+         },
+ 
+         applyDataSource(in_data) {
+             if (!in_data || typeof in_data !== "object") {
+                 return;
+@@
+             }
+         },
++
++        collectFieldValidationErrors(in_options = {}) {
++            const enforce_required = Boolean(in_options.enforceRequired);
++            const errors = {};
++            const messages = [];
++            const addError = (field_code, message) => {
++                if (!errors[field_code]) {
++                    errors[field_code] = message;
++                    messages.push(message);
++                }
++            };
++
++            for (const field_item of this.template_fields) {
++                const field_code = field_item.field_code || "";
++                if (!field_code) {
++                    continue;
++                }
++
++                const field_label = field_item.field_label || field_code;
++                const raw_value = this.getFieldValue(field_code).trim();
++
++                if (enforce_required && field_item.is_required && raw_value === "") {
++                    addError(field_code, `Поле "${field_label}" обязательно для заполнения.`);
++                    continue;
++                }
++
++                if (raw_value === "") {
++                    continue;
++                }
++
++                if (field_code === "inn" && !this.isValidInn(raw_value)) {
++                    addError(field_code, `Поле "${field_label}" должно содержать корректный ИНН.`);
++                    continue;
++                }
++
++                if (field_code === "bik" && !this.isValidBik(raw_value)) {
++                    addError(field_code, `Поле "${field_label}" должно содержать корректный БИК.`);
++                    continue;
++                }
++
++                if (field_code === "email" && !this.isValidOptionalEmail(raw_value)) {
++                    addError(field_code, `Поле "${field_label}" должно содержать корректный e-mail.`);
++                    continue;
++                }
++
++                if (field_code === "checking_account") {
++                    const bik_value = this.getFieldValue("bik");
++                    if (!this.isValidBik(bik_value)) {
++                        addError("bik", `Для проверки поля "${field_label}" необходимо указать корректный БИК.`);
++                        addError(field_code, `Поле "${field_label}" не может быть проверено без корректного БИК.`);
++                        continue;
++                    }
++
++                    if (!this.isValidCheckingAccount(raw_value, bik_value)) {
++                        addError(field_code, `Поле "${field_label}" не прошло проверку контрольного числа.`);
++                        continue;
++                    }
++                }
++
++                if (field_code === "corr_account") {
++                    const bik_value = this.getFieldValue("bik");
++                    if (!this.isValidBik(bik_value)) {
++                        addError("bik", `Для проверки поля "${field_label}" необходимо указать корректный БИК.`);
++                        addError(field_code, `Поле "${field_label}" не может быть проверено без корректного БИК.`);
++                        continue;
++                    }
++
++                    if (!this.isValidCorrAccount(raw_value, bik_value)) {
++                        addError(field_code, `Поле "${field_label}" не прошло проверку контрольного числа.`);
++                        continue;
++                    }
++                }
++            }
++
++            return {
++                field_errors: errors,
++                messages: messages
++            };
++        },
++
++        validateForAutofill() {
++            const errors = {};
++            const messages = [];
++
++            const inn_value = this.getFieldValue("inn");
++            const bik_value = this.getFieldValue("bik");
++
++            if (!this.isValidInn(inn_value)) {
++                errors.inn = "Введите корректный ИНН.";
++                messages.push(`Поле "${this.getFieldLabel("inn")}" должно содержать корректный ИНН.`);
++            }
++
++            if (!this.isValidBik(bik_value)) {
++                errors.bik = "Введите корректный БИК.";
++                messages.push(`Поле "${this.getFieldLabel("bik")}" должно содержать корректный БИК.`);
++            }
++
++            const extra_validation = this.collectFieldValidationErrors({ enforceRequired: false });
++            Object.keys(extra_validation.field_errors).forEach((field_code) => {
++                if (!errors[field_code]) {
++                    errors[field_code] = extra_validation.field_errors[field_code];
++                }
++            });
++            for (const message of extra_validation.messages) {
++                if (!messages.includes(message)) {
++                    messages.push(message);
++                }
++            }
++
++            return {
++                field_errors: errors,
++                messages: messages
++            };
++        },
++
++        validateForGenerate() {
++            return this.collectFieldValidationErrors({ enforceRequired: true });
++        },
+ 
+         initializeFormDataFromTemplate() {
+             const next_form_data = {};
+             for (const field_item of this.template_fields) {
+                 const field_code = field_item.field_code || "";
+@@
+ 
+             this.form_data = next_form_data;
++            this.clearFieldErrors();
+             this.releaseGeneratedUrl();
+             this.clearMessage();
+         },
+@@
+                 this.selected_template = response.data.template || in_template;
+                 this.template_fields = response.data.fields || [];
+                 this.template_field_map = (response.data.template && response.data.template.field_map) ? response.data.template.field_map : {};
+                 this.initializeFormDataFromTemplate();
+             } catch (error) {
+@@
+             }
+         },
+ 
+-        async resolveCompanyByInn() {
+-            const inn = (this.getFieldValue("inn") || "").replace(/\D+/g, "");
+-            if (!/^\d{10,12}$/.test(inn)) {
+-                this.showMessage("Введите корректный ИНН организации.", "error");
+-                return;
+-            }
+-
+-            this.is_resolving_company = true;
++        async autofillData() {
++            const validation = this.validateForAutofill();
++            this.setFieldErrors(validation.field_errors);
++            if (Object.keys(validation.field_errors).length > 0) {
++                this.showMessage(validation.messages.join("<br>"), "error");
++                return;
++            }
++
++            const inn = this.digitsOnly(this.getFieldValue("inn"));
++            const bik = this.digitsOnly(this.getFieldValue("bik"));
++
++            this.is_autofilling_data = true;
+             this.setSpinnerVisible(true);
+             try {
+-                const response = await axios.get("./queries/resolve_company_by_inn.php", {
++                const company_response = await axios.get("./queries/resolve_company_by_inn.php", {
+                     params: {
+                         inn: inn
+                     }
+                 });
+ 
+-                if (!response.data || response.data.status !== "ok") {
+-                    throw new Error(response.data && response.data.message ? response.data.message : "Не удалось получить данные организации");
++                if (!company_response.data || company_response.data.status !== "ok") {
++                    throw new Error(company_response.data && company_response.data.message ? company_response.data.message : "Не удалось получить данные организации");
+                 }
+ 
+-                this.applyDataSource(response.data.company || {});
+-                this.setFieldValue("inn", inn);
+-                if (response.data.stored_account) {
+-                    this.setFieldValue("checking_account", response.data.stored_account);
++                const bank_response = await axios.get("./queries/resolve_bank_by_bik.php", {
++                    params: {
++                        bik: bik
++                    }
++                });
++
++                if (!bank_response.data || bank_response.data.status !== "ok") {
++                    throw new Error(bank_response.data && bank_response.data.message ? bank_response.data.message : "Не удалось получить данные банка");
+                 }
+-                this.showMessage("Реквизиты организации обновлены по DaData.", "success");
+-            } catch (error) {
+-                this.showMessage("Ошибка при получении данных организации.<br>" + String(error), "error");
+-            } finally {
+-                this.is_resolving_company = false;
+-                this.setSpinnerVisible(false);
+-            }
+-        },
+-
+-        async resolveBankByBik() {
+-            const bik = (this.getFieldValue("bik") || "").replace(/\D+/g, "");
+-            if (!/^\d{9}$/.test(bik)) {
+-                this.showMessage("Введите корректный БИК банка.", "error");
+-                return;
+-            }
+-
+-            this.is_resolving_bank = true;
+-            this.setSpinnerVisible(true);
+-            try {
+-                const response = await axios.get("./queries/resolve_bank_by_bik.php", {
+-                    params: {
+-                        bik: bik
+-                    }
+-                });
+-
+-                if (!response.data || response.data.status !== "ok") {
+-                    throw new Error(response.data && response.data.message ? response.data.message : "Не удалось получить данные банка");
+-                }
+-
+-                this.applyDataSource(response.data.bank || {});
+-                this.setFieldValue("bik", bik);
+-                this.showMessage("Банковские реквизиты обновлены по DaData Bank.", "success");
++
++                this.applyDataSource(company_response.data.company || {});
++                this.applyDataSource(bank_response.data.bank || {});
++                this.setFieldValue("inn", inn);
++                this.setFieldValue("bik", bik);
++                this.showMessage("Данные формы дозаполнены по ИНН, БИК и локальной БД.", "success");
+             } catch (error) {
+-                this.showMessage("Ошибка при получении данных банка.<br>" + String(error), "error");
++                this.showMessage("Ошибка при дозаполнении данных.<br>" + String(error), "error");
+             } finally {
+-                this.is_resolving_bank = false;
++                this.is_autofilling_data = false;
+                 this.setSpinnerVisible(false);
+             }
+         },
+-
+-        async saveCounterpartyAccountSilently() {
+-            const inn = (this.getFieldValue("inn") || "").replace(/\D+/g, "");
+-            const checking_account = (this.getFieldValue("checking_account") || "").replace(/\D+/g, "");
+-
+-            if (!/^\d{10,12}$/.test(inn) || !/^\d{20}$/.test(checking_account)) {
+-                return;
+-            }
+-
+-            try {
+-                await axios.post("./queries/save_counterparty_account.php", {
+-                    inn: inn,
+-                    checking_account: checking_account
+-                });
+-            } catch (error) {
+-                console.log("Не удалось сохранить расчётный счёт:", error);
+-            }
+-        },
+ 
+         getDownloadFileName(in_payload) {
+             if (in_payload && in_payload.download_filename) {
+                 return in_payload.download_filename;
+             }
+@@
+         async generateDocument() {
+             if (!this.selected_template || !this.selected_template.template_id) {
+                 this.showMessage("Сначала выберите шаблон документа.", "error");
+                 return;
+             }
+ 
++            const validation = this.validateForGenerate();
++            this.setFieldErrors(validation.field_errors);
++            if (Object.keys(validation.field_errors).length > 0) {
++                this.showMessage(validation.messages.join("<br>"), "error");
++                return;
++            }
++
+             this.is_generating_document = true;
+             this.setSpinnerVisible(true);
+             this.releaseGeneratedUrl();
+ 
+             try {
+@@
+ 
+                 if (!response.data || response.data.status !== "ok") {
++                    if (response.data && response.data.field_errors) {
++                        this.setFieldErrors(response.data.field_errors);
++                    }
+                     throw new Error(response.data && response.data.message ? response.data.message : "Не удалось подготовить документ");
+                 }
+-
+-                await this.saveCounterpartyAccountSilently();
+ 
+                 const blobUrl = await this.fillPdfAndCreateBlobUrl(response.data);
+                 const fileName = this.getDownloadFileName(response.data);
+                 this.generated_download_url = blobUrl;
+                 this.generated_file_name = fileName;
+                 this.triggerBrowserDownload(blobUrl, fileName);
++                this.clearFieldErrors();
+                 this.showMessage("Документ успешно сформирован и готов к скачиванию.", "success");
+             } catch (error) {
+                 this.showMessage("Ошибка при генерации документа.<br>" + String(error), "error");
+             } finally {
+                 this.is_generating_document = false;
+@@
+             <div class="documents_status" v-if="status_message" :class="'documents_status--' + (status_type || 'info')">
+                 {{status_message}}
+             </div>
+ 
+             <div class="documents_actions">
+-                <input class="msll_middle_button" type="button" value="Подтянуть по ИНН" @click="resolveCompanyByInn()" :disabled="is_resolving_company || is_generating_document || is_loading_template_config">
+-                <input class="msll_middle_button" type="button" value="Подтянуть по БИК" @click="resolveBankByBik()" :disabled="is_resolving_bank || is_generating_document || is_loading_template_config">
+-                <input class="msll_middle_button" type="button" value="Сформировать PDF" @click="generateDocument()" :disabled="is_generating_document || is_loading_template_config || !selected_template">
++                <input class="msll_middle_button" type="button" value="Дозаполнить данные" @click="autofillData()" :disabled="is_autofilling_data || is_generating_document || is_loading_template_config">
++                <input class="msll_middle_button" type="button" value="Сформировать PDF" @click="generateDocument()" :disabled="is_autofilling_data || is_generating_document || is_loading_template_config || !selected_template">
+             </div>
+ 
+             <div class="documents_form_grid">
+                 <div class="documents_form_field" v-for="field_item in template_fields" :key="field_item.field_id || field_item.field_code">
+                     <label class="label-align-left documents_label">{{field_item.field_label}}</label>
+ 
+                     <textarea
+                         v-if="isTextareaField(field_item)"
+-                        class="documents_textarea"
++                        :class="['documents_textarea', { 'documents_textarea--invalid': isFieldInvalid(field_item.field_code) }]"
+                         :placeholder="field_item.placeholder || ''"
+                         :value="getFieldValue(field_item.field_code)"
+                         @input="setFieldValue(field_item.field_code, $event.target.value)"
+                     ></textarea>
+ 
+                     <input
+                         v-else
+-                        class="documents_field_input"
++                        :class="['documents_field_input', { 'documents_field_input--invalid': isFieldInvalid(field_item.field_code) }]"
+                         :type="getFieldInputType(field_item)"
+                         :placeholder="field_item.placeholder || ''"
+                         :value="getFieldValue(field_item.field_code)"
+                         @input="setFieldValue(field_item.field_code, $event.target.value)"
+                     >
+ 
+-                    <div class="documents_field_hint" v-if="field_item.is_required">Обязательное поле</div>
++                    <div class="documents_field_error" v-if="isFieldInvalid(field_item.field_code)">{{getFieldError(field_item.field_code)}}</div>
++                    <div class="documents_field_hint" v-else-if="field_item.is_required">Обязательное поле</div>
+                 </div>
+             </div>
+*** End Patch

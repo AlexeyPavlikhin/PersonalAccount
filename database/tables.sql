@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Хост: localhost:3306
--- Время создания: Апр 25 2026 г., 05:07
+-- Время создания: Май 13 2026 г., 19:09
 -- Версия сервера: 8.0.45-0ubuntu0.24.04.1
 -- Версия PHP: 8.3.6
 
@@ -227,7 +227,8 @@ CREATE TABLE `spr_permitions` (
   `permition_id` int NOT NULL,
   `permition_name` varchar(256) NOT NULL,
   `sort` int NOT NULL,
-  `permition_group` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL
+  `permition_group` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `menu_item_name` varchar(256) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
@@ -605,6 +606,120 @@ ALTER TABLE `users_permitions`
 ALTER TABLE `users_premited_courses`
   ADD CONSTRAINT `users_premited_courses_course_id` FOREIGN KEY (`course_id`) REFERENCES `spr_courses_name` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
   ADD CONSTRAINT `users_premited_courses_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+--
+-- Структура таблицы `document_templates`
+--
+
+CREATE TABLE `document_templates` (
+  `template_id` int NOT NULL AUTO_INCREMENT,
+  `template_code` varchar(128) NOT NULL,
+  `template_name` varchar(256) NOT NULL,
+  `template_category` varchar(256) DEFAULT NULL,
+  `template_description` text,
+  `template_url` varchar(1024) NOT NULL,
+  `field_map_json` mediumtext NOT NULL,
+  `filter_tags_json` mediumtext,
+  `cache_key_field` varchar(128) DEFAULT 'inn',
+  `cache_fields_json` mediumtext,
+  `registry_role` varchar(32) NOT NULL DEFAULT 'none',
+  `table_blocks_json` mediumtext,
+  `is_active` tinyint(1) NOT NULL DEFAULT '1',
+  `sort` int NOT NULL DEFAULT '100',
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`template_id`),
+  UNIQUE KEY `ux_document_templates_code` (`template_code`),
+  KEY `idx_document_templates_active_sort` (`is_active`,`sort`,`template_name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Структура таблицы `document_template_fields`
+--
+
+CREATE TABLE `document_template_fields` (
+  `field_id` int NOT NULL AUTO_INCREMENT,
+  `template_id` int NOT NULL,
+  `field_code` varchar(128) NOT NULL,
+  `field_label` varchar(256) NOT NULL,
+  `field_type` varchar(64) NOT NULL DEFAULT 'text',
+  `placeholder` varchar(512) DEFAULT NULL,
+  `default_value` varchar(512) DEFAULT NULL,
+  `is_required` tinyint(1) NOT NULL DEFAULT '0',
+  `data_source` varchar(64) NOT NULL DEFAULT 'manual',
+  `source_field_code` varchar(128) DEFAULT NULL,
+  `sort` int NOT NULL DEFAULT '100',
+  PRIMARY KEY (`field_id`),
+  UNIQUE KEY `ux_document_template_fields_code` (`template_id`,`field_code`),
+  KEY `idx_document_template_fields_sort` (`template_id`,`sort`),
+  CONSTRAINT `document_template_fields_ibfk_1` FOREIGN KEY (`template_id`) REFERENCES `document_templates` (`template_id`) ON DELETE CASCADE ON UPDATE RESTRICT
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Структура таблицы `document_field_cache`
+--
+
+CREATE TABLE `document_field_cache` (
+  `cache_id` int NOT NULL AUTO_INCREMENT,
+  `cache_key_field` varchar(128) NOT NULL,
+  `cache_key_value` varchar(256) NOT NULL,
+  `cached_data_json` mediumtext NOT NULL,
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`cache_id`),
+  KEY `idx_document_field_cache_key` (`cache_key_field`,`cache_key_value`),
+  KEY `idx_document_field_cache_updated` (`updated_at`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Структура таблицы `document_number_counters`
+--
+
+CREATE TABLE `document_number_counters` (
+  `counter_code` varchar(64) NOT NULL,
+  `last_value` int NOT NULL DEFAULT '0',
+  `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`counter_code`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Структура таблицы `document_issued_contracts`
+--
+
+CREATE TABLE `document_issued_contracts` (
+  `contract_id` int NOT NULL AUTO_INCREMENT,
+  `contract_number` varchar(32) NOT NULL,
+  `contract_seq` int NOT NULL DEFAULT '0',
+  `contract_date` date DEFAULT NULL,
+  `subject_short` varchar(512) DEFAULT NULL,
+  `counterparty_display` varchar(512) DEFAULT NULL,
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`contract_id`),
+  UNIQUE KEY `ux_document_issued_contracts_number` (`contract_number`),
+  KEY `idx_document_issued_contracts_date` (`contract_date`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Структура таблицы `document_issued_specifications`
+--
+
+CREATE TABLE `document_issued_specifications` (
+  `spec_id` int NOT NULL AUTO_INCREMENT,
+  `contract_id` int NOT NULL,
+  `spec_number` int NOT NULL DEFAULT '0',
+  `spec_date` date DEFAULT NULL,
+  `invoice_number` int DEFAULT NULL,
+  `invoice_date` date DEFAULT NULL,
+  `planned_act_date` date DEFAULT NULL,
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`spec_id`),
+  KEY `idx_document_issued_specs_contract` (`contract_id`),
+  KEY `idx_document_issued_specs_planned_act` (`planned_act_date`),
+  UNIQUE KEY `ux_document_issued_specs_contract_num` (`contract_id`, `spec_number`),
+  CONSTRAINT `document_issued_specifications_ibfk_1` FOREIGN KEY (`contract_id`) REFERENCES `document_issued_contracts` (`contract_id`) ON DELETE CASCADE ON UPDATE RESTRICT
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

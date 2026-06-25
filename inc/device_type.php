@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Определение типа клиента по User-Agent (login.php — разные тексты для mobile/desktop).
+ */
+
 function DeviceType() {
     $userAgent = $_SERVER['HTTP_USER_AGENT'] ?? '';
 
